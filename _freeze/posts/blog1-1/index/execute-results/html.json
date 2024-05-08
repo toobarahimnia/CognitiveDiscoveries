@@ -1,0 +1,15 @@
+{
+  "hash": "520035bfc50d52eaea7d9dae1c473741",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"Is it spring yet?\"\nauthor: \"Tooba Rahimnia\"\ndate: \"2024-05-02\"\ncategories: [news, code, analysis]\nimage: \"spring.jpg\"\n---\n\n\nWhen I first started learning about image classification back in 2018 I was amazed by how a computer system can recognize objects. One of the first projects I worked on was to classify multiple different objects, and since I was living in the Canada, I came up with the idea of categorizing Canadian seasons, aka: spring, winter and construction.\n\nEverything I used for this project is completely free and everyone can implement it within a few minutes!\n\nThe basic steps we'll take are:\n\n1.  Use DuckDuckGo to search for images of \"bird photos\"\n2.  Use DuckDuckGo to search for images of \"forest photos\"\n3.  Fine-tune a pretrained neural network to recognise these two groups\n4.  Try running this model on a picture of a bird and see if it works.\n\n\n::: {.cell}\n\n```{.r .cell-code}\n2+3\n```\n\n::: {.cell-output .cell-output-stdout}\n\n```\n[1] 5\n```\n\n\n:::\n:::\n\n\n::: {.cell}\n\n```{.1 .cell-code}\n\n```\n:::\n\n'''{r}\n\n'''\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
