@@ -1,0 +1,24 @@
+---
+title: "Is it spring yet?"
+author: "Tooba Rahimnia"
+date: "2024-05-08"
+categories: [news, code, analysis]
+image: "spring.jpg"
+---
+
+This is a post with executable code.
+
+When I first started learning about image classification back in 2018 I was amazed by how a computer system can recognize objects. One of the first projects I worked on was to classify multiple different objects, and since I was living in the Canada, I came up with the idea of categorizing Canadian seasons, aka: spring, winter and construction.
+
+Everything I used for this project is completely free and everyone can implement it within a few minutes!
+
+The basic steps we'll take are:
+
+1.  Use DuckDuckGo to search for images of "bird photos"
+2.  Use DuckDuckGo to search for images of "forest photos"
+3.  Fine-tune a pretrained neural network to recognise these two groups
+4.  Try running this model on a picture of a bird and see if it works.
+
+```{r}
+1 + 1
+```
