@@ -1,0 +1,37 @@
+[
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "Hello and welcome to my blog! I’m a tech enthusiast who’s constantly learning and eager to share my journey with you. Here, I share everything I’ve learned about applied machine learning and the latest cloud technologies. Whether you’re just starting out or already an expert, I hope you’ll find something valuable in my posts. Thank you for joining me on this learning adventure!"
+  },
+  {
+    "objectID": "posts/welcome/index.html",
+    "href": "posts/welcome/index.html",
+    "title": "Welcome To My Blog",
+    "section": "",
+    "text": "This is the first post in a Quarto blog. Welcome! 12323432\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts.\n1\n2\n3\n4\n5\n6"
+  },
+  {
+    "objectID": "posts/blog1/index.html",
+    "href": "posts/blog1/index.html",
+    "title": "How to Build a Web App Using HuggingFace and Gradio Within an Hour",
+    "section": "",
+    "text": "Introduction\nIt’s been a few weeks that I have started taking the fantastic deep learning course, fastai, by Jeremy Howard and it has been an amazing learning journey so far. I come from a STEM background but Howard’s style of teaching deep learning has brought a fresh perspective into learning this field. As I go through each lecture, I made the decision of documenting and sharing my experiences and learning outcomes publicly, so that it could inspire, help or encourage someone along the same path. This course has been a game-changer in my learning path so far, and I’m thrilled to talk about my first project in image classification.\nIn this very first blog, I will guide you through deploying an image classification model using HuggingFace and Gradio. This method is beginner-friendly, straightforward and completely free. Whether you are a newcomer or looking to refine your deployment skills, I’ll walk you through each step, ensuring that by the end, you’ll be able to deploy your own models effortlessly. So, let’s get started on the exciting journey!"
+  },
+  {
+    "objectID": "posts/post-with-code/index.html",
+    "href": "posts/post-with-code/index.html",
+    "title": "Post With Code",
+    "section": "",
+    "text": "This is a post with executable code.\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "CognitiveDiscoveries",
+    "section": "",
+    "text": "How to Build a Web App Using HuggingFace and Gradio Within an Hour\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\nMay 19, 2024\n\n\nTooba Rahimnia\n\n\n\n\n\n\n\n\n\n\n\n\nPost With Code\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\nApr 25, 2024\n\n\nHarlow Malloc\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nApr 22, 2024\n\n\nTristan O’Malley\n\n\n\n\n\n\nNo matching items"
+  }
+]
