@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Tooba Rahimnia">
-<meta name="dcterms.date" content="2024-05-19">
+<meta name="dcterms.date" content="2024-05-02">
 
 <title>CognitiveDiscoveries - How to Build a Web App Using HuggingFace and Gradio Within an Hour</title>
 <style>
@@ -146,7 +146,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div class="quarto-title column-body">
       <h1 class="title">How to Build a Web App Using HuggingFace and Gradio Within an Hour</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">news</div>
                 <div class="quarto-category">code</div>
                 <div class="quarto-category">analysis</div>
               </div>
@@ -166,7 +165,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">May 19, 2024</p>
+        <p class="date">May 2, 2024</p>
       </div>
     </div>
     
@@ -185,10 +184,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>(image)</p>
+<p>Walkthrough of an end to end dog vs cat image classification model deployed on HuggingFace Spaces, supported by FastAI and Gradio.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="front_picture.jpg" class="img-fluid figure-img" width="1952"></p>
+<figcaption>Image by pexels.com</figcaption>
+</figure>
+</div>
 <p>It’s been a few weeks that I have started taking the fantastic deep learning course, <a href="https://www.fast.ai/">fastai</a>, by Jeremy Howard and it has been an amazing learning journey so far. I come from a STEM background but Howard’s style of teaching deep learning has brought a fresh perspective into learning this field. As I go through each lecture, I made the decision of documenting and sharing my experiences and learning outcomes publicly, so that it could inspire, help or encourage someone along the same path. This course has been a game-changer in my learning path so far, and I’m thrilled to talk about my first project in image classification.</p>
 <p>In this very first blog, I will guide you through deploying an image classification model using HuggingFace and Gradio. This method is beginner-friendly, straightforward and completely free. Whether you are a newcomer or looking to refine your deployment skills, I’ll walk you through each step, ensuring that by the end, you’ll be able to deploy your own models effortlessly. So, let’s get started on the exciting journey!</p>
-<p>(overview of how the final project looks like)</p>
 <section id="prerequisites" class="level3">
 <h3 class="anchored" data-anchor-id="prerequisites">Prerequisites</h3>
 <p>Before we begin, make sure you have the followings:</p>
@@ -231,25 +235,125 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> is_cat(x): <span class="cf">return</span> x[<span class="dv">0</span>].isupper()          </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Let’s take a look at some randomly picked photos from our dataset.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dls.show_batch()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>(image)</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Unknown.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
 </section>
 <section id="training-the-model" class="level3">
 <h3 class="anchored" data-anchor-id="training-the-model">Training the Model</h3>
+<p>After setting up the <code>DataLoader</code>, the next step is to create and train a model using the <code>fastai</code> library. Here’s how you can do it:</p>
+<p>First, we initialize a <code>vision_learner</code> with our data loaders (<code>dls</code>), specifying the architecture we want to use—in this case, ResNet-152, a powerful and accurate convolutional neural network. We also specify the metrics we want to monitor during training, such as the error rate.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>learn <span class="op">=</span> vision_learner(dls, resnet152, metrics<span class="op">=</span>error_rate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Next, we fine-tune the model using the <code>fine_tune</code> method:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>learn.fine_tune(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This method fine-tunes the model for a specified number of epochs—in this case, 3 epochs. Fine-tuning involves training the model’s top layers, which are typically initialized with random weights, while gradually unfreezing and training the deeper layers of the pre-trained network. This process allows the model to adapt to our specific dataset while leveraging the powerful features learned by ResNet-152 on a much larger dataset.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>epoch</th>
+<th>train_loss</th>
+<th>valid_loss</th>
+<th>error_rate</th>
+<th>time</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>0.051338</td>
+<td>0.039052</td>
+<td>0.010825</td>
+<td>01:58</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>0.026246</td>
+<td>0.006559</td>
+<td>0.002030</td>
+<td>01:58</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>0.010546</td>
+<td>0.004937</td>
+<td>0.001353</td>
+<td>01:57</td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="downloading-the-model" class="level3">
 <h3 class="anchored" data-anchor-id="downloading-the-model">Downloading the Model</h3>
 <p>Let’s go ahead and download our model.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>learn.export(<span class="st">'model.pkl'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>learn.export(<span class="st">'model.pkl'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="deployment" class="level3">
 <h3 class="anchored" data-anchor-id="deployment">Deployment</h3>
+<p>For the deployment, it’s very straightforward. We will be using HuggingFace Spaces. It is a platform that allows you to host and share machine learning models and demos easily.</p>
+<p>Before going onto HuggingFace, we need to create our <code>app.py</code> and <code>requirements.txt</code> files so that we can upload them to the HF repo.</p>
+<p>In the <code>app.py</code> file, we load the model that we saved previously, using <code>load_learner('model.pkl')</code>, and then classify our new unseen images using the Gradio interface. Gradio is a Python library that allows you to quickly create customizable web apps for your machine learning models and data processing pipelines.</p>
+<p>What we are basically doing here is setting up a web interface where users can upload images, and our model will classify these images and return the results. We call our <code>classify_image</code> function, specify our inputs and outputs, and optionally include some example images for users to test.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastai.vision.<span class="bu">all</span> <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gradio <span class="im">as</span> gr</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> is_cat(x): <span class="cf">return</span> x[<span class="dv">0</span>].isupper() </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>learn <span class="op">=</span> load_learner(<span class="st">'model.pkl'</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>categories <span class="op">=</span> (<span class="st">'Dog'</span>, <span class="st">'Cat'</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> classify_image(img):</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    pred,idx,probs <span class="op">=</span> learn.predict(img)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">dict</span>(<span class="bu">zip</span>(categories, <span class="bu">map</span>(<span class="bu">float</span>,probs)))</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>image <span class="op">=</span> gr.Image()</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>label <span class="op">=</span> gr.Label()</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>examples <span class="op">=</span> [<span class="st">'dog.jpg'</span>, <span class="st">'cat.jpg'</span>, <span class="st">'cat_dog.jpg'</span>]</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>intf <span class="op">=</span> gr.Interface(fn<span class="op">=</span>classify_image, inputs<span class="op">=</span>image, outputs<span class="op">=</span>label, examples<span class="op">=</span>examples)</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>intf.launch(inline<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We need to create a <code>requirements.txt</code> file as mentioned before, and all we need to mention is the <code>fastai</code> library because HF doesn’t automatically include it. This file ensures that the necessary dependencies are installed when the app is deployed on HuggingFace Spaces.</p>
 <section id="setting-up-huggingface-spaces" class="level4">
 <h4 class="anchored" data-anchor-id="setting-up-huggingface-spaces">Setting up HuggingFace Spaces</h4>
+<p>So how do you set up the HF Space? First, go to the <a href="https://huggingface.co/spaces">HuggingFace Spaces website</a>. Once you’re there, click on “Create new Space”.</p>
+<p>Choose a Space name of your own. For the License, choose “apache-2.0”. Select Gradio as the Space SDK. Leave the rest as is and click on “Create Space”.</p>
+<p><img src="HF.png" class="img-fluid"></p>
+<p>Open your local terminal and navigate to the directory where your required files, that you created previously, are saved. Once there, do the following:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone <span class="op">&lt;</span>https://huggingface.co/spaces/<span class="op">&gt;&lt;</span>your_login<span class="op">&gt;</span>/<span class="op">&lt;</span>your_app_name<span class="op">&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="op">&lt;</span>your_app_name<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Have your three files ready:</p>
+<ul>
+<li><p>app.py</p></li>
+<li><p>requirements.txt</p></li>
+<li><p>model.pkl</p></li>
+</ul>
+<p>You can commit and push the first two files as follow:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add <span class="op">&lt;</span>your_file_name<span class="op">&gt;</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">'Add application file'</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>However, to upload your model, you need a different approach since it’s a large file (over 25 MB). You need to first. Follow these steps:</p>
+<ol type="1">
+<li><p><strong>Install Git</strong>: If you do not have Git installed locally, please download from <a href="#0">here</a>.</p></li>
+<li><p><strong>Download and install Git Large File Storage (LFS)</strong>: Git LFS is an extension for Git that allows you to handle large files. Download and install it from <a href="https://git-lfs.github.com/">here</a>.</p></li>
+<li><p><strong>Set up Git LFS</strong>: Type the following commands in your terminal:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> lfs install </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> lfs track <span class="st">"*.pkl"</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add .gitattributes </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p><strong>Add and commit your model file:</strong></p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add model.pkl </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">"Add model"</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p><strong>Push your changes to the repository:</strong></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push <span class="at">-u</span> origin master</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ol>
 </section>
 </section>
 <section id="final-result" class="level3">
 <h3 class="anchored" data-anchor-id="final-result">Final Result</h3>
-<p>HF link -&gt; result app + source code.</p>
+<p>After following all these steps, your app will show up on the screen in a few moments! You’ll see your HuggingFace Space with your deployed image classification model, ready to use and share with others!</p>
+<p><img src="cat_dog classification.jpg" class="img-fluid"></p>
+<p>Thanks for sticking with me up to this point! I hope you found this guide useful. Feel free to check out my app and all the source code by clicking <a href="https://huggingface.co/spaces/toobarah/arsenal">here</a>. Happy coding, and keep pushing boundaries!</p>
 
 
 </section>
