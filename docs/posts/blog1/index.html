@@ -22,6 +22,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -151,10 +185,71 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<section id="introduction" class="level3">
-<h3 class="anchored" data-anchor-id="introduction">Introduction</h3>
+<p>(image)</p>
 <p>It’s been a few weeks that I have started taking the fantastic deep learning course, <a href="https://www.fast.ai/">fastai</a>, by Jeremy Howard and it has been an amazing learning journey so far. I come from a STEM background but Howard’s style of teaching deep learning has brought a fresh perspective into learning this field. As I go through each lecture, I made the decision of documenting and sharing my experiences and learning outcomes publicly, so that it could inspire, help or encourage someone along the same path. This course has been a game-changer in my learning path so far, and I’m thrilled to talk about my first project in image classification.</p>
 <p>In this very first blog, I will guide you through deploying an image classification model using HuggingFace and Gradio. This method is beginner-friendly, straightforward and completely free. Whether you are a newcomer or looking to refine your deployment skills, I’ll walk you through each step, ensuring that by the end, you’ll be able to deploy your own models effortlessly. So, let’s get started on the exciting journey!</p>
+<p>(overview of how the final project looks like)</p>
+<section id="prerequisites" class="level3">
+<h3 class="anchored" data-anchor-id="prerequisites">Prerequisites</h3>
+<p>Before we begin, make sure you have the followings:</p>
+<ul>
+<li><p>A basic understanding of Python</p></li>
+<li><p>A HuggingFace account (sign up <a href="https://huggingface.co/">here</a>)</p></li>
+</ul>
+</section>
+<section id="getting-started" class="level3">
+<h3 class="anchored" data-anchor-id="getting-started"><strong>Getting Started</strong></h3>
+<p>First thing, open the Google Colab and let’s make sure we have the necessary tools set up. Since we’re using the popular fastai library, you might need to install or upgrade it first with the following command.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install <span class="op">-</span>Uqq fastai</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now, install the one necessary package needed at this step.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastai.vision.<span class="bu">all</span> <span class="im">import</span> <span class="op">*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="gathering-data" class="level3">
+<h3 class="anchored" data-anchor-id="gathering-data"><strong>Gathering Data</strong></h3>
+<p>Fastai makes it incredibly easy for us to work with datasets thanks to its built-in function: <code>untar_data()</code>. This function streamlines the process of downloading and extracting datasets.</p>
+<p>In our case, we use <code>untar_data(URLs.PETS)</code> to download a compressed dataset of pet images from a specified URL and extract it to a specific location on our local machine (<code>path</code>).</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>path <span class="op">=</span> untar_data(URLs.PETS)<span class="op">/</span><span class="st">'images'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The PETS dataset includes images of 37 breeds of pets along with annotations, which are perfect for training an image classification model.</p>
+</section>
+<section id="loading-data" class="level3">
+<h3 class="anchored" data-anchor-id="loading-data">Loading Data</h3>
+<p>Next we need to load our data. <code>ImageDataLoaders.from_name_func</code> is a method we use that is provided by the <code>fastai</code> library. It is designed to help you create a <code>DataLoader</code> for training and validating image classification models. This method is particularly useful when you have a dataset of images and the labels can be inferred from the filenames of those images, which is basically what we have here.</p>
+<p>The primary purpose of <code>ImageDataLoaders.from_name_func</code> is to create a data loader that can feed images and their corresponding labels to a machine learning model during training and validation phases. It streamlines the process of preparing data, handling transformations, and ensuring that the data is fed in batches to the model.</p>
+<p>But how does it work? Let’s break it down into smaller pieces:</p>
+<ul>
+<li><p><code>path</code>: The path to your dataset directory.</p></li>
+<li><p><code>get_image_files(path)</code>: A function from fastai that returns a list of all image file paths in the directory.</p></li>
+<li><p><code>label_func</code>: A function that takes a file path and returns the label. In this example, it selects the label according to the first letter of the file’s name. If the name starts with a capital letter, the image belongs to a cat, and a dog otherwise.</p></li>
+<li><p><code>item_tfms</code>: Transformations applied to each image individually, such as resizing.</p></li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dls <span class="op">=</span> ImageDataLoaders.from_name_func(<span class="st">'.'</span>, </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>            get_image_files(path), valid_pct<span class="op">=</span><span class="fl">0.2</span>, seed<span class="op">=</span><span class="dv">42</span>, </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>            label_func<span class="op">=</span>is_cat, </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>            item_tfms<span class="op">=</span>Resize(<span class="dv">192</span>))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> is_cat(x): <span class="cf">return</span> x[<span class="dv">0</span>].isupper()          </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s take a look at some randomly picked photos from our dataset.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dls.show_batch()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>(image)</p>
+</section>
+<section id="training-the-model" class="level3">
+<h3 class="anchored" data-anchor-id="training-the-model">Training the Model</h3>
+</section>
+<section id="downloading-the-model" class="level3">
+<h3 class="anchored" data-anchor-id="downloading-the-model">Downloading the Model</h3>
+<p>Let’s go ahead and download our model.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>learn.export(<span class="st">'model.pkl'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="deployment" class="level3">
+<h3 class="anchored" data-anchor-id="deployment">Deployment</h3>
+<section id="setting-up-huggingface-spaces" class="level4">
+<h4 class="anchored" data-anchor-id="setting-up-huggingface-spaces">Setting up HuggingFace Spaces</h4>
+</section>
+</section>
+<section id="final-result" class="level3">
+<h3 class="anchored" data-anchor-id="final-result">Final Result</h3>
+<p>HF link -&gt; result app + source code.</p>
 
 
 </section>

@@ -6,8 +6,96 @@ categories: [news, code, analysis]
 image: "spring.jpg"
 ---
 
-### Introduction
+(image)
 
 It’s been a few weeks that I have started taking the fantastic deep learning course, [fastai](https://www.fast.ai/), by Jeremy Howard and it has been an amazing learning journey so far. I come from a STEM background but Howard’s style of teaching deep learning has brought a fresh perspective into learning this field. As I go through each lecture, I made the decision of documenting and sharing my experiences and learning outcomes publicly, so that it could inspire, help or encourage someone along the same path. This course has been a game-changer in my learning path so far, and I’m thrilled to talk about my first project in image classification.
 
 In this very first blog, I will guide you through deploying an image classification model using HuggingFace and Gradio. This method is beginner-friendly, straightforward and completely free. Whether you are a newcomer or looking to refine your deployment skills, I’ll walk you through each step, ensuring that by the end, you’ll be able to deploy your own models effortlessly. So, let’s get started on the exciting journey!
+
+(overview of how the final project looks like)
+
+### Prerequisites
+
+Before we begin, make sure you have the followings:
+
+-   A basic understanding of Python
+
+-   A HuggingFace account (sign up [here](https://huggingface.co/))
+
+### **Getting Started**
+
+First thing, open the Google Colab and let's make sure we have the necessary tools set up. Since we're using the popular fastai library, you might need to install or upgrade it first with the following command.
+
+``` python
+!pip install -Uqq fastai
+```
+
+Now, install the one necessary package needed at this step.
+
+``` python
+from fastai.vision.all import *
+```
+
+### **Gathering Data**
+
+Fastai makes it incredibly easy for us to work with datasets thanks to its built-in function: `untar_data()`. This function streamlines the process of downloading and extracting datasets.
+
+In our case, we use `untar_data(URLs.PETS)` to download a compressed dataset of pet images from a specified URL and extract it to a specific location on our local machine (`path`).
+
+``` python
+path = untar_data(URLs.PETS)/'images'
+```
+
+The PETS dataset includes images of 37 breeds of pets along with annotations, which are perfect for training an image classification model.
+
+### Loading Data
+
+Next we need to load our data. `ImageDataLoaders.from_name_func` is a method we use that is provided by the `fastai` library. It is designed to help you create a `DataLoader` for training and validating image classification models. This method is particularly useful when you have a dataset of images and the labels can be inferred from the filenames of those images, which is basically what we have here.
+
+The primary purpose of `ImageDataLoaders.from_name_func` is to create a data loader that can feed images and their corresponding labels to a machine learning model during training and validation phases. It streamlines the process of preparing data, handling transformations, and ensuring that the data is fed in batches to the model.
+
+But how does it work? Let’s break it down into smaller pieces:
+
+-   `path`: The path to your dataset directory.
+
+-   `get_image_files(path)`: A function from fastai that returns a list of all image file paths in the directory.
+
+-   `label_func`: A function that takes a file path and returns the label. In this example, it selects the label according to the first letter of the file's name. If the name starts with a capital letter, the image belongs to a cat, and a dog otherwise.
+
+-   `item_tfms`: Transformations applied to each image individually, such as resizing.
+
+``` python
+dls = ImageDataLoaders.from_name_func('.', 
+            get_image_files(path), valid_pct=0.2, seed=42, 
+            label_func=is_cat, 
+            item_tfms=Resize(192))
+
+
+def is_cat(x): return x[0].isupper()          
+```
+
+Let’s take a look at some randomly picked photos from our dataset.
+
+``` python
+dls.show_batch()
+```
+
+(image)
+
+### Training the Model
+
+### Downloading the Model
+
+Let’s go ahead and download our model.
+
+``` python
+learn.export('model.pkl')
+```
+
+### Deployment
+
+#### Setting up HuggingFace Spaces
+
+### Final Result
+
+HF link -\> result app + source code.
