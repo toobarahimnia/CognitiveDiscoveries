@@ -4,7 +4,6 @@ author: "Tooba Rahimnia"
 date: "2024-05-20"
 categories: [code, analysis] #news
 image: "opening.jpg"
-reading-time: true
 ---
 
 Walkthrough of an end to end dog vs cat image classification model deployed on HuggingFace Spaces, supported by FastAI and Gradio.
