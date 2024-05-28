@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Tooba Rahimnia">
-<meta name="dcterms.date" content="2024-05-02">
+<meta name="dcterms.date" content="2024-05-20">
 
 <title>CognitiveDiscoveries - How to Build a Web App Using HuggingFace and Gradio Within an Hour</title>
 <style>
@@ -165,7 +165,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">May 2, 2024</p>
+        <p class="date">May 20, 2024</p>
       </div>
     </div>
     
@@ -191,7 +191,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <figcaption>Image by pexels.com</figcaption>
 </figure>
 </div>
-<p>It’s been a few weeks that I have started taking the fantastic deep learning course, <a href="https://www.fast.ai/">fastai</a>, by Jeremy Howard and it has been an amazing learning journey so far. I come from a STEM background but Howard’s style of teaching deep learning has brought a fresh perspective into learning this field. As I go through each lecture, I made the decision of documenting and sharing my experiences and learning outcomes publicly, so that it could inspire, help or encourage someone along the same path. This course has been a game-changer in my learning path so far, and I’m thrilled to talk about my first project in image classification.</p>
+<p>It’s been a few weeks that I have started taking the fantastic deep learning course, <a href="https://www.fast.ai/">fast.ai</a>, by Jeremy Howard and it has been an amazing learning journey so far. I come from a STEM background but Howard’s style of teaching deep learning has brought a fresh perspective into learning this field. As I go through each lecture, I made the decision of documenting and sharing my experiences and learning outcomes publicly, so that it could inspire, help or encourage someone along the same path. This course has been a game-changer in my learning path so far, and I’m thrilled to talk about my first project in image classification.</p>
 <p>In this very first blog, I will guide you through deploying an image classification model using HuggingFace and Gradio. This method is beginner-friendly, straightforward and completely free. Whether you are a newcomer or looking to refine your deployment skills, I’ll walk you through each step, ensuring that by the end, you’ll be able to deploy your own models effortlessly. So, let’s get started on the exciting journey!</p>
 <section id="prerequisites" class="level3">
 <h3 class="anchored" data-anchor-id="prerequisites">Prerequisites</h3>
@@ -217,7 +217,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="loading-data" class="level3">
 <h3 class="anchored" data-anchor-id="loading-data">Loading Data</h3>
-<p>Next we need to load our data. <code>ImageDataLoaders.from_name_func</code> is a method we use that is provided by the <code>fastai</code> library. It is designed to help you create a <code>DataLoader</code> for training and validating image classification models. This method is particularly useful when you have a dataset of images and the labels can be inferred from the filenames of those images, which is basically what we have here.</p>
+<p>Next, we need to load our data. <code>ImageDataLoaders.from_name_func</code> is a method we use that is provided by the <code>fastai</code> library. It is designed to help you create a <code>DataLoader</code> for training and validating image classification models. This method is particularly useful when you have a dataset of images and the labels can be inferred from the filenames of those images, which is basically what we have here.</p>
 <p>The primary purpose of <code>ImageDataLoaders.from_name_func</code> is to create a data loader that can feed images and their corresponding labels to a machine learning model during training and validation phases. It streamlines the process of preparing data, handling transformations, and ensuring that the data is fed in batches to the model.</p>
 <p>But how does it work? Let’s break it down into smaller pieces:</p>
 <ul>
