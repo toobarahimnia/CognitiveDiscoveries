@@ -8,7 +8,7 @@ image: "opening.jpg"
 
 Walkthrough of an end to end dog vs cat image classification model deployed on HuggingFace Spaces, supported by FastAI and Gradio.
 
-![Image by pexels.com](front_picture.jpg){width="1952"}
+![](front_picture.jpg){width="1952"}
 
 It’s been a few weeks that I have started taking the fantastic deep learning course, [fast.ai](https://www.fast.ai/), by Jeremy Howard and it has been an amazing learning journey so far. I come from a STEM background but Howard’s style of teaching deep learning has brought a fresh perspective into learning this field. As I go through each lecture, I made the decision of documenting and sharing my experiences and learning outcomes publicly, so that it could inspire, help or encourage someone along the same path. This course has been a game-changer in my learning path so far, and I’m thrilled to talk about my first project in image classification.
 

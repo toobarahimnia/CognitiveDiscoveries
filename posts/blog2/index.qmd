@@ -292,7 +292,7 @@ Now, let's dive into the implementation and see how we can create a REST API usi
             prediction_dict = json.loads(prediction.data.decode('utf-8'))  # Convert bytes to string and then to dict
 
             return render_template('result.html', percentage=prediction_dict['probability'], prediction=prediction_dict['dog_type'])
-         
+
 
         #function to predict image
         def single_image_predict(image):
@@ -318,61 +318,61 @@ Now, let's dive into the implementation and see how we can create a REST API usi
         <!DOCTYPE html>
         <html>
         <head>
-        	<title>Home</title>
-        	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-        	<link rel="stylesheet" type="text/css" href="/static/style.css">
-        	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/styles.css') }}">
+            <title>Home</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="stylesheet" type="text/css" href="/static/style.css">
+            <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/styles.css') }}">
         </head>
 
         <body>
-          
-        	<div class="container main"></div>
-        	  	<div class="row">
-        		  <div class="col">
-        			<h1 class="header">Dog Breed Image Classifier</h1>
-        			<form action="{{ url_for('predict')}}" method="post" enctype="multipart/form-data">
-        				<label for="uploaded-file" class="upload-frame">
-        					Upload your photo here :)
-        					<input type="file" id="uploaded-file" class="form-control" name="uploaded-file" style="display: none;" onchange="displayImage(event)">
-        				</label>
-        				<input type="hidden" name="image_path" id="image_path">
-        				<div class="button-group">
-        					<!-- <button class="upload-photo-btn" type="button" onclick="document.getElementById('file-input').click()">Upload Photo</button> -->
-        					<button class="submit-btn" type="submit">Submit</button>
-        				</div>
-        			</form>
-        			
-        			<script>
-        				function displayImage(event) {
-        					var file = event.target.files[0];
-        					var reader = new FileReader();
-        		
-        					reader.onload = function(e) {
-        						var imageUrl = e.target.result;
-        						var uploadFrame = document.querySelector('.upload-frame');
-        						uploadFrame.style.backgroundImage = 'url(' + imageUrl + ')';
-        						document.getElementById('image_path').value = imageUrl; // Set the value of the hidden input field
-        					};
-        		
-        					reader.readAsDataURL(file);
-        				}
 
-        				function validateForm(event) {
-        					var fileInput = document.getElementById('uploaded-file');
-        					if (fileInput.files.length === 0) {
-        						alert('Please upload a photo first');
-        						event.preventDefault(); // Prevent the form from submitting
-        					}
-        				}
+            <div class="container main"></div>
+                <div class="row">
+                  <div class="col">
+                    <h1 class="header">Dog Breed Image Classifier</h1>
+                    <form action="{{ url_for('predict')}}" method="post" enctype="multipart/form-data">
+                        <label for="uploaded-file" class="upload-frame">
+                            Upload your photo here :)
+                            <input type="file" id="uploaded-file" class="form-control" name="uploaded-file" style="display: none;" onchange="displayImage(event)">
+                        </label>
+                        <input type="hidden" name="image_path" id="image_path">
+                        <div class="button-group">
+                            <!-- <button class="upload-photo-btn" type="button" onclick="document.getElementById('file-input').click()">Upload Photo</button> -->
+                            <button class="submit-btn" type="submit">Submit</button>
+                        </div>
+                    </form>
 
-        				document.querySelector('form').addEventListener('submit', validateForm);
-        			</script>
+                    <script>
+                        function displayImage(event) {
+                            var file = event.target.files[0];
+                            var reader = new FileReader();
 
-        		</div>
-        	</div>
-        	
-        	</body>
-        </html>	
+                            reader.onload = function(e) {
+                                var imageUrl = e.target.result;
+                                var uploadFrame = document.querySelector('.upload-frame');
+                                uploadFrame.style.backgroundImage = 'url(' + imageUrl + ')';
+                                document.getElementById('image_path').value = imageUrl; // Set the value of the hidden input field
+                            };
+
+                            reader.readAsDataURL(file);
+                        }
+
+                        function validateForm(event) {
+                            var fileInput = document.getElementById('uploaded-file');
+                            if (fileInput.files.length === 0) {
+                                alert('Please upload a photo first');
+                                event.preventDefault(); // Prevent the form from submitting
+                            }
+                        }
+
+                        document.querySelector('form').addEventListener('submit', validateForm);
+                    </script>
+
+                </div>
+            </div>
+
+            </body>
+        </html> 
         ```
 
         ``` python
@@ -395,8 +395,8 @@ Now, let's dive into the implementation and see how we can create a REST API usi
 
             <div class="results">
                 <h3>This is {{ percentage }}% {{ prediction }}</h3>
-        		<p>Let's play again! Hit the Home link below :)</p>
-        		<div style="text-align: center;">
+                <p>Let's play again! Hit the Home link below :)</p>
+                <div style="text-align: center;">
                     <a href="{{ url_for('index') }}" class="back-btn">Home</a>
                 </div>
             </div>
