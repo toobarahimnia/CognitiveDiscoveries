@@ -2,7 +2,7 @@
 title: "How to Build a Web App Using HuggingFace and Gradio Within an Hour"
 author: "Tooba Rahimnia"
 date: "2024-05-20"
-categories: [code, analysis] #news
+categories: [code, analysis, Computer Vision] #news
 image: "opening.jpg"
 ---
 

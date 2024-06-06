@@ -2,7 +2,7 @@
 title: "Implementing Binary Image Classification Using FastAI, and Flask"
 author: "Tooba Rahimnia"
 date: "2024-05-28"
-categories: [code, analysis] #news
+categories: [code, analysis, Computer Vision] #news
 image: "opening.jpg"
 ---
 

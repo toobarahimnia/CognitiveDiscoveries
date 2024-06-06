@@ -2,7 +2,7 @@
 title: "Navigating the Kaggle U.S. Patent Phrase to Phrase Matching Competition: A Step-by-Step Guide "
 author: "Tooba Rahimnia"
 date: "2024-06-05"
-categories: [code, analysis] #news
+categories: [code, analysis, NLP] #news
 image: "opening.jpg"
 ---
 
@@ -40,21 +40,21 @@ Next, on the right-hand sidebar, follow these steps:
 
 -   **Download the Models**: We will be using two different models for this task (`debertav3base` and `debertav3small`). Click on `+ Add Input`, then under the Datasets category, type in the names of these two models one by one and download them.
 
-    ![](Screenshot 2024-06-05 at 2.44.07 PM.png){width="359"}
+    ![](Screenshot%202024-06-05%20at%202.44.07%20PM.png){width="359"}
 
     (Side note: You can also try `deberta-v3-large` model later on, however, it requires more computing power and I personally do not recommend using it for the start)
 
 -   **Download CPC Dataset**: There is another dataset that we need to download. Follow the same steps as before and type `cpc-codes` to obtain the new CSV file. We will explore the information contained in this dataset in later sections.
 
-    ![](Screenshot 2024-06-05 at 2.47.46 PM.png){width="365"}
+    ![](Screenshot%202024-06-05%20at%202.47.46%20PM.png){width="365"}
 
 -   **Turn on GPU**: You will need GPUs for this task... Click on the three dots at the top right corner, then choose Accelerator, and select a GPU option.
 
-    ![](Screenshot 2024-06-05 at 2.53.11 PM.png){width="433"}
+    ![](Screenshot%202024-06-05%20at%202.53.11%20PM.png){width="433"}
 
 -   **Turn off the Internet**: Finally, you need to work in offline mode as required by the competition organizer. Once all your files are downloaded, open the left-side window, select Session options, and turn off the internet connection. (screenshot)
 
-    ![](Screenshot 2024-06-05 at 2.57.20 PM.png){width="332"}
+    ![](Screenshot%202024-06-05%20at%202.57.20%20PM.png){width="332"}
 
 ## Importing libraries and Set Required Seed
 
@@ -149,7 +149,7 @@ train_df.score.hist()
 plt.title('Histogram of Scores')
 ```
 
-![](Screenshot 2024-06-05 at 4.45.09 PM.png){width="492"}
+![](Screenshot%202024-06-05%20at%204.45.09%20PM.png){width="492"}
 
 Note that there are only 5 potential scores:
 
@@ -173,7 +173,7 @@ plt.title('Top 10 Anchors')
 plt.show()
 ```
 
-![](Screenshot 2024-06-05 at 4.51.21 PM.png){width="560"}
+![](Screenshot%202024-06-05%20at%204.51.21%20PM.png){width="560"}
 
 Here, we can see the top 10 mostly used `anchors`, respectively. The total number of entities containing each anchor is written on top of its bar.
 
@@ -213,7 +213,7 @@ updated_train_df['input'] = updated_train_df['title'] + "; " + updated_train_df[
 updated_train_df.tail()
 ```
 
-![](Screenshot 2024-06-05 at 5.47.05 PM.png)
+![](Screenshot%202024-06-05%20at%205.47.05%20PM.png)
 
 Do the same steps for `test_df`:
 
@@ -339,7 +339,7 @@ test_dataset = SubmitDataset(updated_test_df['input'].to_list(),
                              tokenizer)
 ```
 
-![](Screenshot 2024-06-05 at 7.32.19 PM.png)
+![](Screenshot%202024-06-05%20at%207.32.19%20PM.png)
 
 There it is! Every input/output entity turned into a token and then into a number.
 
@@ -468,7 +468,7 @@ print(f'Training Time: {stop-start: .2f}s')
 
 Let's compare the performance of Model 1 (left side) and Model 2 (right side).
 
-![](Screenshot 2024-06-05 at 8.44.01 PM.png)
+![](Screenshot%202024-06-05%20at%208.44.01%20PM.png)
 
 As you can see, Model 2 is more accurate than Model 1. It performs 4.6% better on the first epoch and 2.8% better on the second epoch. The training and validation loss of Model 2 is almost half of Model 1.
 
