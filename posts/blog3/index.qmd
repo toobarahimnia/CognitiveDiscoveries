@@ -247,7 +247,7 @@ You can safely ignore the warnings here.
 
 ## Loading Data
 
-In the following cells we will build our custom dataset classes for training and testing that inherit from `torch.utils.data.Dataset`.
+In the following cells we will build our custom dataset classes for training and testing that inherit from Hugging Face.
 
 ``` python
 class TrainDataset(Dataset):
