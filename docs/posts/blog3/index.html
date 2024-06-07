@@ -340,7 +340,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="loading-data" class="level2">
 <h2 class="anchored" data-anchor-id="loading-data">Loading Data</h2>
-<p>In the following cells we will build our custom dataset classes for training and testing that inherit from Hugging Face.</p>
+<p>In the following cells we will build our custom dataset classes for training and testing that inherit from <code>torch.utils.data.Dataset</code>.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> TrainDataset(Dataset):</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, inputs, targets, scores, tokenizer):</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.scores <span class="op">=</span> scores</span>
