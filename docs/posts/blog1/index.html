@@ -107,7 +107,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -177,7 +177,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#prerequisites" id="toc-prerequisites" class="nav-link active" data-scroll-target="#prerequisites">Prerequisites</a></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">Getting Started</a></li>
+  <li><a href="#gathering-data" id="toc-gathering-data" class="nav-link" data-scroll-target="#gathering-data">Gathering Data</a></li>
+  <li><a href="#loading-data" id="toc-loading-data" class="nav-link" data-scroll-target="#loading-data">Loading Data</a></li>
+  <li><a href="#training-the-model" id="toc-training-the-model" class="nav-link" data-scroll-target="#training-the-model">Training the Model</a></li>
+  <li><a href="#downloading-the-model" id="toc-downloading-the-model" class="nav-link" data-scroll-target="#downloading-the-model">Downloading the Model</a></li>
+  <li><a href="#deployment" id="toc-deployment" class="nav-link" data-scroll-target="#deployment">Deployment</a>
+  <ul class="collapse">
+  <li><a href="#setting-up-huggingface-spaces" id="toc-setting-up-huggingface-spaces" class="nav-link" data-scroll-target="#setting-up-huggingface-spaces">Setting up HuggingFace Spaces</a></li>
+  </ul></li>
+  <li><a href="#final-result" id="toc-final-result" class="nav-link" data-scroll-target="#final-result">Final Result</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
 
@@ -189,30 +207,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="front_picture.jpg" class="img-fluid" width="1952"></p>
 <p>It’s been a few weeks that I have started taking the fantastic deep learning course, <a href="https://www.fast.ai/">fast.ai</a>, by Jeremy Howard and it has been an amazing learning journey so far. I come from a STEM background but Howard’s style of teaching deep learning has brought a fresh perspective into learning this field. As I go through each lecture, I made the decision of documenting and sharing my experiences and learning outcomes publicly, so that it could inspire, help or encourage someone along the same path. This course has been a game-changer in my learning path so far, and I’m thrilled to talk about my first project in image classification.</p>
 <p>In this very first blog, I will guide you through deploying an image classification model using HuggingFace and Gradio. This method is beginner-friendly, straightforward and completely free. Whether you are a newcomer or looking to refine your deployment skills, I’ll walk you through each step, ensuring that by the end, you’ll be able to deploy your own models effortlessly. So, let’s get started on the exciting journey!</p>
-<section id="prerequisites" class="level3">
-<h3 class="anchored" data-anchor-id="prerequisites">Prerequisites</h3>
+<section id="prerequisites" class="level2">
+<h2 class="anchored" data-anchor-id="prerequisites">Prerequisites</h2>
 <p>Before we begin, make sure you have the followings:</p>
 <ul>
 <li><p>A basic understanding of Python</p></li>
 <li><p>A HuggingFace account (sign up <a href="https://huggingface.co/">here</a>)</p></li>
 </ul>
 </section>
-<section id="getting-started" class="level3">
-<h3 class="anchored" data-anchor-id="getting-started"><strong>Getting Started</strong></h3>
+<section id="getting-started" class="level2">
+<h2 class="anchored" data-anchor-id="getting-started">Getting Started</h2>
 <p>First thing, open the Google Colab and let’s make sure we have the necessary tools set up. Since we’re using the popular fastai library, you might need to install or upgrade it first with the following command.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install <span class="op">-</span>Uqq fastai</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Now, install the one necessary package needed at this step.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> fastai.vision.<span class="bu">all</span> <span class="im">import</span> <span class="op">*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="gathering-data" class="level3">
-<h3 class="anchored" data-anchor-id="gathering-data"><strong>Gathering Data</strong></h3>
+<section id="gathering-data" class="level2">
+<h2 class="anchored" data-anchor-id="gathering-data">Gathering Data</h2>
 <p>Fastai makes it incredibly easy for us to work with datasets thanks to its built-in function: <code>untar_data()</code>. This function streamlines the process of downloading and extracting datasets.</p>
 <p>In our case, we use <code>untar_data(URLs.PETS)</code> to download a compressed dataset of pet images from a specified URL and extract it to a specific location on our local machine (<code>path</code>).</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>path <span class="op">=</span> untar_data(URLs.PETS)<span class="op">/</span><span class="st">'images'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The PETS dataset includes images of 37 breeds of pets along with annotations, which are perfect for training an image classification model.</p>
 </section>
-<section id="loading-data" class="level3">
-<h3 class="anchored" data-anchor-id="loading-data">Loading Data</h3>
+<section id="loading-data" class="level2">
+<h2 class="anchored" data-anchor-id="loading-data">Loading Data</h2>
 <p>Next, we need to load our data. <code>ImageDataLoaders.from_name_func</code> is a method we use that is provided by the <code>fastai</code> library. It is designed to help you create a <code>DataLoader</code> for training and validating image classification models. This method is particularly useful when you have a dataset of images and the labels can be inferred from the filenames of those images, which is basically what we have here.</p>
 <p>The primary purpose of <code>ImageDataLoaders.from_name_func</code> is to create a data loader that can feed images and their corresponding labels to a machine learning model during training and validation phases. It streamlines the process of preparing data, handling transformations, and ensuring that the data is fed in batches to the model.</p>
 <p>But how does it work? Let’s break it down into smaller pieces:</p>
@@ -237,8 +255,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </figure>
 </div>
 </section>
-<section id="training-the-model" class="level3">
-<h3 class="anchored" data-anchor-id="training-the-model">Training the Model</h3>
+<section id="training-the-model" class="level2">
+<h2 class="anchored" data-anchor-id="training-the-model">Training the Model</h2>
 <p>After setting up the <code>DataLoader</code>, the next step is to create and train a model using the <code>fastai</code> library. Here’s how you can do it:</p>
 <p>First, we initialize a <code>vision_learner</code> with our data loaders (<code>dls</code>), specifying the architecture we want to use—in this case, ResNet-152, a powerful and accurate convolutional neural network. We also specify the metrics we want to monitor during training, such as the error rate.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>learn <span class="op">=</span> vision_learner(dls, resnet152, metrics<span class="op">=</span>error_rate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -280,13 +298,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 </section>
-<section id="downloading-the-model" class="level3">
-<h3 class="anchored" data-anchor-id="downloading-the-model">Downloading the Model</h3>
+<section id="downloading-the-model" class="level2">
+<h2 class="anchored" data-anchor-id="downloading-the-model">Downloading the Model</h2>
 <p>Let’s go ahead and download our model.</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>learn.export(<span class="st">'model.pkl'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="deployment" class="level3">
-<h3 class="anchored" data-anchor-id="deployment">Deployment</h3>
+<section id="deployment" class="level2">
+<h2 class="anchored" data-anchor-id="deployment">Deployment</h2>
 <p>For the deployment, it’s very straightforward. We will be using HuggingFace Spaces. It is a platform that allows you to host and share machine learning models and demos easily.</p>
 <p>Before going onto HuggingFace, we need to create our <code>app.py</code> and <code>requirements.txt</code> files so that we can upload them to the HF repo.</p>
 <p>In the <code>app.py</code> file, we load the model that we saved previously, using <code>load_learner('model.pkl')</code>, and then classify our new unseen images using the Gradio interface. Gradio is a Python library that allows you to quickly create customizable web apps for your machine learning models and data processing pipelines.</p>
@@ -311,8 +329,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>intf <span class="op">=</span> gr.Interface(fn<span class="op">=</span>classify_image, inputs<span class="op">=</span>image, outputs<span class="op">=</span>label, examples<span class="op">=</span>examples)</span>
 <span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>intf.launch(inline<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>We need to create a <code>requirements.txt</code> file as mentioned before, and all we need to mention is the <code>fastai</code> library because HF doesn’t automatically include it. This file ensures that the necessary dependencies are installed when the app is deployed on HuggingFace Spaces.</p>
-<section id="setting-up-huggingface-spaces" class="level4">
-<h4 class="anchored" data-anchor-id="setting-up-huggingface-spaces">Setting up HuggingFace Spaces</h4>
+<section id="setting-up-huggingface-spaces" class="level3">
+<h3 class="anchored" data-anchor-id="setting-up-huggingface-spaces">Setting up HuggingFace Spaces</h3>
 <p>So how do you set up the HF Space? First, go to the <a href="https://huggingface.co/spaces">HuggingFace Spaces website</a>. Once you’re there, click on “Create new Space”.</p>
 <p>Choose a Space name of your own. For the License, choose “apache-2.0”. Select Gradio as the Space SDK. Leave the rest as is and click on “Create Space”.</p>
 <p><img src="HF.png" class="img-fluid"></p>
@@ -345,8 +363,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ol>
 </section>
 </section>
-<section id="final-result" class="level3">
-<h3 class="anchored" data-anchor-id="final-result">Final Result</h3>
+<section id="final-result" class="level2">
+<h2 class="anchored" data-anchor-id="final-result">Final Result</h2>
 <p>After following all these steps, your app will show up on the screen in a few moments! You’ll see your HuggingFace Space with your deployed image classification model, ready to use and share with others!</p>
 <p><img src="cat_dog classification.jpg" class="img-fluid"></p>
 <p>Thanks for sticking with me up to this point! I hope you found this guide useful. Feel free to check out my app and all the source code by clicking <a href="https://huggingface.co/spaces/toobarah/arsenal">here</a>. Happy coding, and keep pushing boundaries!</p>

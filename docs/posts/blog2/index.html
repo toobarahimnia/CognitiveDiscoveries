@@ -107,7 +107,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -177,7 +177,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#data-loading-and-model-fine-tuning-in-jupyter-notebook" id="toc-data-loading-and-model-fine-tuning-in-jupyter-notebook" class="nav-link active" data-scroll-target="#data-loading-and-model-fine-tuning-in-jupyter-notebook">Data Loading and Model Fine-Tuning in Jupyter Notebook</a>
+  <ul class="collapse">
+  <li><a href="#downloading-data" id="toc-downloading-data" class="nav-link" data-scroll-target="#downloading-data">Downloading Data</a></li>
+  <li><a href="#data-cleaning" id="toc-data-cleaning" class="nav-link" data-scroll-target="#data-cleaning">Data Cleaning</a></li>
+  <li><a href="#data-augmentation-and-loading" id="toc-data-augmentation-and-loading" class="nav-link" data-scroll-target="#data-augmentation-and-loading">Data Augmentation and Loading</a></li>
+  <li><a href="#training-the-model" id="toc-training-the-model" class="nav-link" data-scroll-target="#training-the-model">Training the Model</a></li>
+  </ul></li>
+  <li><a href="#building-a-restful-api-with-flask" id="toc-building-a-restful-api-with-flask" class="nav-link" data-scroll-target="#building-a-restful-api-with-flask">Building a RESTful API with Flask</a></li>
+  <li><a href="#next-step-deployment" id="toc-next-step-deployment" class="nav-link" data-scroll-target="#next-step-deployment">Next Step: Deployment</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
 
@@ -189,8 +205,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="puppy.avif" class="img-fluid"></p>
 <p>In this project, we will build a web application that can classify the breed of a dog given an image provided by the user. We will walk through the entire process, from loading the data and fine-tuning our model to designing the back end and front end using Flask, HTML, and CSS.</p>
 <p>So, without further ado, let’s get started.</p>
-<section id="data-loading-and-model-fine-tuning-in-jupyter-notebook" class="level3">
-<h3 class="anchored" data-anchor-id="data-loading-and-model-fine-tuning-in-jupyter-notebook"><strong>Data Loading and Model Fine-Tuning in Jupyter Notebook</strong></h3>
+<section id="data-loading-and-model-fine-tuning-in-jupyter-notebook" class="level2">
+<h2 class="anchored" data-anchor-id="data-loading-and-model-fine-tuning-in-jupyter-notebook">Data Loading and Model Fine-Tuning in Jupyter Notebook</h2>
 <p>First, install and load all the packages and dependencies:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install fastbook</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install timm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -202,8 +218,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> bs4 <span class="im">import</span> BeautifulSoup <span class="im">as</span> bs </span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<section id="downloading-data" class="level4">
-<h4 class="anchored" data-anchor-id="downloading-data">Downloading Data</h4>
+<section id="downloading-data" class="level3">
+<h3 class="anchored" data-anchor-id="downloading-data">Downloading Data</h3>
 <p>In the next steps, we will extract our dataset from a webpage using a method called web scraping. Our target website contains an extensive list of dog breed names. We will use the first 50 breed names and then download 150 different images for each breed using the Python library&nbsp;<code>download_images</code>, which retrieves images directly from Google.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fetch the webpage and parse it</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>URL <span class="op">=</span> <span class="st">"&lt;https://www.akc.org/expert-advice/news/most-popular-dog-breeds-full-ranking-list/&gt;"</span> </span>
@@ -231,8 +247,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>      download_images(dest, urls<span class="op">=</span>search_images_ddg(<span class="ss">f'</span><span class="sc">{</span>breed<span class="sc">}</span><span class="ss"> dog'</span>, max_images<span class="op">=</span><span class="dv">150</span>))</span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>      resize_images(dest, dest<span class="op">=</span>dest)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="data-cleaning" class="level4">
-<h4 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h4>
+<section id="data-cleaning" class="level3">
+<h3 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h3>
 <p>If you proceed with training your model on the dataset you collected, you might end up with an error similar to this:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">OSError:</span> Caught OSError in DataLoader worker process 0.</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Original</span> Traceback <span class="er">(</span><span class="ex">most</span> recent call last<span class="kw">)</span><span class="bu">:</span></span>
@@ -264,8 +280,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>            os.remove(os.path.join(root, breedname, filename))</span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Successfully Completed Operation! Files Courrupted are "</span>, cnt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="data-augmentation-and-loading" class="level4">
-<h4 class="anchored" data-anchor-id="data-augmentation-and-loading">Data Augmentation and Loading</h4>
+<section id="data-augmentation-and-loading" class="level3">
+<h3 class="anchored" data-anchor-id="data-augmentation-and-loading">Data Augmentation and Loading</h3>
 <p>At this step, we begin to set up a pipeline to process a dataset of dog images, applying necessary transformations and preparing it for training a deep learning model using the <strong><code>fastai</code></strong> library.</p>
 <p>First, we need to create the <code>DataBlock</code>. Let’s take it to smaller pieces and see what each part does:</p>
 <ul>
@@ -300,8 +316,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>dls.train.show_batch(max_n<span class="op">=</span><span class="dv">4</span>, nrows<span class="op">=</span><span class="dv">1</span>, unique<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><img src="data_aug.png" class="img-fluid"></p>
 </section>
-<section id="training-the-model" class="level4">
-<h4 class="anchored" data-anchor-id="training-the-model">Training the Model</h4>
+<section id="training-the-model" class="level3">
+<h3 class="anchored" data-anchor-id="training-the-model">Training the Model</h3>
 <p>Let’s go ahead and train our model</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>learn <span class="op">=</span> cnn_learner(dls, resnet34, metrics<span class="op">=</span>error_rate)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>learn.fine_tune(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -332,8 +348,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>learn.export(<span class="st">'/content/model.pkl'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
-<section id="building-a-restful-api-with-flask" class="level3">
-<h3 class="anchored" data-anchor-id="building-a-restful-api-with-flask"><strong>Building a RESTful API with Flask</strong></h3>
+<section id="building-a-restful-api-with-flask" class="level2">
+<h2 class="anchored" data-anchor-id="building-a-restful-api-with-flask">Building a RESTful API with Flask</h2>
 <p>REST APIs have become essential to modern software applications, enabling seamless communication between systems and ensuring data consistency. They facilitate the easy exchange of information between various websites, databases, and SaaS (Software as a Service) applications. Whether you’re developing a mobile app, a web application, or integrating third-party services, understanding how to create a robust REST API is crucial. </p>
 <p>There are numerous ways to build a REST API, and leveraging existing frameworks and tools can streamline the process. One such example is&nbsp;<strong>Flask</strong>, a web framework in Python. With the&nbsp;<a href="https://flask-restful.readthedocs.io/en/latest/?utm_source=xp&amp;utm_medium=blog&amp;utm_campaign=content">Flask-RESTful extension</a>, developers can quickly and efficiently develop REST APIs. </p>
 <p>Now, let’s dive into the implementation and see how we can create a REST API using Flask and the Flask-RESTful extension.</p>
@@ -521,8 +537,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h4 class="anchored" data-anchor-id="section"></h4>
 </section>
 </section>
-<section id="next-step-deployment" class="level3">
-<h3 class="anchored" data-anchor-id="next-step-deployment">Next Step: Deployment</h3>
+<section id="next-step-deployment" class="level2">
+<h2 class="anchored" data-anchor-id="next-step-deployment">Next Step: Deployment</h2>
 <p>So far, we have learned how to create our deep learning-based web app. We designed both the backend and the frontend. The final step is to deploy our model so everyone can access our application on their own devices.</p>
 <p>There are many options for choosing the right platform, but one of the most widely used deployment environments is a cloud service provider. Cloud services are ubiquitous these days, making it essential for machine learning practitioners and tech experts to stay ahead with a solid understanding of these services. One of the most important cloud service providers in the job market is AWS.</p>
 <p>Deploying a project of this scale on AWS can be tricky (and costly). If you have never worked with the platform before and want to do some warm-up practices with DL models, the best alternative options would be using Heroku, Hugging Face, or Render.</p>

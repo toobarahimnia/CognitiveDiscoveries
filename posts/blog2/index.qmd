@@ -14,7 +14,7 @@ In this project, we will build a web application that can classify the breed of 
 
 So, without further ado, let’s get started.
 
-### **Data Loading and Model Fine-Tuning in Jupyter Notebook**
+## Data Loading and Model Fine-Tuning in Jupyter Notebook
 
 First, install and load all the packages and dependencies:
 
@@ -34,7 +34,7 @@ from pathlib import Path
 import os
 ```
 
-#### Downloading Data
+### Downloading Data
 
 In the next steps, we will extract our dataset from a webpage using a method called web scraping. Our target website contains an extensive list of dog breed names. We will use the first 50 breed names and then download 150 different images for each breed using the Python library `download_images`, which retrieves images directly from Google.
 
@@ -76,7 +76,7 @@ if not root.exists():
       resize_images(dest, dest=dest)
 ```
 
-#### Data Cleaning
+### Data Cleaning
 
 If you proceed with training your model on the dataset you collected, you might end up with an error similar to this:
 
@@ -116,7 +116,7 @@ for breedname in os.listdir(root):
 print("Successfully Completed Operation! Files Courrupted are ", cnt)
 ```
 
-#### Data Augmentation and Loading
+### Data Augmentation and Loading
 
 At this step, we begin to set up a pipeline to process a dataset of dog images, applying necessary transformations and preparing it for training a deep learning model using the **`fastai`** library.
 
@@ -175,7 +175,7 @@ dls.train.show_batch(max_n=4, nrows=1, unique=True)
 
 ![](data_aug.png)
 
-#### Training the Model
+### Training the Model
 
 Let's go ahead and train our model
 
@@ -215,7 +215,7 @@ Lastly, we download our model and we're done with this part:
 learn.export('/content/model.pkl')
 ```
 
-### **Building a RESTful API with Flask**
+## Building a RESTful API with Flask
 
 REST APIs have become essential to modern software applications, enabling seamless communication between systems and ensuring data consistency. They facilitate the easy exchange of information between various websites, databases, and SaaS (Software as a Service) applications. Whether you're developing a mobile app, a web application, or integrating third-party services, understanding how to create a robust REST API is crucial. \n
 
@@ -421,7 +421,7 @@ Now, let's dive into the implementation and see how we can create a REST API usi
 
 #### 
 
-### Next Step: Deployment
+## Next Step: Deployment
 
 So far, we have learned how to create our deep learning-based web app. We designed both the backend and the frontend. The final step is to deploy our model so everyone can access our application on their own devices.
 

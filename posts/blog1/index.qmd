@@ -14,7 +14,7 @@ It’s been a few weeks that I have started taking the fantastic deep learning c
 
 In this very first blog, I will guide you through deploying an image classification model using HuggingFace and Gradio. This method is beginner-friendly, straightforward and completely free. Whether you are a newcomer or looking to refine your deployment skills, I’ll walk you through each step, ensuring that by the end, you’ll be able to deploy your own models effortlessly. So, let’s get started on the exciting journey!
 
-### Prerequisites
+## Prerequisites
 
 Before we begin, make sure you have the followings:
 
@@ -22,7 +22,7 @@ Before we begin, make sure you have the followings:
 
 -   A HuggingFace account (sign up [here](https://huggingface.co/))
 
-### **Getting Started**
+## Getting Started
 
 First thing, open the Google Colab and let's make sure we have the necessary tools set up. Since we're using the popular fastai library, you might need to install or upgrade it first with the following command.
 
@@ -36,7 +36,7 @@ Now, install the one necessary package needed at this step.
 from fastai.vision.all import *
 ```
 
-### **Gathering Data**
+## Gathering Data
 
 Fastai makes it incredibly easy for us to work with datasets thanks to its built-in function: `untar_data()`. This function streamlines the process of downloading and extracting datasets.
 
@@ -48,7 +48,7 @@ path = untar_data(URLs.PETS)/'images'
 
 The PETS dataset includes images of 37 breeds of pets along with annotations, which are perfect for training an image classification model.
 
-### Loading Data
+## Loading Data
 
 Next, we need to load our data. `ImageDataLoaders.from_name_func` is a method we use that is provided by the `fastai` library. It is designed to help you create a `DataLoader` for training and validating image classification models. This method is particularly useful when you have a dataset of images and the labels can be inferred from the filenames of those images, which is basically what we have here.
 
@@ -82,7 +82,7 @@ dls.show_batch()
 
 ![](Unknown.png){fig-align="center"}
 
-### Training the Model
+## Training the Model
 
 After setting up the `DataLoader`, the next step is to create and train a model using the `fastai` library. Here’s how you can do it:
 
@@ -106,7 +106,7 @@ This method fine-tunes the model for a specified number of epochs—in this case
 | 1     | 0.026246   | 0.006559   | 0.002030   | 01:58 |
 | 2     | 0.010546   | 0.004937   | 0.001353   | 01:57 |
 
-### Downloading the Model
+## Downloading the Model
 
 Let’s go ahead and download our model.
 
@@ -114,7 +114,7 @@ Let’s go ahead and download our model.
 learn.export('model.pkl')
 ```
 
-### Deployment
+## Deployment
 
 For the deployment, it’s very straightforward. We will be using HuggingFace Spaces. It is a platform that allows you to host and share machine learning models and demos easily.
 
@@ -148,7 +148,7 @@ intf.launch(inline=False)
 
 We need to create a `requirements.txt` file as mentioned before, and all we need to mention is the `fastai` library because HF doesn’t automatically include it. This file ensures that the necessary dependencies are installed when the app is deployed on HuggingFace Spaces.
 
-#### Setting up HuggingFace Spaces
+### Setting up HuggingFace Spaces
 
 So how do you set up the HF Space? First, go to the [HuggingFace Spaces website](https://huggingface.co/spaces). Once you're there, click on "Create new Space".
 
@@ -206,7 +206,7 @@ However, to upload your model, you need a different approach since it's a large 
     git push -u origin master
     ```
 
-### Final Result
+## Final Result
 
 After following all these steps, your app will show up on the screen in a few moments! You’ll see your HuggingFace Space with your deployed image classification model, ready to use and share with others!
 
