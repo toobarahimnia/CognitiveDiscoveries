@@ -238,11 +238,11 @@
     "text": "Inference\nNow that we have our trained model, we can automatically submit our checkpoint to the leaderboard. You can modify the following values to fit your dataset, language, and model name:\nkwargs = {\n    \"dataset_tags\": \"marsyas/gtzan\",\n    \"dataset\": \"GTZAN\",\n    \"model_name\": f\"{model_name}-finetuned-gtzan\",\n    \"finetuned_from\": model_id,\n    \"tasks\": \"audio-classification\",\n}\nThe training results can now be uploaded to the Hub through the .push_to_hub command:\ntrainer.push_to_hub(**kwargs)\nBy following these steps, you built a complete system for music genre classification using the GTZAN dataset, Gradio for interactive visualization, and Hugging Face Transformers for model training and inference."
   },
   {
-    "objectID": "posts/blog4/index.html#demo-with-gradio",
-    "href": "posts/blog4/index.html#demo-with-gradio",
+    "objectID": "posts/blog4/index.html#gradio-demo",
+    "href": "posts/blog4/index.html#gradio-demo",
     "title": "How to Build a Music Genre Classifier Using Hugging Face Transformers and Gradio",
-    "section": "Demo with Gradio",
-    "text": "Demo with Gradio"
+    "section": "Gradio Demo",
+    "text": "Gradio Demo\nNow that we built our music classification model trained on GTZAN dataset, we can showcase it on Gradio. We first need to load up fine-tuned checkpoint using the pipeline() class:\nfrom transformers import pipeline\n\nmodel_id = \"toobarah/distilhubert-finetuned-gtzan\"\npipe = pipeline(\"audio-classification\", model=model_id)\nNext, we defined a function that processes an audio file through the pipeline. The pipeline handles loading the file, resampling it to the correct rate, and running inference with the model. The model’s predictions are then formatted as a dictionary for display.\ndef classify_audio(filepath):\n    preds = pipe(filepath)\n    outputs = {}\n    for p in preds:\n        outputs[p[\"label\"]] = p[\"score\"]\n    return outputs\nFinal step, we launch the Gradio demo by calling the function we just created:\nimport gradio as gr\n\ndemo = gr.Interface(\n    fn=classify_audio, inputs=gr.Audio(type=\"filepath\"), outputs=gr.Label()\n)\ndemo.launch(debug=True)\n* If you get an ImportError after running the last cell, try downgrading your Gradio using the following command:\npip install gradio==3.47.1\nOtherwise, you should see a window pop up as shown below! Go ahead, upload some music, test your model, and enjoy!"
   },
   {
     "objectID": "posts/blog4/index.html#conclusion",
@@ -256,13 +256,6 @@
     "href": "index.html",
     "title": "CognitiveDiscoveries",
     "section": "",
-    "text": "How to Build a Music Genre Classifier Using Hugging Face Transformers and Gradio\n\n\n\n\n\n\nCode\n\n\nAnalysis\n\n\nAudio Signal Processing\n\n\n\n\n\n\n\n\n\nJun 19, 2024\n\n\nTooba Rahimnia\n\n\n\n\n\n\n\n\n\n\n\n\nNavigating the Kaggle U.S. Patent Phrase to Phrase Matching Competition: A Step-by-Step Guide\n\n\n\n\n\n\nCode\n\n\nAnalysis\n\n\nNLP\n\n\n\n\n\n\n\n\n\nJun 5, 2024\n\n\nTooba Rahimnia\n\n\n\n\n\n\n\n\n\n\n\n\nImplementing Binary Image Classification Using FastAI, and Flask\n\n\n\n\n\n\nCode\n\n\nAnalysis\n\n\nComputer Vision\n\n\n\n\n\n\n\n\n\nMay 28, 2024\n\n\nTooba Rahimnia\n\n\n\n\n\n\n\n\n\n\n\n\nHow to Build a Web App Using HuggingFace and Gradio Within an Hour\n\n\n\n\n\n\nCode\n\n\nAnalysis\n\n\nComputer Vision\n\n\n\n\n\n\n\n\n\nMay 20, 2024\n\n\nTooba Rahimnia\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "posts/blog4/index.html#gradio-demo",
-    "href": "posts/blog4/index.html#gradio-demo",
-    "title": "How to Build a Music Genre Classifier Using Hugging Face Transformers and Gradio",
-    "section": "Gradio Demo",
-    "text": "Gradio Demo\nNow that we built our music classification model trained on GTZAN dataset, we can showcase it on Gradio. We first need to load up fine-tuned checkpoint using the pipeline() class:\nfrom transformers import pipeline\n\nmodel_id = \"toobarah/distilhubert-finetuned-gtzan\"\npipe = pipeline(\"audio-classification\", model=model_id)\nNext, we defined a function that processes an audio file through the pipeline. The pipeline handles loading the file, resampling it to the correct rate, and running inference with the model. The model’s predictions are then formatted as a dictionary for display.\ndef classify_audio(filepath):\n    preds = pipe(filepath)\n    outputs = {}\n    for p in preds:\n        outputs[p[\"label\"]] = p[\"score\"]\n    return outputs\nFinal step, we launch the Gradio demo by calling the function we just created:\nimport gradio as gr\n\ndemo = gr.Interface(\n    fn=classify_audio, inputs=gr.Audio(type=\"filepath\"), outputs=gr.Label()\n)\ndemo.launch(debug=True)\n* If you get an ImportError after running the last cell, try downgrading your Gradio using the following command:\npip install gradio==3.47.1\nOtherwise, you should see a window pop up as shown below! Go ahead, upload some music, test your model, and enjoy!"
+    "text": "How to Build a Music Genre Classifier Using Hugging Face Transformers and Gradio\n\n\n\n\n\n\nCode\n\n\nAnalysis\n\n\nAudio Signal Processing\n\n\n\n\n\n\n\n\n\nJun 20, 2024\n\n\nTooba Rahimnia\n\n\n\n\n\n\n\n\n\n\n\n\nNavigating the Kaggle U.S. Patent Phrase to Phrase Matching Competition: A Step-by-Step Guide\n\n\n\n\n\n\nCode\n\n\nAnalysis\n\n\nNLP\n\n\n\n\n\n\n\n\n\nJun 5, 2024\n\n\nTooba Rahimnia\n\n\n\n\n\n\n\n\n\n\n\n\nImplementing Binary Image Classification Using FastAI, and Flask\n\n\n\n\n\n\nCode\n\n\nAnalysis\n\n\nComputer Vision\n\n\n\n\n\n\n\n\n\nMay 28, 2024\n\n\nTooba Rahimnia\n\n\n\n\n\n\n\n\n\n\n\n\nHow to Build a Web App Using HuggingFace and Gradio Within an Hour\n\n\n\n\n\n\nCode\n\n\nAnalysis\n\n\nComputer Vision\n\n\n\n\n\n\n\n\n\nMay 20, 2024\n\n\nTooba Rahimnia\n\n\n\n\n\n\nNo matching items"
   }
 ]
