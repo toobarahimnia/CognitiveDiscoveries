@@ -207,13 +207,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>In this tutorial, we will build a music genre classification system using the GTZAN dataset to identify the genre of a given audio track.</p>
+<p>In this post, we will build a music genre classification system using the GTZAN dataset to identify the genre of a given audio track.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="pexels-pixabay-164697.jpg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
 </figure>
 </div>
-<p>Have you ever been curious about how machine learning models classify music genres? What features in the dataset are useful for the model’s understanding? And how can you deploy your trained model for users? If these questions have crossed your mind, then keep reading as I guide you through everything you need to quickly deploy a music classification app. By the end of this tutorial, you will have a fully functional music genre classification model capable of predicting the genre of any audio track. You will also have a Gradio-based interactive interface to test and visualize the model’s predictions, and the model will be ready for deployment using the Hugging Face Hub.</p>
+<p>Have you ever been curious about how machine learning models classify music genres? What features in the dataset are useful for the model’s understanding? And how can you deploy your trained model for users? If these questions have crossed your mind, then keep reading as I guide you through everything you need to quickly deploy a music classification app. By the end of this post, you will have a fully functional music genre classification model capable of predicting the genre of any audio track. You will also have a Gradio-based interactive interface to test and visualize the model’s predictions, and the model will be ready for deployment using the Hugging Face Hub.</p>
 <section id="load-and-prepare-the-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="load-and-prepare-the-dataset">Load and Prepare the Dataset</h2>
 <p>We start by loading the GTZAN dataset using the <code>datasets</code> library and split it into training and test sets. The reason for using GTZAN is that it’s a popular dataset containing 1,000 songs for music genre classification. Each song is a 30-second clip from one of 10 genres of music, spanning blues to rock.</p>
@@ -629,7 +629,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>In this tutorial, we provided a step-by-step guide for fine-tuning the DistilHuBERT model for a music classification task. It has also been a learning journey for me, and I drew much inspiration from the work of the Hugging Face <a href="https://huggingface.co/learn/audio-course/en/chapter4/introduction">audio course</a> as I began this project. Every step shown here can be applied to any audio classification task. If you’re interested in exploring other datasets or models, I recommend checking out other <a href="https://github.com/huggingface/transformers/tree/main/examples/pytorch/audio-classification">examples</a> in the 🤗 Transformers repository.</p>
+<p>This tutorial was a step-by-step guide for fine-tuning the DistilHuBERT model for a music classification task. It has also been a learning journey for me, and I drew much inspiration from the work of the Hugging Face <a href="https://huggingface.co/learn/audio-course/en/chapter4/introduction">audio course</a> as I began this project. I hope I was able to explain the steps clearly and that they were easy for you to follow. Every step shown here can be applied to any audio classification task, so if you’re interested in exploring other datasets or models, I recommend checking out other <a href="https://github.com/huggingface/transformers/tree/main/examples/pytorch/audio-classification">examples</a> in the 🤗 Transformers repository.</p>
 <p>For access to all the code shared here in one file, click on this <a href="https://drive.google.com/file/d/1v41Y8vXaJzZjq1fNtNYSR5zN9nG6oA-u/view?usp=sharing">Colab file</a>. Happy coding! :)</p>
 
 

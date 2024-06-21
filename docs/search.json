@@ -179,7 +179,7 @@
     "href": "posts/blog4/index.html",
     "title": "How to Build a Music Genre Classifier Using Hugging Face Transformers and Gradio",
     "section": "",
-    "text": "In this tutorial, we will build a music genre classification system using the GTZAN dataset to identify the genre of a given audio track.\nHave you ever been curious about how machine learning models classify music genres? What features in the dataset are useful for the model’s understanding? And how can you deploy your trained model for users? If these questions have crossed your mind, then keep reading as I guide you through everything you need to quickly deploy a music classification app. By the end of this tutorial, you will have a fully functional music genre classification model capable of predicting the genre of any audio track. You will also have a Gradio-based interactive interface to test and visualize the model’s predictions, and the model will be ready for deployment using the Hugging Face Hub."
+    "text": "In this post, we will build a music genre classification system using the GTZAN dataset to identify the genre of a given audio track.\nHave you ever been curious about how machine learning models classify music genres? What features in the dataset are useful for the model’s understanding? And how can you deploy your trained model for users? If these questions have crossed your mind, then keep reading as I guide you through everything you need to quickly deploy a music classification app. By the end of this post, you will have a fully functional music genre classification model capable of predicting the genre of any audio track. You will also have a Gradio-based interactive interface to test and visualize the model’s predictions, and the model will be ready for deployment using the Hugging Face Hub."
   },
   {
     "objectID": "posts/blog4/index.html#load-and-prepare-the-dataset",
@@ -249,7 +249,7 @@
     "href": "posts/blog4/index.html#conclusion",
     "title": "How to Build a Music Genre Classifier Using Hugging Face Transformers and Gradio",
     "section": "Conclusion",
-    "text": "Conclusion\nIn this tutorial, we provided a step-by-step guide for fine-tuning the DistilHuBERT model for a music classification task. It has also been a learning journey for me, and I drew much inspiration from the work of the Hugging Face audio course as I began this project. Every step shown here can be applied to any audio classification task. If you’re interested in exploring other datasets or models, I recommend checking out other examples in the 🤗 Transformers repository.\nFor access to all the code shared here in one file, click on this Colab file. Happy coding! :)"
+    "text": "Conclusion\nThis tutorial was a step-by-step guide for fine-tuning the DistilHuBERT model for a music classification task. It has also been a learning journey for me, and I drew much inspiration from the work of the Hugging Face audio course as I began this project. I hope I was able to explain the steps clearly and that they were easy for you to follow. Every step shown here can be applied to any audio classification task, so if you’re interested in exploring other datasets or models, I recommend checking out other examples in the 🤗 Transformers repository.\nFor access to all the code shared here in one file, click on this Colab file. Happy coding! :)"
   },
   {
     "objectID": "index.html",

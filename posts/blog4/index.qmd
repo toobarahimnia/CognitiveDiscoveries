@@ -6,11 +6,11 @@ categories: [Code, Analysis, Audio Signal Processing] #news
 image: "opening.jpg"
 ---
 
-In this tutorial, we will build a music genre classification system using the GTZAN dataset to identify the genre of a given audio track.
+In this post, we will build a music genre classification system using the GTZAN dataset to identify the genre of a given audio track.
 
 ![](pexels-pixabay-164697.jpg){fig-align="center"}
 
-Have you ever been curious about how machine learning models classify music genres? What features in the dataset are useful for the model's understanding? And how can you deploy your trained model for users? If these questions have crossed your mind, then keep reading as I guide you through everything you need to quickly deploy a music classification app. By the end of this tutorial, you will have a fully functional music genre classification model capable of predicting the genre of any audio track. You will also have a Gradio-based interactive interface to test and visualize the model's predictions, and the model will be ready for deployment using the Hugging Face Hub.
+Have you ever been curious about how machine learning models classify music genres? What features in the dataset are useful for the model's understanding? And how can you deploy your trained model for users? If these questions have crossed your mind, then keep reading as I guide you through everything you need to quickly deploy a music classification app. By the end of this post, you will have a fully functional music genre classification model capable of predicting the genre of any audio track. You will also have a Gradio-based interactive interface to test and visualize the model's predictions, and the model will be ready for deployment using the Hugging Face Hub.
 
 ## Load and Prepare the Dataset
 
@@ -86,7 +86,7 @@ As you can see, the audio file is represented as 1-dimensional NumPy array. But 
 
 In signal processing, sampling refers to the process of converting a continuous signal (such as sound) into a discrete signal by taking periodic samples.
 
-[![Wikipedia article: Sampling (signal_processing)](Screenshot 2024-06-19 at 4.36.31 PM.png){fig-align="center"}](https://en.wikipedia.org/wiki/Sampling_(signal_processing))
+[![Wikipedia article: Sampling (signal_processing)](Screenshot%202024-06-19%20at%204.36.31%20PM.png){fig-align="center"}](https://en.wikipedia.org/wiki/Sampling_(signal_processing))
 
 In our example of audio sampling, **sampling rate** (or **sampling frequency**) refers to the number of samples of audio carried per second. It is usually measured in Hertz (Hz). To put it in perspective, standard media consumption has a sampling rate of 44,100 Hz, meaning it takes 44,100 samples per second. In comparison, high-resolution audio has a sampling rate of 192,000 Hz (192 kHz). For training speech models, a commonly used sampling rate is 16,000 Hz (16 kHz).
 
@@ -128,7 +128,7 @@ demo.launch(debug=True)
 
 #### **Output**
 
-![](Screenshot 2024-06-19 at 10.23.29 PM.png){fig-align="center"}
+![](Screenshot%202024-06-19%20at%2010.23.29%20PM.png){fig-align="center"}
 
 #### **Explanation**
 
@@ -337,7 +337,7 @@ notebook_login()
 
 #### **Output**
 
-![](Screenshot 2024-06-20 at 2.47.50 PM.png){fig-align="center"}
+![](Screenshot%202024-06-20%20at%202.47.50%20PM.png){fig-align="center"}
 
 Next step, we define the training arguments (e.g. batch size, number of epochs, learning rate, etc.)
 
@@ -487,10 +487,10 @@ pip install gradio==3.47.1
 
 Otherwise, you should see a window pop up as shown below! Go ahead, upload some music, test your model, and enjoy!
 
-![](Screenshot 2024-06-20 at 6.17.17 PM.png)
+![](Screenshot%202024-06-20%20at%206.17.17%20PM.png)
 
 ## Conclusion
 
-In this tutorial, we provided a step-by-step guide for fine-tuning the DistilHuBERT model for a music classification task. It has also been a learning journey for me, and I drew much inspiration from the work of the Hugging Face [audio course](https://huggingface.co/learn/audio-course/en/chapter4/introduction) as I began this project. Every step shown here can be applied to any audio classification task. If you're interested in exploring other datasets or models, I recommend checking out other [examples](https://github.com/huggingface/transformers/tree/main/examples/pytorch/audio-classification) in the 🤗 Transformers repository.
+This tutorial was a step-by-step guide for fine-tuning the DistilHuBERT model for a music classification task. It has also been a learning journey for me, and I drew much inspiration from the work of the Hugging Face [audio course](https://huggingface.co/learn/audio-course/en/chapter4/introduction) as I began this project. I hope I was able to explain the steps clearly and that they were easy for you to follow. Every step shown here can be applied to any audio classification task, so if you're interested in exploring other datasets or models, I recommend checking out other [examples](https://github.com/huggingface/transformers/tree/main/examples/pytorch/audio-classification) in the 🤗 Transformers repository.
 
 For access to all the code shared here in one file, click on this [Colab file](https://drive.google.com/file/d/1v41Y8vXaJzZjq1fNtNYSR5zN9nG6oA-u/view?usp=sharing). Happy coding! :)
