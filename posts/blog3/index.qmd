@@ -2,7 +2,7 @@
 title: "Navigating the Kaggle U.S. Patent Phrase to Phrase Matching Competition: A Step-by-Step Guide "
 author: "Tooba Rahimnia"
 date: "2024-06-05"
-categories: [code, analysis, NLP] #news
+categories: [Code, Analysis, NLP] #news
 image: "opening.jpg"
 ---
 
