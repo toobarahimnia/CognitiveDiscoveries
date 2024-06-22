@@ -217,35 +217,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="load-and-prepare-the-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="load-and-prepare-the-dataset">Load and Prepare the Dataset</h2>
 <p>We start by loading the GTZAN dataset using the <code>datasets</code> library and split it into training and test sets. The reason for using GTZAN is that it’s a popular dataset containing 1,000 songs for music genre classification. Each song is a 30-second clip from one of 10 genres of music, spanning blues to rock.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datasets <span class="im">import</span> load_dataset</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the GTZAN dataset</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>gtzan <span class="op">=</span> load_dataset(<span class="st">'marsyas/gtzan'</span>, <span class="st">'all'</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Split the dataset into training and test sets</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>gtzan <span class="op">=</span> gtzan[<span class="st">'train'</span>].train_test_split(seed<span class="op">=</span><span class="dv">42</span>, shuffle<span class="op">=</span><span class="va">True</span>, test_size<span class="op">=</span><span class="fl">0.1</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># How does the dataset look like</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gtzan)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a function to convert genre ID to genre name</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>id2label_fn <span class="op">=</span> gtzan[<span class="st">'train'</span>].features[<span class="st">'genre'</span>].int2str</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Example of converting a genre ID to genre name</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(id2label_fn(gtzan[<span class="st">'train'</span>][<span class="st">'genre'</span>][<span class="dv">1</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="im">from</span> datasets <span class="im">import</span> load_dataset</span>
+<span id="cb1-2"><a href="#cb1-2"></a></span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="co"># Load the GTZAN dataset</span></span>
+<span id="cb1-4"><a href="#cb1-4"></a>gtzan <span class="op">=</span> load_dataset(<span class="st">'marsyas/gtzan'</span>, <span class="st">'all'</span>)</span>
+<span id="cb1-5"><a href="#cb1-5"></a></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="co"># Split the dataset into training and test sets</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a>gtzan <span class="op">=</span> gtzan[<span class="st">'train'</span>].train_test_split(seed<span class="op">=</span><span class="dv">42</span>, shuffle<span class="op">=</span><span class="va">True</span>, test_size<span class="op">=</span><span class="fl">0.1</span>)</span>
+<span id="cb1-8"><a href="#cb1-8"></a></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="co"># How does the dataset look like</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="bu">print</span>(gtzan)</span>
+<span id="cb1-11"><a href="#cb1-11"></a></span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="co"># Create a function to convert genre ID to genre name</span></span>
+<span id="cb1-13"><a href="#cb1-13"></a>id2label_fn <span class="op">=</span> gtzan[<span class="st">'train'</span>].features[<span class="st">'genre'</span>].int2str</span>
+<span id="cb1-14"><a href="#cb1-14"></a></span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="co"># Example of converting a genre ID to genre name</span></span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="bu">print</span>(id2label_fn(gtzan[<span class="st">'train'</span>][<span class="st">'genre'</span>][<span class="dv">1</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="output" class="level4">
 <h4 class="anchored" data-anchor-id="output"><strong>Output</strong></h4>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">DatasetDict</span><span class="er">(</span><span class="kw">{</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="ex">train:</span> Dataset<span class="er">(</span><span class="kw">{</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="ex">features:</span> [<span class="st">'file'</span>, <span class="st">'audio'</span>, <span class="st">'genre'</span>],</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="ex">num_rows:</span> 899</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">})</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="ex">test:</span> Dataset<span class="er">(</span><span class="kw">{</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="ex">features:</span> [<span class="st">'file'</span>, <span class="st">'audio'</span>, <span class="st">'genre'</span>],</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="ex">num_rows:</span> 100</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">})</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="kw">})</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="ex">classical</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1"></a><span class="ex">DatasetDict</span><span class="er">(</span><span class="kw">{</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>    <span class="ex">train:</span> Dataset<span class="er">(</span><span class="kw">{</span></span>
+<span id="cb2-3"><a href="#cb2-3"></a>        <span class="ex">features:</span> [<span class="st">'file'</span>, <span class="st">'audio'</span>, <span class="st">'genre'</span>],</span>
+<span id="cb2-4"><a href="#cb2-4"></a>        <span class="ex">num_rows:</span> 899</span>
+<span id="cb2-5"><a href="#cb2-5"></a>    <span class="kw">})</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a>    <span class="ex">test:</span> Dataset<span class="er">(</span><span class="kw">{</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a>        <span class="ex">features:</span> [<span class="st">'file'</span>, <span class="st">'audio'</span>, <span class="st">'genre'</span>],</span>
+<span id="cb2-8"><a href="#cb2-8"></a>        <span class="ex">num_rows:</span> 100</span>
+<span id="cb2-9"><a href="#cb2-9"></a>    <span class="kw">})</span></span>
+<span id="cb2-10"><a href="#cb2-10"></a><span class="kw">})</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a><span class="ex">classical</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="explanation" class="level4">
 <h4 class="anchored" data-anchor-id="explanation"><strong>Explanation</strong></h4>
@@ -259,19 +259,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="generate-audio-samples-with-gradio" class="level2">
 <h2 class="anchored" data-anchor-id="generate-audio-samples-with-gradio">Generate Audio Samples with Gradio</h2>
 <p>As you have seen in the previous section, our dataset contains three types of features: <code>file</code>, <code>audio</code>, and <code>genre</code>. We learned about <code>genre</code> and now let’s have a closer look at <code>audio</code> and figure out what’s inside of it.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>gtzan[<span class="st">"train"</span>][<span class="dv">0</span>][<span class="st">"audio"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a>gtzan[<span class="st">"train"</span>][<span class="dv">0</span>][<span class="st">"audio"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="output-1" class="level4">
 <h4 class="anchored" data-anchor-id="output-1"><strong>Output</strong></h4>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">{</span><span class="st">'path'</span><span class="ex">:</span> <span class="st">'/root/.cache/huggingface/datasets/downloads/extracted/5022b0984afa7334ff9a3c60566280b08b5179d4ac96a628052bada7d8940244/genres/pop/pop.00098.wav'</span>,</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a> <span class="st">'array'</span><span class="ex">:</span> array<span class="er">(</span><span class="bu">[</span> 0.10720825,  </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                  0.16122437,  </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                  <span class="er">0.28585815,</span> </span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                  <span class="ex">...,</span> </span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>                  <span class="ex">-0.22924805,</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                  <span class="ex">-0.20629883,</span> </span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                  <span class="ex">-0.11334229]</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>                <span class="kw">)</span><span class="ex">,</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a> <span class="st">'sampling_rate'</span><span class="ex">:</span> 22050}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1"></a><span class="ex">{</span><span class="st">'path'</span><span class="ex">:</span> <span class="st">'/root/.cache/huggingface/datasets/downloads/extracted/5022b0984afa7334ff9a3c60566280b08b5179d4ac96a628052bada7d8940244/genres/pop/pop.00098.wav'</span>,</span>
+<span id="cb4-2"><a href="#cb4-2"></a> <span class="st">'array'</span><span class="ex">:</span> array<span class="er">(</span><span class="bu">[</span> 0.10720825,  </span>
+<span id="cb4-3"><a href="#cb4-3"></a>                  0.16122437,  </span>
+<span id="cb4-4"><a href="#cb4-4"></a>                  <span class="er">0.28585815,</span> </span>
+<span id="cb4-5"><a href="#cb4-5"></a>                  <span class="ex">...,</span> </span>
+<span id="cb4-6"><a href="#cb4-6"></a>                  <span class="ex">-0.22924805,</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a>                  <span class="ex">-0.20629883,</span> </span>
+<span id="cb4-8"><a href="#cb4-8"></a>                  <span class="ex">-0.11334229]</span></span>
+<span id="cb4-9"><a href="#cb4-9"></a>                <span class="kw">)</span><span class="ex">,</span></span>
+<span id="cb4-10"><a href="#cb4-10"></a> <span class="st">'sampling_rate'</span><span class="ex">:</span> 22050}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>As you can see, the audio file is represented as 1-dimensional NumPy array. But what does the value of <code>array</code> represent? And what is <code>sampling_rate</code>?</p>
 </section>
 <section id="sampling-and-sampling-rate" class="level3">
@@ -300,23 +300,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="gradio" class="level3">
 <h3 class="anchored" data-anchor-id="gradio">Gradio</h3>
 <p>Now that we better understand our dataset let’s create a aimple and interactive UI with the <code>Blocks API</code> to visualize some audio samples and their labels.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gradio <span class="im">as</span> gr</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to generate an audio sample</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_audio():</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    example <span class="op">=</span> gtzan[<span class="st">"train"</span>].shuffle()[<span class="dv">0</span>]</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    audio <span class="op">=</span> example[<span class="st">"audio"</span>]</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (audio[<span class="st">"sampling_rate"</span>], audio[<span class="st">"array"</span>]), id2label_fn(example[<span class="st">"genre"</span>])</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a Gradio interface to display audio samples</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> gr.Blocks() <span class="im">as</span> demo:</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> gr.Column():</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>            audio, label <span class="op">=</span> generate_audio()</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>            output <span class="op">=</span> gr.Audio(audio, label<span class="op">=</span>label)</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Launch the Gradio demo</span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>demo.launch(debug<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="im">import</span> gradio <span class="im">as</span> gr</span>
+<span id="cb5-2"><a href="#cb5-2"></a></span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="co"># Function to generate an audio sample</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="kw">def</span> generate_audio():</span>
+<span id="cb5-5"><a href="#cb5-5"></a>    example <span class="op">=</span> gtzan[<span class="st">"train"</span>].shuffle()[<span class="dv">0</span>]</span>
+<span id="cb5-6"><a href="#cb5-6"></a>    audio <span class="op">=</span> example[<span class="st">"audio"</span>]</span>
+<span id="cb5-7"><a href="#cb5-7"></a>    <span class="cf">return</span> (audio[<span class="st">"sampling_rate"</span>], audio[<span class="st">"array"</span>]), id2label_fn(example[<span class="st">"genre"</span>])</span>
+<span id="cb5-8"><a href="#cb5-8"></a></span>
+<span id="cb5-9"><a href="#cb5-9"></a><span class="co"># Create a Gradio interface to display audio samples</span></span>
+<span id="cb5-10"><a href="#cb5-10"></a><span class="cf">with</span> gr.Blocks() <span class="im">as</span> demo:</span>
+<span id="cb5-11"><a href="#cb5-11"></a>    <span class="cf">with</span> gr.Column():</span>
+<span id="cb5-12"><a href="#cb5-12"></a>        <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>):</span>
+<span id="cb5-13"><a href="#cb5-13"></a>            audio, label <span class="op">=</span> generate_audio()</span>
+<span id="cb5-14"><a href="#cb5-14"></a>            output <span class="op">=</span> gr.Audio(audio, label<span class="op">=</span>label)</span>
+<span id="cb5-15"><a href="#cb5-15"></a></span>
+<span id="cb5-16"><a href="#cb5-16"></a><span class="co"># Launch the Gradio demo</span></span>
+<span id="cb5-17"><a href="#cb5-17"></a>demo.launch(debug<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="output-2" class="level4">
 <h4 class="anchored" data-anchor-id="output-2"><strong>Output</strong></h4>
 <div class="quarto-figure quarto-figure-center">
@@ -338,22 +338,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="feature-extraction" class="level2">
 <h2 class="anchored" data-anchor-id="feature-extraction">Feature Extraction</h2>
 <p>Just as tokenization is essential in NLP, audio and speech models need input encoded in a processable format. In 🤗 Transformers, this is handled by the model’s <em>feature extractor</em>. The <code>AutoFeatureExtractor</code> class automatically selects the right feature extractor for a given model. Let’s see how to process our audio files by instantiating the feature extractor for DistilHuBERT from the pre-trained checkpoint:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoFeatureExtractor</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Load a pre-trained feature extractor</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>model_id <span class="op">=</span> <span class="st">'ntu-spml/distilhubert'</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>feature_extractor <span class="op">=</span> AutoFeatureExtractor.from_pretrained(</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    model_id,</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    do_normalize<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    return_attention_mask<span class="op">=</span><span class="va">True</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the sampling rate from the feature extractor</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>sampling_rate <span class="op">=</span> feature_extractor.sampling_rate</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>sampling_rate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoFeatureExtractor</span>
+<span id="cb6-2"><a href="#cb6-2"></a></span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="co"># Load a pre-trained feature extractor</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a>model_id <span class="op">=</span> <span class="st">'ntu-spml/distilhubert'</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a>feature_extractor <span class="op">=</span> AutoFeatureExtractor.from_pretrained(</span>
+<span id="cb6-6"><a href="#cb6-6"></a>    model_id,</span>
+<span id="cb6-7"><a href="#cb6-7"></a>    do_normalize<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb6-8"><a href="#cb6-8"></a>    return_attention_mask<span class="op">=</span><span class="va">True</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a>)</span>
+<span id="cb6-10"><a href="#cb6-10"></a></span>
+<span id="cb6-11"><a href="#cb6-11"></a><span class="co"># Get the sampling rate from the feature extractor</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a>sampling_rate <span class="op">=</span> feature_extractor.sampling_rate</span>
+<span id="cb6-13"><a href="#cb6-13"></a>sampling_rate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="output-3" class="level4">
 <h4 class="anchored" data-anchor-id="output-3"><strong>Output</strong></h4>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">16000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1"></a><span class="ex">16000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="explanation-2" class="level4">
 <h4 class="anchored" data-anchor-id="explanation-2"><strong>Explanation</strong></h4>
@@ -366,73 +366,73 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="preprocess-the-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="preprocess-the-dataset">Preprocess the Dataset</h2>
 <p>We preprocess the audio data to match the input requirements of the model by converting audio samples to the desired format and sampling rate.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datasets <span class="im">import</span> Audio</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Cast the audio column to match the feature extractor's sampling rate</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>gtzan <span class="op">=</span> gtzan.cast_column(<span class="st">'audio'</span>, Audio(sampling_rate<span class="op">=</span>sampling_rate))</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>gtzan[<span class="st">"train"</span>][<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a><span class="im">from</span> datasets <span class="im">import</span> Audio</span>
+<span id="cb8-2"><a href="#cb8-2"></a></span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="co"># Cast the audio column to match the feature extractor's sampling rate</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a>gtzan <span class="op">=</span> gtzan.cast_column(<span class="st">'audio'</span>, Audio(sampling_rate<span class="op">=</span>sampling_rate))</span>
+<span id="cb8-5"><a href="#cb8-5"></a></span>
+<span id="cb8-6"><a href="#cb8-6"></a>gtzan[<span class="st">"train"</span>][<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Below we can verify that the sampling rate is downsampled to 16 kHz. 🤗 Datasets will resample the audio file in real-time as each audio sample is loaded:</p>
 <section id="output-4" class="level4">
 <h4 class="anchored" data-anchor-id="output-4"><strong>Output</strong></h4>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">{</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"file"</span><span class="ex">:</span> <span class="st">"~/.cache/huggingface/datasets/downloads/extracted/fa06ce46130d3467683100aca945d6deafb642315765a784456e1d81c94715a8/genres/pop/pop.00098.wav"</span>,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"audio"</span><span class="ex">:</span> {</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"path"</span><span class="ex">:</span> <span class="st">"~/.cache/huggingface/datasets/downloads/extracted/fa06ce46130d3467683100aca945d6deafb642315765a784456e1d81c94715a8/genres/pop/pop.00098.wav"</span>,</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"array"</span><span class="ex">:</span> array<span class="er">(</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>            <span class="bu">[</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>                0.0873509,</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>                0.20183384,</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>                0.4790867,</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>                <span class="er">...,</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>                <span class="er">-0.18743178,</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>                <span class="er">-0.23294401,</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>                <span class="er">-0.13517427,</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>            <span class="er">],</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>            <span class="er">dtype=float32,</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        <span class="er">),</span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>        <span class="er">"sampling_rate":</span> <span class="er">16000,</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    <span class="er">}</span><span class="ex">,</span></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"genre"</span><span class="ex">:</span> 7,</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1"></a><span class="kw">{</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a>    <span class="st">"file"</span><span class="ex">:</span> <span class="st">"~/.cache/huggingface/datasets/downloads/extracted/fa06ce46130d3467683100aca945d6deafb642315765a784456e1d81c94715a8/genres/pop/pop.00098.wav"</span>,</span>
+<span id="cb9-3"><a href="#cb9-3"></a>    <span class="st">"audio"</span><span class="ex">:</span> {</span>
+<span id="cb9-4"><a href="#cb9-4"></a>        <span class="st">"path"</span><span class="ex">:</span> <span class="st">"~/.cache/huggingface/datasets/downloads/extracted/fa06ce46130d3467683100aca945d6deafb642315765a784456e1d81c94715a8/genres/pop/pop.00098.wav"</span>,</span>
+<span id="cb9-5"><a href="#cb9-5"></a>        <span class="st">"array"</span><span class="ex">:</span> array<span class="er">(</span></span>
+<span id="cb9-6"><a href="#cb9-6"></a>            <span class="bu">[</span></span>
+<span id="cb9-7"><a href="#cb9-7"></a>                0.0873509,</span>
+<span id="cb9-8"><a href="#cb9-8"></a>                0.20183384,</span>
+<span id="cb9-9"><a href="#cb9-9"></a>                0.4790867,</span>
+<span id="cb9-10"><a href="#cb9-10"></a>                <span class="er">...,</span></span>
+<span id="cb9-11"><a href="#cb9-11"></a>                <span class="er">-0.18743178,</span></span>
+<span id="cb9-12"><a href="#cb9-12"></a>                <span class="er">-0.23294401,</span></span>
+<span id="cb9-13"><a href="#cb9-13"></a>                <span class="er">-0.13517427,</span></span>
+<span id="cb9-14"><a href="#cb9-14"></a>            <span class="er">],</span></span>
+<span id="cb9-15"><a href="#cb9-15"></a>            <span class="er">dtype=float32,</span></span>
+<span id="cb9-16"><a href="#cb9-16"></a>        <span class="er">),</span></span>
+<span id="cb9-17"><a href="#cb9-17"></a>        <span class="er">"sampling_rate":</span> <span class="er">16000,</span></span>
+<span id="cb9-18"><a href="#cb9-18"></a>    <span class="er">}</span><span class="ex">,</span></span>
+<span id="cb9-19"><a href="#cb9-19"></a>    <span class="st">"genre"</span><span class="ex">:</span> 7,</span>
+<span id="cb9-20"><a href="#cb9-20"></a><span class="er">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>What we have just done is that we’ve provided the sampling rate of our audio data to our feature extractor. This is a crucial step as the feature extractor verifies whether the sampling rate of our audio data matches the model’s expected rate. If there were a mismatch, we would need to up-sample or down-sample the audio data to align with the model’s required sampling rate.</p>
 <p>After processing our resampled audio files, the final step is to create a function that can be applied to all examples in the dataset. Since we want the audio clips to be 30 seconds long, we will truncate any longer clips using the <code>max_length</code> and <code>truncation</code> arguments of the feature extractor.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to preprocess the audio data</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>max_duration <span class="op">=</span> <span class="fl">30.0</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> preprocess_function(examples):</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    audio_arrays <span class="op">=</span> [x[<span class="st">"array"</span>] <span class="cf">for</span> x <span class="kw">in</span> examples[<span class="st">"audio"</span>]]</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    inputs <span class="op">=</span> feature_extractor(</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        audio_arrays,</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        sampling_rate<span class="op">=</span>feature_extractor.sampling_rate,</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        max_length<span class="op">=</span><span class="bu">int</span>(feature_extractor.sampling_rate <span class="op">*</span> max_duration),</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        truncation<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        return_attention_mask<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> inputs</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the preprocessing function to the dataset</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>gtzan_encoded <span class="op">=</span> gtzan.<span class="bu">map</span>(</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    preprocess_function,</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    remove_columns<span class="op">=</span>[<span class="st">"audio"</span>, <span class="st">"file"</span>],</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    batched<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    batch_size<span class="op">=</span><span class="dv">100</span>, <span class="co"># by default is 1000</span></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    num_proc<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>gtzan_encoded</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># Function to preprocess the audio data</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>max_duration <span class="op">=</span> <span class="fl">30.0</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a></span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="kw">def</span> preprocess_function(examples):</span>
+<span id="cb10-5"><a href="#cb10-5"></a>    audio_arrays <span class="op">=</span> [x[<span class="st">"array"</span>] <span class="cf">for</span> x <span class="kw">in</span> examples[<span class="st">"audio"</span>]]</span>
+<span id="cb10-6"><a href="#cb10-6"></a>    inputs <span class="op">=</span> feature_extractor(</span>
+<span id="cb10-7"><a href="#cb10-7"></a>        audio_arrays,</span>
+<span id="cb10-8"><a href="#cb10-8"></a>        sampling_rate<span class="op">=</span>feature_extractor.sampling_rate,</span>
+<span id="cb10-9"><a href="#cb10-9"></a>        max_length<span class="op">=</span><span class="bu">int</span>(feature_extractor.sampling_rate <span class="op">*</span> max_duration),</span>
+<span id="cb10-10"><a href="#cb10-10"></a>        truncation<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb10-11"><a href="#cb10-11"></a>        return_attention_mask<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb10-12"><a href="#cb10-12"></a>    )</span>
+<span id="cb10-13"><a href="#cb10-13"></a>    <span class="cf">return</span> inputs</span>
+<span id="cb10-14"><a href="#cb10-14"></a></span>
+<span id="cb10-15"><a href="#cb10-15"></a><span class="co"># Apply the preprocessing function to the dataset</span></span>
+<span id="cb10-16"><a href="#cb10-16"></a>gtzan_encoded <span class="op">=</span> gtzan.<span class="bu">map</span>(</span>
+<span id="cb10-17"><a href="#cb10-17"></a>    preprocess_function,</span>
+<span id="cb10-18"><a href="#cb10-18"></a>    remove_columns<span class="op">=</span>[<span class="st">"audio"</span>, <span class="st">"file"</span>],</span>
+<span id="cb10-19"><a href="#cb10-19"></a>    batched<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb10-20"><a href="#cb10-20"></a>    batch_size<span class="op">=</span><span class="dv">100</span>, <span class="co"># by default is 1000</span></span>
+<span id="cb10-21"><a href="#cb10-21"></a>    num_proc<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb10-22"><a href="#cb10-22"></a>)</span>
+<span id="cb10-23"><a href="#cb10-23"></a>gtzan_encoded</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="output-5" class="level4">
 <h4 class="anchored" data-anchor-id="output-5"><strong>Output</strong></h4>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">DatasetDict</span><span class="er">(</span><span class="kw">{</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="ex">train:</span> Dataset<span class="er">(</span><span class="kw">{</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        <span class="ex">features:</span> [<span class="st">'genre'</span>, <span class="st">'input_values'</span>, <span class="st">'attention_mask'</span>],</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        <span class="ex">num_rows:</span> 899</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">})</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="ex">test:</span> Dataset<span class="er">(</span><span class="kw">{</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        <span class="ex">features:</span> [<span class="st">'genre'</span>, <span class="st">'input_values'</span>, <span class="st">'attention_mask'</span>],</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        <span class="ex">num_rows:</span> 100</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">})</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="kw">})</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1"></a><span class="ex">DatasetDict</span><span class="er">(</span><span class="kw">{</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a>    <span class="ex">train:</span> Dataset<span class="er">(</span><span class="kw">{</span></span>
+<span id="cb11-3"><a href="#cb11-3"></a>        <span class="ex">features:</span> [<span class="st">'genre'</span>, <span class="st">'input_values'</span>, <span class="st">'attention_mask'</span>],</span>
+<span id="cb11-4"><a href="#cb11-4"></a>        <span class="ex">num_rows:</span> 899</span>
+<span id="cb11-5"><a href="#cb11-5"></a>    <span class="kw">})</span></span>
+<span id="cb11-6"><a href="#cb11-6"></a>    <span class="ex">test:</span> Dataset<span class="er">(</span><span class="kw">{</span></span>
+<span id="cb11-7"><a href="#cb11-7"></a>        <span class="ex">features:</span> [<span class="st">'genre'</span>, <span class="st">'input_values'</span>, <span class="st">'attention_mask'</span>],</span>
+<span id="cb11-8"><a href="#cb11-8"></a>        <span class="ex">num_rows:</span> 100</span>
+<span id="cb11-9"><a href="#cb11-9"></a>    <span class="kw">})</span></span>
+<span id="cb11-10"><a href="#cb11-10"></a><span class="kw">})</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="explanation-3" class="level4">
 <h4 class="anchored" data-anchor-id="explanation-3"><strong>Explanation</strong></h4>
@@ -441,38 +441,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><strong>Applying Function</strong>: <code>gtzan.map</code> applies the preprocessing function to the entire dataset.</li>
 </ul>
 <p><code>feature_extractor</code> provides a dictionary containing two arrays: <code>input_values</code> and <code>attention_mask</code>. That is why we see them as new columns for our <code>features</code>.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>sample <span class="op">=</span> gtzan[<span class="st">"train"</span>][<span class="dv">0</span>][<span class="st">"audio"</span>]</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>inputs <span class="op">=</span> feature_extractor(sample[<span class="st">"array"</span>], sampling_rate<span class="op">=</span>sample[<span class="st">"sampling_rate"</span>])</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"inputs keys: </span><span class="sc">{</span><span class="bu">list</span>(inputs.keys())<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">inputs</span> keys: [<span class="st">'input_values'</span>, <span class="st">'attention_mask'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a>sample <span class="op">=</span> gtzan[<span class="st">"train"</span>][<span class="dv">0</span>][<span class="st">"audio"</span>]</span>
+<span id="cb12-2"><a href="#cb12-2"></a></span>
+<span id="cb12-3"><a href="#cb12-3"></a>inputs <span class="op">=</span> feature_extractor(sample[<span class="st">"array"</span>], sampling_rate<span class="op">=</span>sample[<span class="st">"sampling_rate"</span>])</span>
+<span id="cb12-4"><a href="#cb12-4"></a></span>
+<span id="cb12-5"><a href="#cb12-5"></a><span class="bu">print</span>(<span class="ss">f"inputs keys: </span><span class="sc">{</span><span class="bu">list</span>(inputs.keys())<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1"></a><span class="ex">inputs</span> keys: [<span class="st">'input_values'</span>, <span class="st">'attention_mask'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>For a simpler training process, we’ve excluded the <code>audio</code> and <code>file</code> columns from the dataset. Instead, the dataset now includes an <code>input_values</code> column with encoded audio files, an <code>attention_mask</code> column with binary masks (0 or 1) indicating padded areas in the audio input, and a <code>genre</code> column with corresponding labels or targets.</p>
 </section>
 </section>
 <section id="prepare-labels" class="level2">
 <h2 class="anchored" data-anchor-id="prepare-labels">Prepare Labels</h2>
 <p>We need to rename the <code>genre</code> column to <code>label</code> to enable the Trainer to process the class labels.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>gtzan_encoded <span class="op">=</span> gtzan_encoded.rename_column(<span class="st">"genre"</span>, <span class="st">"label"</span>)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create mappings from IDs to labels and vice versa</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>id2label <span class="op">=</span> {<span class="bu">str</span>(i): id2label_fn(i) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(gtzan_encoded[<span class="st">"train"</span>].features[<span class="st">"label"</span>].names))}</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>label2id <span class="op">=</span> {v: k <span class="cf">for</span> k, v <span class="kw">in</span> id2label.items()}</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>id2label</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1"></a>gtzan_encoded <span class="op">=</span> gtzan_encoded.rename_column(<span class="st">"genre"</span>, <span class="st">"label"</span>)</span>
+<span id="cb14-2"><a href="#cb14-2"></a></span>
+<span id="cb14-3"><a href="#cb14-3"></a><span class="co"># Create mappings from IDs to labels and vice versa</span></span>
+<span id="cb14-4"><a href="#cb14-4"></a>id2label <span class="op">=</span> {<span class="bu">str</span>(i): id2label_fn(i) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(gtzan_encoded[<span class="st">"train"</span>].features[<span class="st">"label"</span>].names))}</span>
+<span id="cb14-5"><a href="#cb14-5"></a>label2id <span class="op">=</span> {v: k <span class="cf">for</span> k, v <span class="kw">in</span> id2label.items()}</span>
+<span id="cb14-6"><a href="#cb14-6"></a></span>
+<span id="cb14-7"><a href="#cb14-7"></a>id2label</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="output-6" class="level4">
 <h4 class="anchored" data-anchor-id="output-6"><strong>Output</strong></h4>
-<div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>{ <span class="st">'0'</span>: <span class="st">'blues'</span>,</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">'1'</span>: <span class="st">'classical'</span>,</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">'2'</span>: <span class="st">'country'</span>,</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">'3'</span>: <span class="st">'disco'</span>,</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">'4'</span>: <span class="st">'hiphop'</span>,</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">'5'</span>: <span class="st">'jazz'</span>,</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">'6'</span>: <span class="st">'metal'</span>,</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">'7'</span>: <span class="st">'pop'</span>,</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">'8'</span>: <span class="st">'reggae'</span>,</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">'9'</span>: <span class="st">'rock'</span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1"></a>{ <span class="st">'0'</span>: <span class="st">'blues'</span>,</span>
+<span id="cb15-2"><a href="#cb15-2"></a>  <span class="st">'1'</span>: <span class="st">'classical'</span>,</span>
+<span id="cb15-3"><a href="#cb15-3"></a>  <span class="st">'2'</span>: <span class="st">'country'</span>,</span>
+<span id="cb15-4"><a href="#cb15-4"></a>  <span class="st">'3'</span>: <span class="st">'disco'</span>,</span>
+<span id="cb15-5"><a href="#cb15-5"></a>  <span class="st">'4'</span>: <span class="st">'hiphop'</span>,</span>
+<span id="cb15-6"><a href="#cb15-6"></a>  <span class="st">'5'</span>: <span class="st">'jazz'</span>,</span>
+<span id="cb15-7"><a href="#cb15-7"></a>  <span class="st">'6'</span>: <span class="st">'metal'</span>,</span>
+<span id="cb15-8"><a href="#cb15-8"></a>  <span class="st">'7'</span>: <span class="st">'pop'</span>,</span>
+<span id="cb15-9"><a href="#cb15-9"></a>  <span class="st">'8'</span>: <span class="st">'reggae'</span>,</span>
+<span id="cb15-10"><a href="#cb15-10"></a>  <span class="st">'9'</span>: <span class="st">'rock'</span></span>
+<span id="cb15-11"><a href="#cb15-11"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="explanation-4" class="level4">
 <h4 class="anchored" data-anchor-id="explanation-4"><strong>Explanation</strong></h4>
@@ -485,22 +485,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="load-and-fine-tune-the-model" class="level2">
 <h2 class="anchored" data-anchor-id="load-and-fine-tune-the-model">Load and Fine-tune the Model</h2>
 <p>We load a pre-trained audio classification model and fine-tune it on the GTZAN dataset.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoModelForAudioClassification</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Load a pre-trained audio classification model</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>num_labels <span class="op">=</span> <span class="bu">len</span>(id2label)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> AutoModelForAudioClassification.from_pretrained(</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    model_id,</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    num_labels<span class="op">=</span>num_labels,</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    label2id<span class="op">=</span>label2id,</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    id2label<span class="op">=</span>id2label,</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoModelForAudioClassification</span>
+<span id="cb16-2"><a href="#cb16-2"></a></span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="co"># Load a pre-trained audio classification model</span></span>
+<span id="cb16-4"><a href="#cb16-4"></a>num_labels <span class="op">=</span> <span class="bu">len</span>(id2label)</span>
+<span id="cb16-5"><a href="#cb16-5"></a></span>
+<span id="cb16-6"><a href="#cb16-6"></a>model <span class="op">=</span> AutoModelForAudioClassification.from_pretrained(</span>
+<span id="cb16-7"><a href="#cb16-7"></a>    model_id,</span>
+<span id="cb16-8"><a href="#cb16-8"></a>    num_labels<span class="op">=</span>num_labels,</span>
+<span id="cb16-9"><a href="#cb16-9"></a>    label2id<span class="op">=</span>label2id,</span>
+<span id="cb16-10"><a href="#cb16-10"></a>    id2label<span class="op">=</span>id2label,</span>
+<span id="cb16-11"><a href="#cb16-11"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The next step is optional but advised. We basically link our notebook to the 🤗 Hub. The main advantage of doing so is to ensure that no model checkpoint is lost during the training process. You can get your Hub authentication token (permission: write) from <a href="https://huggingface.co/settings/tokens">here</a> :</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Login to Hugging Face Hub (optional)</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> huggingface_hub <span class="im">import</span> notebook_login</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>notebook_login()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1"></a><span class="co"># Login to Hugging Face Hub (optional)</span></span>
+<span id="cb17-2"><a href="#cb17-2"></a><span class="im">from</span> huggingface_hub <span class="im">import</span> notebook_login</span>
+<span id="cb17-3"><a href="#cb17-3"></a></span>
+<span id="cb17-4"><a href="#cb17-4"></a>notebook_login()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="output-7" class="level4">
 <h4 class="anchored" data-anchor-id="output-7"><strong>Output</strong></h4>
 <div class="quarto-figure quarto-figure-center">
@@ -509,30 +509,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </figure>
 </div>
 <p>Next step, we define the training arguments (e.g.&nbsp;batch size, number of epochs, learning rate, etc.)</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define training arguments</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> TrainingArguments</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>model_name <span class="op">=</span> model_id.split(<span class="st">"/"</span>)[<span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>batch_size <span class="op">=</span> <span class="dv">8</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>gradient_accumulation_steps <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>num_train_epochs <span class="op">=</span> <span class="dv">10</span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>training_args <span class="op">=</span> TrainingArguments(</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"</span><span class="sc">{</span>model_name<span class="sc">}</span><span class="ss">-finetuned-gtzan"</span>,</span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    evaluation_strategy<span class="op">=</span><span class="st">"epoch"</span>,</span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    save_strategy<span class="op">=</span><span class="st">"epoch"</span>,</span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    learning_rate<span class="op">=</span><span class="fl">5e-5</span>,</span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    per_device_train_batch_size<span class="op">=</span>batch_size,</span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    gradient_accumulation_steps<span class="op">=</span>gradient_accumulation_steps,</span>
-<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    per_device_eval_batch_size<span class="op">=</span>batch_size,</span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    num_train_epochs<span class="op">=</span>num_train_epochs,</span>
-<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    warmup_ratio<span class="op">=</span><span class="fl">0.1</span>,</span>
-<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>    logging_steps<span class="op">=</span><span class="dv">5</span>,</span>
-<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>    load_best_model_at_end<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>    metric_for_best_model<span class="op">=</span><span class="st">"accuracy"</span>,</span>
-<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>    fp16<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>    push_to_hub<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1"></a><span class="co"># Define training arguments</span></span>
+<span id="cb18-2"><a href="#cb18-2"></a><span class="im">from</span> transformers <span class="im">import</span> TrainingArguments</span>
+<span id="cb18-3"><a href="#cb18-3"></a></span>
+<span id="cb18-4"><a href="#cb18-4"></a>model_name <span class="op">=</span> model_id.split(<span class="st">"/"</span>)[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb18-5"><a href="#cb18-5"></a>batch_size <span class="op">=</span> <span class="dv">8</span></span>
+<span id="cb18-6"><a href="#cb18-6"></a>gradient_accumulation_steps <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb18-7"><a href="#cb18-7"></a>num_train_epochs <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb18-8"><a href="#cb18-8"></a></span>
+<span id="cb18-9"><a href="#cb18-9"></a>training_args <span class="op">=</span> TrainingArguments(</span>
+<span id="cb18-10"><a href="#cb18-10"></a>    <span class="ss">f"</span><span class="sc">{</span>model_name<span class="sc">}</span><span class="ss">-finetuned-gtzan"</span>,</span>
+<span id="cb18-11"><a href="#cb18-11"></a>    evaluation_strategy<span class="op">=</span><span class="st">"epoch"</span>,</span>
+<span id="cb18-12"><a href="#cb18-12"></a>    save_strategy<span class="op">=</span><span class="st">"epoch"</span>,</span>
+<span id="cb18-13"><a href="#cb18-13"></a>    learning_rate<span class="op">=</span><span class="fl">5e-5</span>,</span>
+<span id="cb18-14"><a href="#cb18-14"></a>    per_device_train_batch_size<span class="op">=</span>batch_size,</span>
+<span id="cb18-15"><a href="#cb18-15"></a>    gradient_accumulation_steps<span class="op">=</span>gradient_accumulation_steps,</span>
+<span id="cb18-16"><a href="#cb18-16"></a>    per_device_eval_batch_size<span class="op">=</span>batch_size,</span>
+<span id="cb18-17"><a href="#cb18-17"></a>    num_train_epochs<span class="op">=</span>num_train_epochs,</span>
+<span id="cb18-18"><a href="#cb18-18"></a>    warmup_ratio<span class="op">=</span><span class="fl">0.1</span>,</span>
+<span id="cb18-19"><a href="#cb18-19"></a>    logging_steps<span class="op">=</span><span class="dv">5</span>,</span>
+<span id="cb18-20"><a href="#cb18-20"></a>    load_best_model_at_end<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb18-21"><a href="#cb18-21"></a>    metric_for_best_model<span class="op">=</span><span class="st">"accuracy"</span>,</span>
+<span id="cb18-22"><a href="#cb18-22"></a>    fp16<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb18-23"><a href="#cb18-23"></a>    push_to_hub<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb18-24"><a href="#cb18-24"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="explanation-5" class="level4">
 <h4 class="anchored" data-anchor-id="explanation-5"><strong>Explanation</strong></h4>
@@ -545,31 +545,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="training-and-evaluation" class="level2">
 <h2 class="anchored" data-anchor-id="training-and-evaluation">Training and Evaluation</h2>
 <p>Lastly, we define a function to compute metrics and create a trainer to handle the training process.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> evaluate</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the accuracy metric</span></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>metric <span class="op">=</span> evaluate.load(<span class="st">"accuracy"</span>)</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Function to compute accuracy</span></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> compute_metrics(eval_pred):</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    predictions <span class="op">=</span> np.argmax(eval_pred.predictions, axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> metric.compute(predictions<span class="op">=</span>predictions, references<span class="op">=</span>eval_pred.label_ids)</span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize the trainer</span></span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> Trainer</span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>trainer <span class="op">=</span> Trainer(</span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>    model,</span>
-<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>    training_args,</span>
-<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>    train_dataset<span class="op">=</span>gtzan_encoded[<span class="st">"train"</span>],</span>
-<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>    eval_dataset<span class="op">=</span>gtzan_encoded[<span class="st">"test"</span>],</span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>    tokenizer<span class="op">=</span>feature_extractor,</span>
-<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>    compute_metrics<span class="op">=</span>compute_metrics,</span>
-<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Train the model</span></span>
-<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>trainer.train()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1"></a><span class="im">import</span> evaluate</span>
+<span id="cb19-2"><a href="#cb19-2"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb19-3"><a href="#cb19-3"></a></span>
+<span id="cb19-4"><a href="#cb19-4"></a><span class="co"># Load the accuracy metric</span></span>
+<span id="cb19-5"><a href="#cb19-5"></a>metric <span class="op">=</span> evaluate.load(<span class="st">"accuracy"</span>)</span>
+<span id="cb19-6"><a href="#cb19-6"></a></span>
+<span id="cb19-7"><a href="#cb19-7"></a><span class="co"># Function to compute accuracy</span></span>
+<span id="cb19-8"><a href="#cb19-8"></a><span class="kw">def</span> compute_metrics(eval_pred):</span>
+<span id="cb19-9"><a href="#cb19-9"></a>    predictions <span class="op">=</span> np.argmax(eval_pred.predictions, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb19-10"><a href="#cb19-10"></a>    <span class="cf">return</span> metric.compute(predictions<span class="op">=</span>predictions, references<span class="op">=</span>eval_pred.label_ids)</span>
+<span id="cb19-11"><a href="#cb19-11"></a></span>
+<span id="cb19-12"><a href="#cb19-12"></a><span class="co"># Initialize the trainer</span></span>
+<span id="cb19-13"><a href="#cb19-13"></a><span class="im">from</span> transformers <span class="im">import</span> Trainer</span>
+<span id="cb19-14"><a href="#cb19-14"></a></span>
+<span id="cb19-15"><a href="#cb19-15"></a>trainer <span class="op">=</span> Trainer(</span>
+<span id="cb19-16"><a href="#cb19-16"></a>    model,</span>
+<span id="cb19-17"><a href="#cb19-17"></a>    training_args,</span>
+<span id="cb19-18"><a href="#cb19-18"></a>    train_dataset<span class="op">=</span>gtzan_encoded[<span class="st">"train"</span>],</span>
+<span id="cb19-19"><a href="#cb19-19"></a>    eval_dataset<span class="op">=</span>gtzan_encoded[<span class="st">"test"</span>],</span>
+<span id="cb19-20"><a href="#cb19-20"></a>    tokenizer<span class="op">=</span>feature_extractor,</span>
+<span id="cb19-21"><a href="#cb19-21"></a>    compute_metrics<span class="op">=</span>compute_metrics,</span>
+<span id="cb19-22"><a href="#cb19-22"></a>)</span>
+<span id="cb19-23"><a href="#cb19-23"></a></span>
+<span id="cb19-24"><a href="#cb19-24"></a><span class="co"># Train the model</span></span>
+<span id="cb19-25"><a href="#cb19-25"></a>trainer.train()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="output-8" class="level4">
 <h4 class="anchored" data-anchor-id="output-8"><strong>Output</strong></h4>
 <pre><code>| Epoch | Training Loss | Validation Loss | Accuracy |
@@ -590,40 +590,40 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="inference" class="level2">
 <h2 class="anchored" data-anchor-id="inference">Inference</h2>
 <p>Now that we have our trained model, we can automatically submit our checkpoint to the leaderboard. You can modify the following values to fit your dataset, language, and model name:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>kwargs <span class="op">=</span> {</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"dataset_tags"</span>: <span class="st">"marsyas/gtzan"</span>,</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"dataset"</span>: <span class="st">"GTZAN"</span>,</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"model_name"</span>: <span class="ss">f"</span><span class="sc">{</span>model_name<span class="sc">}</span><span class="ss">-finetuned-gtzan"</span>,</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"finetuned_from"</span>: model_id,</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"tasks"</span>: <span class="st">"audio-classification"</span>,</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1"></a>kwargs <span class="op">=</span> {</span>
+<span id="cb21-2"><a href="#cb21-2"></a>    <span class="st">"dataset_tags"</span>: <span class="st">"marsyas/gtzan"</span>,</span>
+<span id="cb21-3"><a href="#cb21-3"></a>    <span class="st">"dataset"</span>: <span class="st">"GTZAN"</span>,</span>
+<span id="cb21-4"><a href="#cb21-4"></a>    <span class="st">"model_name"</span>: <span class="ss">f"</span><span class="sc">{</span>model_name<span class="sc">}</span><span class="ss">-finetuned-gtzan"</span>,</span>
+<span id="cb21-5"><a href="#cb21-5"></a>    <span class="st">"finetuned_from"</span>: model_id,</span>
+<span id="cb21-6"><a href="#cb21-6"></a>    <span class="st">"tasks"</span>: <span class="st">"audio-classification"</span>,</span>
+<span id="cb21-7"><a href="#cb21-7"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The training results can now be uploaded to the Hub through the <code>.push_to_hub</code> command:</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>trainer.push_to_hub(<span class="op">**</span>kwargs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1"></a>trainer.push_to_hub(<span class="op">**</span>kwargs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>By following these steps, you built a complete system for music genre classification using the GTZAN dataset, Gradio for interactive visualization, and Hugging Face Transformers for model training and inference.</p>
 </section>
 <section id="gradio-demo" class="level2">
 <h2 class="anchored" data-anchor-id="gradio-demo">Gradio Demo</h2>
 <p>Now that we built our music classification model trained on GTZAN dataset, we can showcase it on <a href="https://www.gradio.app/">Gradio</a>. We first need to load up fine-tuned checkpoint using the <code>pipeline()</code> class:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> pipeline</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>model_id <span class="op">=</span> <span class="st">"toobarah/distilhubert-finetuned-gtzan"</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>pipe <span class="op">=</span> pipeline(<span class="st">"audio-classification"</span>, model<span class="op">=</span>model_id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1"></a><span class="im">from</span> transformers <span class="im">import</span> pipeline</span>
+<span id="cb23-2"><a href="#cb23-2"></a></span>
+<span id="cb23-3"><a href="#cb23-3"></a>model_id <span class="op">=</span> <span class="st">"toobarah/distilhubert-finetuned-gtzan"</span></span>
+<span id="cb23-4"><a href="#cb23-4"></a>pipe <span class="op">=</span> pipeline(<span class="st">"audio-classification"</span>, model<span class="op">=</span>model_id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Next, we defined a function that processes an audio file through the pipeline. The pipeline handles loading the file, resampling it to the correct rate, and running inference with the model. The model’s predictions are then formatted as a dictionary for display.</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> classify_audio(filepath):</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    preds <span class="op">=</span> pipe(filepath)</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    outputs <span class="op">=</span> {}</span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> p <span class="kw">in</span> preds:</span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>        outputs[p[<span class="st">"label"</span>]] <span class="op">=</span> p[<span class="st">"score"</span>]</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> outputs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1"></a><span class="kw">def</span> classify_audio(filepath):</span>
+<span id="cb24-2"><a href="#cb24-2"></a>    preds <span class="op">=</span> pipe(filepath)</span>
+<span id="cb24-3"><a href="#cb24-3"></a>    outputs <span class="op">=</span> {}</span>
+<span id="cb24-4"><a href="#cb24-4"></a>    <span class="cf">for</span> p <span class="kw">in</span> preds:</span>
+<span id="cb24-5"><a href="#cb24-5"></a>        outputs[p[<span class="st">"label"</span>]] <span class="op">=</span> p[<span class="st">"score"</span>]</span>
+<span id="cb24-6"><a href="#cb24-6"></a>    <span class="cf">return</span> outputs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Final step, we launch the Gradio demo by calling the function we just created:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> gradio <span class="im">as</span> gr</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>demo <span class="op">=</span> gr.Interface(</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    fn<span class="op">=</span>classify_audio, inputs<span class="op">=</span>gr.Audio(<span class="bu">type</span><span class="op">=</span><span class="st">"filepath"</span>), outputs<span class="op">=</span>gr.Label()</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>demo.launch(debug<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1"></a><span class="im">import</span> gradio <span class="im">as</span> gr</span>
+<span id="cb25-2"><a href="#cb25-2"></a></span>
+<span id="cb25-3"><a href="#cb25-3"></a>demo <span class="op">=</span> gr.Interface(</span>
+<span id="cb25-4"><a href="#cb25-4"></a>    fn<span class="op">=</span>classify_audio, inputs<span class="op">=</span>gr.Audio(<span class="bu">type</span><span class="op">=</span><span class="st">"filepath"</span>), outputs<span class="op">=</span>gr.Label()</span>
+<span id="cb25-5"><a href="#cb25-5"></a>)</span>
+<span id="cb25-6"><a href="#cb25-6"></a>demo.launch(debug<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>* If you get an <code>ImportError</code> after running the last cell, try downgrading your Gradio using the following command:</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>pip install gradio<span class="op">==</span><span class="fl">3.47.1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1"></a>pip install gradio<span class="op">==</span><span class="fl">3.47.1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Otherwise, you should see a window pop up as shown below! Go ahead, upload some music, test your model, and enjoy!</p>
 <p><img src="Screenshot 2024-06-20 at 6.17.17 PM.png" class="img-fluid"></p>
 </section>

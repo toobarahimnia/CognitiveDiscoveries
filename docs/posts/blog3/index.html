@@ -242,57 +242,57 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="importing-libraries-and-set-required-seed" class="level2">
 <h2 class="anchored" data-anchor-id="importing-libraries-and-set-required-seed">Importing libraries and Set Required Seed</h2>
 <p>Now we are ready to start the exciting part. We’ll be using PyTorch and Transformers, along with Matplotlib for some exploratory data analysis (EDA).</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> transformers</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoModelForSequenceClassification, AutoTokenizer</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch <span class="im">import</span> optim</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.data <span class="im">import</span> DataLoader, Dataset, random_split</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torchmetrics.regression <span class="im">import</span> PearsonCorrCoef</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> timeit</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm <span class="im">import</span> tqdm</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> operator <span class="im">import</span> itemgetter</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="im">import</span> transformers</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="im">from</span> transformers <span class="im">import</span> AutoModelForSequenceClassification, AutoTokenizer</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="im">import</span> torch</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="im">from</span> torch <span class="im">import</span> optim</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="im">from</span> torch.utils.data <span class="im">import</span> DataLoader, Dataset, random_split</span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="im">from</span> torchmetrics.regression <span class="im">import</span> PearsonCorrCoef</span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="im">import</span> random</span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="im">import</span> timeit</span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="im">from</span> tqdm <span class="im">import</span> tqdm</span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="im">from</span> operator <span class="im">import</span> itemgetter</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Additionally, we’ll use a seed to ensure that the random numbers generated are reproducible. Reproducibility is essential for controlling randomness in both CPU and GPU operations, ensuring deterministic behavior. This is crucial for debugging and for ensuring that experiments can be replicated exactly.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>RANDOM_SEED <span class="op">=</span> <span class="dv">42</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#MODEL_PATH = '/kaggle/input/debertav3base'</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>MODEL_PATH <span class="op">=</span> <span class="st">'/kaggle/input/debertav3small'</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>MAX_LENGTH <span class="op">=</span> <span class="dv">256</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>BATCH_SIZE <span class="op">=</span> <span class="dv">64</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>LEARNING_RATE <span class="op">=</span> <span class="fl">2e-5</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>EPOCHS <span class="op">=</span> <span class="dv">2</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> set_random_seed(seed):</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    random.seed(seed)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    np.random.seed(seed)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    torch.manual_seed(seed)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    torch.cuda.manual_seed_all(seed)</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    torch.backends.cudnn.deterministic <span class="op">=</span> <span class="va">True</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    torch.backends.cudnn.benchmark <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>set_random_seed(RANDOM_SEED)</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>device <span class="op">=</span> <span class="st">'cuda'</span> <span class="cf">if</span> torch.cuda.is_available() <span class="cf">else</span> <span class="st">'cpu'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a>RANDOM_SEED <span class="op">=</span> <span class="dv">42</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="co">#MODEL_PATH = '/kaggle/input/debertav3base'</span></span>
+<span id="cb2-3"><a href="#cb2-3"></a>MODEL_PATH <span class="op">=</span> <span class="st">'/kaggle/input/debertav3small'</span></span>
+<span id="cb2-4"><a href="#cb2-4"></a>MAX_LENGTH <span class="op">=</span> <span class="dv">256</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a>BATCH_SIZE <span class="op">=</span> <span class="dv">64</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a>LEARNING_RATE <span class="op">=</span> <span class="fl">2e-5</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a>EPOCHS <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a></span>
+<span id="cb2-9"><a href="#cb2-9"></a><span class="kw">def</span> set_random_seed(seed):</span>
+<span id="cb2-10"><a href="#cb2-10"></a>    random.seed(seed)</span>
+<span id="cb2-11"><a href="#cb2-11"></a>    np.random.seed(seed)</span>
+<span id="cb2-12"><a href="#cb2-12"></a>    torch.manual_seed(seed)</span>
+<span id="cb2-13"><a href="#cb2-13"></a>    torch.cuda.manual_seed_all(seed)</span>
+<span id="cb2-14"><a href="#cb2-14"></a>    torch.backends.cudnn.deterministic <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb2-15"><a href="#cb2-15"></a>    torch.backends.cudnn.benchmark <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb2-16"><a href="#cb2-16"></a></span>
+<span id="cb2-17"><a href="#cb2-17"></a>set_random_seed(RANDOM_SEED)</span>
+<span id="cb2-18"><a href="#cb2-18"></a>device <span class="op">=</span> <span class="st">'cuda'</span> <span class="cf">if</span> torch.cuda.is_available() <span class="cf">else</span> <span class="st">'cpu'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The code below helps control the amount of logging output by focusing only on error messages, which can be particularly useful for cleaner logs and debugging.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>transformers.utils.logging.set_verbosity_error()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a>transformers.utils.logging.set_verbosity_error()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="reading-datasets" class="level2">
 <h2 class="anchored" data-anchor-id="reading-datasets">Reading Datasets</h2>
 <p>Now, let’s read our files:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>train_df <span class="op">=</span> pd.read_csv(<span class="st">'/kaggle/input/us-patent-phrase-to-phrase-matching/train.csv'</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>test_df <span class="op">=</span> pd.read_csv(<span class="st">'/kaggle/input/us-patent-phrase-to-phrase-matching/test.csv'</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>submission_df <span class="op">=</span> pd.read_csv(<span class="st">'/kaggle/input/us-patent-phrase-to-phrase-matching/sample_submission.csv'</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>patents_df <span class="op">=</span> pd.read_csv(<span class="st">'/kaggle/input/cpc-codes/titles.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a>train_df <span class="op">=</span> pd.read_csv(<span class="st">'/kaggle/input/us-patent-phrase-to-phrase-matching/train.csv'</span>)</span>
+<span id="cb4-2"><a href="#cb4-2"></a></span>
+<span id="cb4-3"><a href="#cb4-3"></a>test_df <span class="op">=</span> pd.read_csv(<span class="st">'/kaggle/input/us-patent-phrase-to-phrase-matching/test.csv'</span>)</span>
+<span id="cb4-4"><a href="#cb4-4"></a></span>
+<span id="cb4-5"><a href="#cb4-5"></a>submission_df <span class="op">=</span> pd.read_csv(<span class="st">'/kaggle/input/us-patent-phrase-to-phrase-matching/sample_submission.csv'</span>)</span>
+<span id="cb4-6"><a href="#cb4-6"></a></span>
+<span id="cb4-7"><a href="#cb4-7"></a>patents_df <span class="op">=</span> pd.read_csv(<span class="st">'/kaggle/input/cpc-codes/titles.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="eda-warm-up" class="level2">
 <h2 class="anchored" data-anchor-id="eda-warm-up">EDA Warm Up</h2>
 <p>Let’s explore and extract some useful information from our datasets, first.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>train_df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a>train_df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><img src="train.png" class="img-fluid" width="483"></p>
 <p>The above table tells us that the training set has five columns:</p>
 <p><code>id</code> - a unique identifier for a pair of phrases</p>
@@ -301,8 +301,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><code>context</code> - the CPC classification, which indicates the subject within which the similarity is to be scored</p>
 <p><code>score</code> - the similarity. This is sourced from a combination of one or more manual expert ratings.</p>
 <p>What else can we get?</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>train_df.score.hist()</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Histogram of Scores'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a>train_df.score.hist()</span>
+<span id="cb6-2"><a href="#cb6-2"></a>plt.title(<span class="st">'Histogram of Scores'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><img src="Screenshot 2024-06-05 at 4.45.09 PM.png" class="img-fluid" width="492"></p>
 <p>Note that there are only 5 potential scores:</p>
 <p><strong>1.0</strong> - Represents a very close match, typically indicating an exact match except for possible differences in conjugation, quantity (e.g., singular vs.&nbsp;plural), and the addition or removal of stopwords (e.g., “the,” “and,” “or”).</p>
@@ -311,32 +311,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>0.25</strong> - Indicates that the two phrases are somewhat related, such as being in the same high-level domain but not being synonyms. This category also includes antonyms.</p>
 <p><strong>0.0</strong> - Represents phrases that are unrelated.</p>
 <p>Now let’s have a closer look at the <code>anchor</code> column:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> train_df.groupby(<span class="st">'anchor'</span>)[<span class="st">'id'</span>].count().sort_values(ascending<span class="op">=</span><span class="va">False</span>).head(<span class="dv">10</span>).plot(kind<span class="op">=</span><span class="st">'bar'</span>, color<span class="op">=</span><span class="bu">list</span>(<span class="st">'gbymcr'</span>))</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> container <span class="kw">in</span> ax.containers:</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    ax.bar_label(container)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Top 10 Anchors'</span>)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a>ax <span class="op">=</span> train_df.groupby(<span class="st">'anchor'</span>)[<span class="st">'id'</span>].count().sort_values(ascending<span class="op">=</span><span class="va">False</span>).head(<span class="dv">10</span>).plot(kind<span class="op">=</span><span class="st">'bar'</span>, color<span class="op">=</span><span class="bu">list</span>(<span class="st">'gbymcr'</span>))</span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="cf">for</span> container <span class="kw">in</span> ax.containers:</span>
+<span id="cb7-3"><a href="#cb7-3"></a>    ax.bar_label(container)</span>
+<span id="cb7-4"><a href="#cb7-4"></a>plt.title(<span class="st">'Top 10 Anchors'</span>)</span>
+<span id="cb7-5"><a href="#cb7-5"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><img src="Screenshot 2024-06-05 at 4.51.21 PM.png" class="img-fluid" width="560"></p>
 <p>Here, we can see the top 10 mostly used <code>anchors</code>, respectively. The total number of entities containing each anchor is written on top of its bar.</p>
 <p>The test dataset is quite similar to the train dataset, except that it does not have the score column.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>test_df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a>test_df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><img src="test.png" class="img-fluid" width="484"></p>
 <p>And our submission file at the end should look like this:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>submission_df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1"></a>submission_df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><img src="submit.png" class="img-fluid" width="219"></p>
 <p>The only dataset left is <code>patents_df</code>. But what information does it have inside? Let’s have a look.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>patents_df.head() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1"></a>patents_df.head() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><img src="patents_df.png" class="img-fluid" width="683"></p>
 <p>Remember that earlier we suggested that we could represent the input to the model as something like “<em>TEXT1: abatement; TEXT2: eliminating process</em>”. We’ll need to apply that context here.</p>
 <p>To begin, merge <code>train_df</code> and <code>patent_df</code> on the shared column: notice that <code>train_df['context']</code> and <code>patent_df['code']</code> contain similar information on both tables, so they’ll be the point of juncture.</p>
 <p>next step, we will create a new column (<code>input)</code> on the new training dataset (<code>updated_train_df)</code>. It combines <code>updated_train_df['title']</code> and <code>updated_train_df['anchor']</code>.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>updated_train_df <span class="op">=</span> train_df.merge(patents_df, left_on<span class="op">=</span><span class="st">'context'</span>, right_on<span class="op">=</span><span class="st">'code'</span>) </span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>updated_train_df[<span class="st">'input'</span>] <span class="op">=</span> updated_train_df[<span class="st">'title'</span>] <span class="op">+</span> <span class="st">"; "</span> <span class="op">+</span> updated_train_df[<span class="st">'anchor'</span>]</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>updated_train_df.tail()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1"></a>updated_train_df <span class="op">=</span> train_df.merge(patents_df, left_on<span class="op">=</span><span class="st">'context'</span>, right_on<span class="op">=</span><span class="st">'code'</span>) </span>
+<span id="cb11-2"><a href="#cb11-2"></a>updated_train_df[<span class="st">'input'</span>] <span class="op">=</span> updated_train_df[<span class="st">'title'</span>] <span class="op">+</span> <span class="st">"; "</span> <span class="op">+</span> updated_train_df[<span class="st">'anchor'</span>]</span>
+<span id="cb11-3"><a href="#cb11-3"></a>updated_train_df.tail()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><img src="Screenshot 2024-06-05 at 5.47.05 PM.png" class="img-fluid"></p>
 <p>Do the same steps for <code>test_df</code>:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>updated_test_df <span class="op">=</span> test_df.merge(patents_df, left_on<span class="op">=</span><span class="st">'context'</span>, right_on<span class="op">=</span><span class="st">'code'</span>)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>updated_test_df[<span class="st">'input'</span>] <span class="op">=</span> updated_test_df[<span class="st">'title'</span>] <span class="op">+</span> <span class="st">" "</span> <span class="op">+</span> updated_test_df[<span class="st">'anchor'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a>updated_test_df <span class="op">=</span> test_df.merge(patents_df, left_on<span class="op">=</span><span class="st">'context'</span>, right_on<span class="op">=</span><span class="st">'code'</span>)</span>
+<span id="cb12-2"><a href="#cb12-2"></a>updated_test_df[<span class="st">'input'</span>] <span class="op">=</span> updated_test_df[<span class="st">'title'</span>] <span class="op">+</span> <span class="st">" "</span> <span class="op">+</span> updated_test_df[<span class="st">'anchor'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="tokenization" class="level2">
 <h2 class="anchored" data-anchor-id="tokenization">Tokenization</h2>
@@ -350,46 +350,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p><em>Numericalization</em>: Convert each token into a number.</p></li>
 </ul>
 <p>The details about how this is done depend on the particular model we choose. There are numerous models available, but for the starting point we will be using the two models that we have downloaded earlier.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>tokenizer <span class="op">=</span> AutoTokenizer.from_pretrained(MODEL_PATH)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> AutoModelForSequenceClassification.from_pretrained(MODEL_PATH, num_labels<span class="op">=</span><span class="dv">1</span>).to(device)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1"></a>tokenizer <span class="op">=</span> AutoTokenizer.from_pretrained(MODEL_PATH)</span>
+<span id="cb13-2"><a href="#cb13-2"></a>model <span class="op">=</span> AutoModelForSequenceClassification.from_pretrained(MODEL_PATH, num_labels<span class="op">=</span><span class="dv">1</span>).to(device)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>The <code>num_labels=1</code> basically turns it into a regression problem, as to output only one score.</p>
 <p>You can safely ignore the warnings here.</p>
 </section>
 <section id="loading-data" class="level2">
 <h2 class="anchored" data-anchor-id="loading-data">Loading Data</h2>
 <p>In the following cells we will build our custom dataset classes for training and testing that inherit from <code>torch.utils.data.Dataset</code>.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> TrainDataset(Dataset):</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, inputs, targets, scores, tokenizer):</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.scores <span class="op">=</span> scores</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.encodings <span class="op">=</span> tokenizer(inputs, </span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>                                   targets, </span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>                                   padding<span class="op">=</span><span class="va">True</span>, </span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>                                   truncation<span class="op">=</span><span class="va">True</span>, </span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>                                   max_length<span class="op">=</span>MAX_LENGTH)</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__getitem__</span>(<span class="va">self</span>, idx):</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>        out_dic <span class="op">=</span> {key: torch.tensor(val[idx]) <span class="cf">for</span> key, val <span class="kw">in</span> <span class="va">self</span>.encodings.items()}</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        out_dic[<span class="st">'scores'</span>] <span class="op">=</span> <span class="va">self</span>.scores[idx]</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> out_dic</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__len__</span>(<span class="va">self</span>):</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">len</span>(<span class="va">self</span>.scores)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SubmitDataset(Dataset):</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, inputs, targets, ids, tokenizer):</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.ids <span class="op">=</span> ids</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.encodings <span class="op">=</span> tokenizer(inputs, </span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                                   targets, </span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>                                   padding<span class="op">=</span><span class="va">True</span>, </span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>                                   truncation<span class="op">=</span><span class="va">True</span>, </span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>                                   max_length<span class="op">=</span>MAX_LENGTH)</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__getitem__</span>(<span class="va">self</span>, idx):</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        out_dic <span class="op">=</span> {key: torch.tensor(val[idx]) <span class="cf">for</span> key, val <span class="kw">in</span> <span class="va">self</span>.encodings.items()}</span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>        out_dic[<span class="st">'ids'</span>] <span class="op">=</span> <span class="va">self</span>.ids[idx]</span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> out_dic</span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__len__</span>(<span class="va">self</span>):</span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">len</span>(<span class="va">self</span>.ids)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1"></a><span class="kw">class</span> TrainDataset(Dataset):</span>
+<span id="cb14-2"><a href="#cb14-2"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, inputs, targets, scores, tokenizer):</span>
+<span id="cb14-3"><a href="#cb14-3"></a>        <span class="va">self</span>.scores <span class="op">=</span> scores</span>
+<span id="cb14-4"><a href="#cb14-4"></a>        <span class="va">self</span>.encodings <span class="op">=</span> tokenizer(inputs, </span>
+<span id="cb14-5"><a href="#cb14-5"></a>                                   targets, </span>
+<span id="cb14-6"><a href="#cb14-6"></a>                                   padding<span class="op">=</span><span class="va">True</span>, </span>
+<span id="cb14-7"><a href="#cb14-7"></a>                                   truncation<span class="op">=</span><span class="va">True</span>, </span>
+<span id="cb14-8"><a href="#cb14-8"></a>                                   max_length<span class="op">=</span>MAX_LENGTH)</span>
+<span id="cb14-9"><a href="#cb14-9"></a>    </span>
+<span id="cb14-10"><a href="#cb14-10"></a>    <span class="kw">def</span> <span class="fu">__getitem__</span>(<span class="va">self</span>, idx):</span>
+<span id="cb14-11"><a href="#cb14-11"></a>        out_dic <span class="op">=</span> {key: torch.tensor(val[idx]) <span class="cf">for</span> key, val <span class="kw">in</span> <span class="va">self</span>.encodings.items()}</span>
+<span id="cb14-12"><a href="#cb14-12"></a>        out_dic[<span class="st">'scores'</span>] <span class="op">=</span> <span class="va">self</span>.scores[idx]</span>
+<span id="cb14-13"><a href="#cb14-13"></a>        <span class="cf">return</span> out_dic</span>
+<span id="cb14-14"><a href="#cb14-14"></a>        </span>
+<span id="cb14-15"><a href="#cb14-15"></a>    <span class="kw">def</span> <span class="fu">__len__</span>(<span class="va">self</span>):</span>
+<span id="cb14-16"><a href="#cb14-16"></a>        <span class="cf">return</span> <span class="bu">len</span>(<span class="va">self</span>.scores)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1"></a><span class="kw">class</span> SubmitDataset(Dataset):</span>
+<span id="cb15-2"><a href="#cb15-2"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, inputs, targets, ids, tokenizer):</span>
+<span id="cb15-3"><a href="#cb15-3"></a>        <span class="va">self</span>.ids <span class="op">=</span> ids</span>
+<span id="cb15-4"><a href="#cb15-4"></a>        <span class="va">self</span>.encodings <span class="op">=</span> tokenizer(inputs, </span>
+<span id="cb15-5"><a href="#cb15-5"></a>                                   targets, </span>
+<span id="cb15-6"><a href="#cb15-6"></a>                                   padding<span class="op">=</span><span class="va">True</span>, </span>
+<span id="cb15-7"><a href="#cb15-7"></a>                                   truncation<span class="op">=</span><span class="va">True</span>, </span>
+<span id="cb15-8"><a href="#cb15-8"></a>                                   max_length<span class="op">=</span>MAX_LENGTH)</span>
+<span id="cb15-9"><a href="#cb15-9"></a>    </span>
+<span id="cb15-10"><a href="#cb15-10"></a>    <span class="kw">def</span> <span class="fu">__getitem__</span>(<span class="va">self</span>, idx):</span>
+<span id="cb15-11"><a href="#cb15-11"></a>        out_dic <span class="op">=</span> {key: torch.tensor(val[idx]) <span class="cf">for</span> key, val <span class="kw">in</span> <span class="va">self</span>.encodings.items()}</span>
+<span id="cb15-12"><a href="#cb15-12"></a>        out_dic[<span class="st">'ids'</span>] <span class="op">=</span> <span class="va">self</span>.ids[idx]</span>
+<span id="cb15-13"><a href="#cb15-13"></a>        <span class="cf">return</span> out_dic</span>
+<span id="cb15-14"><a href="#cb15-14"></a>        </span>
+<span id="cb15-15"><a href="#cb15-15"></a>    <span class="kw">def</span> <span class="fu">__len__</span>(<span class="va">self</span>):</span>
+<span id="cb15-16"><a href="#cb15-16"></a>        <span class="cf">return</span> <span class="bu">len</span>(<span class="va">self</span>.ids)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Taking <code>TrainDataset</code> for instance, let’s break it down into sections and see what it entails:</p>
 <ol type="1">
 <li><p>Initialization (<code>__init__</code> method):</p>
@@ -426,33 +426,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul></li>
 </ol>
 <p>After tokenizing, let’s check our datasets:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> TrainDataset(updated_train_df[<span class="st">'input'</span>].to_list(), </span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                       updated_train_df[<span class="st">'target'</span>].to_list(), </span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                       updated_train_df[<span class="st">'score'</span>].to_list(), </span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                       tokenizer)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>test_dataset <span class="op">=</span> SubmitDataset(updated_test_df[<span class="st">'input'</span>].to_list(), </span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>                             updated_test_df[<span class="st">'target'</span>].to_list(), </span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>                             updated_test_df[<span class="st">'id'</span>].to_list(), </span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>                             tokenizer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1"></a>dataset <span class="op">=</span> TrainDataset(updated_train_df[<span class="st">'input'</span>].to_list(), </span>
+<span id="cb16-2"><a href="#cb16-2"></a>                       updated_train_df[<span class="st">'target'</span>].to_list(), </span>
+<span id="cb16-3"><a href="#cb16-3"></a>                       updated_train_df[<span class="st">'score'</span>].to_list(), </span>
+<span id="cb16-4"><a href="#cb16-4"></a>                       tokenizer)</span>
+<span id="cb16-5"><a href="#cb16-5"></a></span>
+<span id="cb16-6"><a href="#cb16-6"></a>test_dataset <span class="op">=</span> SubmitDataset(updated_test_df[<span class="st">'input'</span>].to_list(), </span>
+<span id="cb16-7"><a href="#cb16-7"></a>                             updated_test_df[<span class="st">'target'</span>].to_list(), </span>
+<span id="cb16-8"><a href="#cb16-8"></a>                             updated_test_df[<span class="st">'id'</span>].to_list(), </span>
+<span id="cb16-9"><a href="#cb16-9"></a>                             tokenizer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><img src="Screenshot 2024-06-05 at 7.32.19 PM.png" class="img-fluid"></p>
 <p>There it is! Every input/output entity turned into a token and then into a number.</p>
 <p>Now we split our data into train and validation sets.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>generator <span class="op">=</span> torch.Generator().manual_seed(RANDOM_SEED)</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>train_dataset, val_dataset <span class="op">=</span> random_split(dataset, [<span class="fl">0.8</span>, <span class="fl">0.2</span>], generator<span class="op">=</span>generator)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1"></a>generator <span class="op">=</span> torch.Generator().manual_seed(RANDOM_SEED)</span>
+<span id="cb17-2"><a href="#cb17-2"></a>train_dataset, val_dataset <span class="op">=</span> random_split(dataset, [<span class="fl">0.8</span>, <span class="fl">0.2</span>], generator<span class="op">=</span>generator)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>We use DataLoader after having our datasets to efficiently load and process the data in batches during training, validation, and testing of machine learning models. Therefore, it is easier to handle large datasets that don’t fit into memory all at once. It also provides additional functionalities like shuffling and batching, which are essential for training machine learning models effectively.</p>
 <p>(Tip: Always shuffle=True on the training set and shuffle=False on the validation set and test set. [<a href="https://stackoverflow.com/questions/61702753/why-is-making-shuffle-false-on-validation-set-giving-better-results-in-confusion">source</a>])</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>train_dataloader <span class="op">=</span> DataLoader(dataset<span class="op">=</span>train_dataset, </span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                             batch_size<span class="op">=</span>BATCH_SIZE,</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>                             shuffle<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>val_dataloader <span class="op">=</span> DataLoader(dataset<span class="op">=</span>val_dataset, </span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>                             batch_size<span class="op">=</span>BATCH_SIZE,</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>                             shuffle<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>test_dataloader <span class="op">=</span> DataLoader(dataset<span class="op">=</span>test_dataset, </span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>                             batch_size<span class="op">=</span>BATCH_SIZE,</span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>                             shuffle<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1"></a>train_dataloader <span class="op">=</span> DataLoader(dataset<span class="op">=</span>train_dataset, </span>
+<span id="cb18-2"><a href="#cb18-2"></a>                             batch_size<span class="op">=</span>BATCH_SIZE,</span>
+<span id="cb18-3"><a href="#cb18-3"></a>                             shuffle<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb18-4"><a href="#cb18-4"></a></span>
+<span id="cb18-5"><a href="#cb18-5"></a>val_dataloader <span class="op">=</span> DataLoader(dataset<span class="op">=</span>val_dataset, </span>
+<span id="cb18-6"><a href="#cb18-6"></a>                             batch_size<span class="op">=</span>BATCH_SIZE,</span>
+<span id="cb18-7"><a href="#cb18-7"></a>                             shuffle<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb18-8"><a href="#cb18-8"></a></span>
+<span id="cb18-9"><a href="#cb18-9"></a>test_dataloader <span class="op">=</span> DataLoader(dataset<span class="op">=</span>test_dataset, </span>
+<span id="cb18-10"><a href="#cb18-10"></a>                             batch_size<span class="op">=</span>BATCH_SIZE,</span>
+<span id="cb18-11"><a href="#cb18-11"></a>                             shuffle<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="training-the-model" class="level2">
 <h2 class="anchored" data-anchor-id="training-the-model">Training the Model</h2>
@@ -501,60 +501,60 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Compute and prints the training time.</li>
 </ul></li>
 </ol>
-<div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> optim.AdamW(model.parameters(), lr<span class="op">=</span>LEARNING_RATE)</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>pearson <span class="op">=</span> PearsonCorrCoef()</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>start <span class="op">=</span> timeit.default_timer()</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> tqdm(<span class="bu">range</span>(EPOCHS), position<span class="op">=</span><span class="dv">0</span>, leave<span class="op">=</span><span class="va">True</span>):</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    model.train()</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    train_running_loss <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> idx, sample <span class="kw">in</span> <span class="bu">enumerate</span>(tqdm(train_dataloader, position<span class="op">=</span><span class="dv">0</span>, leave<span class="op">=</span><span class="va">True</span>)):</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>        input_ids <span class="op">=</span> sample[<span class="st">'input_ids'</span>].to(device) <span class="co"># text1</span></span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>        attention_mask <span class="op">=</span> sample[<span class="st">'attention_mask'</span>].to(device) <span class="co"># text2</span></span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>        targets <span class="op">=</span> sample[<span class="st">'scores'</span>].to(device) <span class="co"># relativeness</span></span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>        outputs <span class="op">=</span> model(input_ids<span class="op">=</span>input_ids, </span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>                        attention_mask<span class="op">=</span>attention_mask, </span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>                        labels<span class="op">=</span>targets)</span>
-<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>        loss <span class="op">=</span> outputs.loss</span>
-<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>        optimizer.zero_grad()</span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>        loss.backward()</span>
-<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>        optimizer.step()</span>
-<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>        train_running_loss <span class="op">+=</span> loss.item()</span>
-<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>    train_loss <span class="op">=</span> train_running_loss <span class="op">/</span> (idx <span class="op">+</span> <span class="dv">1</span>)</span>
-<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>    model.<span class="bu">eval</span>()</span>
-<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>    val_running_loss <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>    preds <span class="op">=</span> []</span>
-<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>    golds <span class="op">=</span> []</span>
-<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> torch.no_grad():</span>
-<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> idx, sample <span class="kw">in</span> <span class="bu">enumerate</span>(tqdm(val_dataloader, position<span class="op">=</span><span class="dv">0</span>, leave<span class="op">=</span><span class="va">True</span>)):</span>
-<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>            input_ids <span class="op">=</span> sample[<span class="st">'input_ids'</span>].to(device)</span>
-<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>            attention_mask <span class="op">=</span> sample[<span class="st">'attention_mask'</span>].to(device)</span>
-<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>            targets <span class="op">=</span> sample[<span class="st">'scores'</span>].to(device)</span>
-<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>            outputs <span class="op">=</span> model(input_ids<span class="op">=</span>input_ids, </span>
-<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>                            attention_mask<span class="op">=</span>attention_mask, </span>
-<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a>                            labels<span class="op">=</span>targets)</span>
-<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>            preds.extend([<span class="bu">float</span>(i) <span class="cf">for</span> i <span class="kw">in</span> outputs[<span class="st">'logits'</span>].squeeze()])</span>
-<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a>            golds.extend([<span class="bu">float</span>(i) <span class="cf">for</span> i <span class="kw">in</span> targets])</span>
-<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a>            val_running_loss <span class="op">+=</span> outputs.loss.item()</span>
-<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a>        val_loss <span class="op">=</span> val_running_loss <span class="op">/</span> (idx <span class="op">+</span> <span class="dv">1</span>)</span>
-<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a>    <span class="co"># printing out results </span></span>
-<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'-'</span> <span class="op">*</span> <span class="dv">30</span>)</span>
-<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Pearson Score: </span><span class="sc">{</span><span class="bu">float</span>(pearson(torch.tensor(preds), torch.tensor(golds)))<span class="sc">:.3f}</span><span class="ss">'</span>)</span>
-<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Train Loss EPOCH </span><span class="sc">{</span>epoch<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>train_loss<span class="sc">:.3f}</span><span class="ss">'</span>)</span>
-<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Valid Loss EPOCH </span><span class="sc">{</span>epoch<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>val_loss<span class="sc">:.3f}</span><span class="ss">'</span>)</span>
-<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'-'</span> <span class="op">*</span> <span class="dv">30</span>)</span>
-<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a>stop <span class="op">=</span> timeit.default_timer()</span>
-<span id="cb19-54"><a href="#cb19-54" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Training Time: </span><span class="sc">{</span>stop<span class="op">-</span>start<span class="sc">: .2f}</span><span class="ss">s'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1"></a>optimizer <span class="op">=</span> optim.AdamW(model.parameters(), lr<span class="op">=</span>LEARNING_RATE)</span>
+<span id="cb19-2"><a href="#cb19-2"></a>pearson <span class="op">=</span> PearsonCorrCoef()</span>
+<span id="cb19-3"><a href="#cb19-3"></a>start <span class="op">=</span> timeit.default_timer()</span>
+<span id="cb19-4"><a href="#cb19-4"></a></span>
+<span id="cb19-5"><a href="#cb19-5"></a><span class="cf">for</span> epoch <span class="kw">in</span> tqdm(<span class="bu">range</span>(EPOCHS), position<span class="op">=</span><span class="dv">0</span>, leave<span class="op">=</span><span class="va">True</span>):</span>
+<span id="cb19-6"><a href="#cb19-6"></a>    model.train()</span>
+<span id="cb19-7"><a href="#cb19-7"></a>    train_running_loss <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb19-8"><a href="#cb19-8"></a>    </span>
+<span id="cb19-9"><a href="#cb19-9"></a>    <span class="cf">for</span> idx, sample <span class="kw">in</span> <span class="bu">enumerate</span>(tqdm(train_dataloader, position<span class="op">=</span><span class="dv">0</span>, leave<span class="op">=</span><span class="va">True</span>)):</span>
+<span id="cb19-10"><a href="#cb19-10"></a>        input_ids <span class="op">=</span> sample[<span class="st">'input_ids'</span>].to(device) <span class="co"># text1</span></span>
+<span id="cb19-11"><a href="#cb19-11"></a>        attention_mask <span class="op">=</span> sample[<span class="st">'attention_mask'</span>].to(device) <span class="co"># text2</span></span>
+<span id="cb19-12"><a href="#cb19-12"></a>        targets <span class="op">=</span> sample[<span class="st">'scores'</span>].to(device) <span class="co"># relativeness</span></span>
+<span id="cb19-13"><a href="#cb19-13"></a>        </span>
+<span id="cb19-14"><a href="#cb19-14"></a>        outputs <span class="op">=</span> model(input_ids<span class="op">=</span>input_ids, </span>
+<span id="cb19-15"><a href="#cb19-15"></a>                        attention_mask<span class="op">=</span>attention_mask, </span>
+<span id="cb19-16"><a href="#cb19-16"></a>                        labels<span class="op">=</span>targets)</span>
+<span id="cb19-17"><a href="#cb19-17"></a>        </span>
+<span id="cb19-18"><a href="#cb19-18"></a>        loss <span class="op">=</span> outputs.loss</span>
+<span id="cb19-19"><a href="#cb19-19"></a>        optimizer.zero_grad()</span>
+<span id="cb19-20"><a href="#cb19-20"></a>        loss.backward()</span>
+<span id="cb19-21"><a href="#cb19-21"></a>        optimizer.step()</span>
+<span id="cb19-22"><a href="#cb19-22"></a>        train_running_loss <span class="op">+=</span> loss.item()</span>
+<span id="cb19-23"><a href="#cb19-23"></a>        </span>
+<span id="cb19-24"><a href="#cb19-24"></a>    train_loss <span class="op">=</span> train_running_loss <span class="op">/</span> (idx <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb19-25"><a href="#cb19-25"></a>    model.<span class="bu">eval</span>()</span>
+<span id="cb19-26"><a href="#cb19-26"></a>    val_running_loss <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb19-27"><a href="#cb19-27"></a>    preds <span class="op">=</span> []</span>
+<span id="cb19-28"><a href="#cb19-28"></a>    golds <span class="op">=</span> []</span>
+<span id="cb19-29"><a href="#cb19-29"></a>    </span>
+<span id="cb19-30"><a href="#cb19-30"></a>    <span class="cf">with</span> torch.no_grad():</span>
+<span id="cb19-31"><a href="#cb19-31"></a>        <span class="cf">for</span> idx, sample <span class="kw">in</span> <span class="bu">enumerate</span>(tqdm(val_dataloader, position<span class="op">=</span><span class="dv">0</span>, leave<span class="op">=</span><span class="va">True</span>)):</span>
+<span id="cb19-32"><a href="#cb19-32"></a>            input_ids <span class="op">=</span> sample[<span class="st">'input_ids'</span>].to(device)</span>
+<span id="cb19-33"><a href="#cb19-33"></a>            attention_mask <span class="op">=</span> sample[<span class="st">'attention_mask'</span>].to(device)</span>
+<span id="cb19-34"><a href="#cb19-34"></a>            targets <span class="op">=</span> sample[<span class="st">'scores'</span>].to(device)</span>
+<span id="cb19-35"><a href="#cb19-35"></a>            </span>
+<span id="cb19-36"><a href="#cb19-36"></a>            outputs <span class="op">=</span> model(input_ids<span class="op">=</span>input_ids, </span>
+<span id="cb19-37"><a href="#cb19-37"></a>                            attention_mask<span class="op">=</span>attention_mask, </span>
+<span id="cb19-38"><a href="#cb19-38"></a>                            labels<span class="op">=</span>targets)</span>
+<span id="cb19-39"><a href="#cb19-39"></a>            </span>
+<span id="cb19-40"><a href="#cb19-40"></a>            preds.extend([<span class="bu">float</span>(i) <span class="cf">for</span> i <span class="kw">in</span> outputs[<span class="st">'logits'</span>].squeeze()])</span>
+<span id="cb19-41"><a href="#cb19-41"></a>            golds.extend([<span class="bu">float</span>(i) <span class="cf">for</span> i <span class="kw">in</span> targets])</span>
+<span id="cb19-42"><a href="#cb19-42"></a>            </span>
+<span id="cb19-43"><a href="#cb19-43"></a>            val_running_loss <span class="op">+=</span> outputs.loss.item()</span>
+<span id="cb19-44"><a href="#cb19-44"></a>        val_loss <span class="op">=</span> val_running_loss <span class="op">/</span> (idx <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb19-45"><a href="#cb19-45"></a>    </span>
+<span id="cb19-46"><a href="#cb19-46"></a>    <span class="co"># printing out results </span></span>
+<span id="cb19-47"><a href="#cb19-47"></a>    <span class="bu">print</span>(<span class="st">'-'</span> <span class="op">*</span> <span class="dv">30</span>)</span>
+<span id="cb19-48"><a href="#cb19-48"></a>    <span class="bu">print</span>(<span class="ss">f'Pearson Score: </span><span class="sc">{</span><span class="bu">float</span>(pearson(torch.tensor(preds), torch.tensor(golds)))<span class="sc">:.3f}</span><span class="ss">'</span>)</span>
+<span id="cb19-49"><a href="#cb19-49"></a>    <span class="bu">print</span>(<span class="ss">f'Train Loss EPOCH </span><span class="sc">{</span>epoch<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>train_loss<span class="sc">:.3f}</span><span class="ss">'</span>)</span>
+<span id="cb19-50"><a href="#cb19-50"></a>    <span class="bu">print</span>(<span class="ss">f'Valid Loss EPOCH </span><span class="sc">{</span>epoch<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>val_loss<span class="sc">:.3f}</span><span class="ss">'</span>)</span>
+<span id="cb19-51"><a href="#cb19-51"></a>    <span class="bu">print</span>(<span class="st">'-'</span> <span class="op">*</span> <span class="dv">30</span>)</span>
+<span id="cb19-52"><a href="#cb19-52"></a>    </span>
+<span id="cb19-53"><a href="#cb19-53"></a>stop <span class="op">=</span> timeit.default_timer()</span>
+<span id="cb19-54"><a href="#cb19-54"></a><span class="bu">print</span>(<span class="ss">f'Training Time: </span><span class="sc">{</span>stop<span class="op">-</span>start<span class="sc">: .2f}</span><span class="ss">s'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Let’s compare the performance of Model 1 (left side) and Model 2 (right side).</p>
 <p><img src="Screenshot 2024-06-05 at 8.44.01 PM.png" class="img-fluid"></p>
 <p>As you can see, Model 2 is more accurate than Model 1. It performs 4.6% better on the first epoch and 2.8% better on the second epoch. The training and validation loss of Model 2 is almost half of Model 1.</p>
@@ -568,29 +568,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="clear-the-memory" class="level2">
 <h2 class="anchored" data-anchor-id="clear-the-memory">Clear the Memory</h2>
 <p>We are close to the end. Make sure to free up your memory at this point.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>torch.cuda.empty_cache()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1"></a>torch.cuda.empty_cache()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="testing-the-model" class="level2">
 <h2 class="anchored" data-anchor-id="testing-the-model">Testing the Model</h2>
-<div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>preds <span class="op">=</span> []</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>ids <span class="op">=</span> []</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">eval</span>()</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> torch.no_grad():</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> idx, sample <span class="kw">in</span> <span class="bu">enumerate</span>(tqdm(test_dataloader)):</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>        input_ids <span class="op">=</span> sample[<span class="st">'input_ids'</span>].to(device)</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>        attention_mask <span class="op">=</span> sample[<span class="st">'attention_mask'</span>].to(device)</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>        ids.extend(sample[<span class="st">"ids"</span>])</span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>        outputs <span class="op">=</span> model(input_ids<span class="op">=</span>input_ids, attention_mask<span class="op">=</span>attention_mask)</span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>        preds.extend([<span class="bu">float</span>(i) <span class="cf">for</span> i <span class="kw">in</span> outputs[<span class="st">"logits"</span>].squeeze()])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1"></a>preds <span class="op">=</span> []</span>
+<span id="cb21-2"><a href="#cb21-2"></a>ids <span class="op">=</span> []</span>
+<span id="cb21-3"><a href="#cb21-3"></a>model.<span class="bu">eval</span>()</span>
+<span id="cb21-4"><a href="#cb21-4"></a><span class="cf">with</span> torch.no_grad():</span>
+<span id="cb21-5"><a href="#cb21-5"></a>    <span class="cf">for</span> idx, sample <span class="kw">in</span> <span class="bu">enumerate</span>(tqdm(test_dataloader)):</span>
+<span id="cb21-6"><a href="#cb21-6"></a>        input_ids <span class="op">=</span> sample[<span class="st">'input_ids'</span>].to(device)</span>
+<span id="cb21-7"><a href="#cb21-7"></a>        attention_mask <span class="op">=</span> sample[<span class="st">'attention_mask'</span>].to(device)</span>
+<span id="cb21-8"><a href="#cb21-8"></a>        ids.extend(sample[<span class="st">"ids"</span>])</span>
+<span id="cb21-9"><a href="#cb21-9"></a>        </span>
+<span id="cb21-10"><a href="#cb21-10"></a>        outputs <span class="op">=</span> model(input_ids<span class="op">=</span>input_ids, attention_mask<span class="op">=</span>attention_mask)</span>
+<span id="cb21-11"><a href="#cb21-11"></a>        preds.extend([<span class="bu">float</span>(i) <span class="cf">for</span> i <span class="kw">in</span> outputs[<span class="st">"logits"</span>].squeeze()])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="submission" class="level2">
 <h2 class="anchored" data-anchor-id="submission">Submission</h2>
 <p>Congratulations on making it this far! Your code is now ready to be submitted. Save your predicted scores in a <em>.</em>csv file and submit the results. Kaggle will use a hidden testing dataset to evaluate your model. You will then be able to see how well your model performs on these unseen datasets.</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>submission_df <span class="op">=</span> pd.DataFrame(<span class="bu">list</span>(<span class="bu">zip</span>(ids, preds)),</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>               columns <span class="op">=</span>[<span class="st">"id"</span>, <span class="st">"score"</span>])</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>submission_df.to_csv(<span class="st">"submission.csv"</span>, index<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>submission_df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1"></a>submission_df <span class="op">=</span> pd.DataFrame(<span class="bu">list</span>(<span class="bu">zip</span>(ids, preds)),</span>
+<span id="cb22-2"><a href="#cb22-2"></a>               columns <span class="op">=</span>[<span class="st">"id"</span>, <span class="st">"score"</span>])</span>
+<span id="cb22-3"><a href="#cb22-3"></a>submission_df.to_csv(<span class="st">"submission.csv"</span>, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb22-4"><a href="#cb22-4"></a>submission_df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Thank you for sticking with me up to this point. This has been my first time working on an NLP case competition, and it’s also my first time writing about it. I hope it provided some value to you. Let’s continue practicing and improving together!</p>
 <p>To access my complete code for this Kaggle competition, click <a href="https://www.kaggle.com/code/toobarahimnia/patent-phrase-to-phrase-matching">here</a>.</p>
 
