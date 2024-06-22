@@ -15,7 +15,7 @@ format:
     theme: cosmo 
     css: styles.css
     code-line-numbers: true
-    highlight-style: github-dark      
+    highlight-style: gruvbox-dark      
 
 editor: visual
 
