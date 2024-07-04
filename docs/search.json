@@ -86,49 +86,49 @@
   {
     "objectID": "posts/blog5/index.html",
     "href": "posts/blog5/index.html",
-    "title": "How to Setup a Machine for Deep Learning Environment on Mac",
+    "title": "How to Setup a Machine for Deep Learning Environment (Mac Version)",
     "section": "",
     "text": "Create a Deep Learning environment on your own system using mamba, and fastai.\nRecently, I discovered a fantastic series of recorded live coding sessions by Jeremy Howard from fastai. These sessions are a treasure trove for machine learning and deep learning enthusiasts, offering practical insights and cutting-edge techniques. Inspired by Jeremy’s work, I’ve decided to document my learnings through writing blog posts. My goal is to understand, remember, and share some of the valuable tips and tricks from these sessions with you.\nYou can explore these amazing sessions here.\nI’m using a MacBook Pro, so some steps might differ slightly from Jeremy’s Windows setup. However, the overall process is quite similar, as we’ll be working within a Linux distribution."
   },
   {
     "objectID": "posts/blog5/index.html#definitions",
     "href": "posts/blog5/index.html#definitions",
-    "title": "How to Setup a Machine for Deep Learning Environment on Mac",
+    "title": "How to Setup a Machine for Deep Learning Environment (Mac Version)",
     "section": "Definitions",
     "text": "Definitions\n\nTerminal and Shell\nLet’s start with the terminal. A terminal, also known as a command line interface (CLI), is a text-based interface used to interact with the operating system. It allows us to execute text commands, run scripts, and manage system processes. This is done through a shell, which is a command-line interpreter that understands and executes the commands.\nFor Mac users, here is the Terminal User Guide to help you get started.\n\n\nPrompt\nWhen you open the terminal, you’ll see the prompt, which includes your username and the tilde (~) sign. The prompt is a text indicator or symbol that shows the system is ready to accept commands. It usually contains information about the current directory, username, and hostname of the machine. The prompt serves as a visual cue that the terminal is awaiting input.\n\n\n\n\n\n\n\nMac vs Windows\nOn a Mac, the terminal is called “Terminal” and is a Unix-based shell, typically using Bash or Zsh, which are powerful for development and system management tasks. Windows traditionally used Command Prompt, which is less feature-rich compared to Unix shells. However, Windows now also includes PowerShell and the Windows Subsystem for Linux (WSL), which provides a more Unix-like environment."
   },
   {
     "objectID": "posts/blog5/index.html#system-setup",
     "href": "posts/blog5/index.html#system-setup",
-    "title": "How to Setup a Machine for Deep Learning Environment on Mac",
+    "title": "How to Setup a Machine for Deep Learning Environment (Mac Version)",
     "section": "System Setup",
     "text": "System Setup\nIf you have a Mac, you can skip the following step as everything is already integrated.\nFor Windows users, you need to first install Linux with WSL:\nwsl --install\nOn Windows, we use a Linux distribution called Ubuntu, and the shell used is Bash. When you open your terminal for the first time, you need to create a username and password. Then, Ubuntu sets up a new virtual machine."
   },
   {
     "objectID": "posts/blog5/index.html#understanding-conda-and-mamba",
     "href": "posts/blog5/index.html#understanding-conda-and-mamba",
-    "title": "How to Setup a Machine for Deep Learning Environment on Mac",
+    "title": "How to Setup a Machine for Deep Learning Environment (Mac Version)",
     "section": "Understanding Conda and Mamba",
     "text": "Understanding Conda and Mamba\nConda and Mamba are package managers that simplify the process of installing and managing software packages, particularly for data science and machine learning projects. They create isolated environments, ensuring that dependencies for different projects do not conflict. For example, when you type which python in your terminal, it typically shows your system’s Python version. Modifying this version of Python is not recommended as it’s used by your computer to run programs on your operating system. Instead, you should install a different version of Python for your use.\nIn a nutshell, the difference between Conda and Mamba is that Mamba is a faster version of Conda, addressing some of the speed and performance issues related to Conda."
   },
   {
     "objectID": "posts/blog5/index.html#setting-up-local-machine",
     "href": "posts/blog5/index.html#setting-up-local-machine",
-    "title": "How to Setup a Machine for Deep Learning Environment on Mac",
+    "title": "How to Setup a Machine for Deep Learning Environment (Mac Version)",
     "section": "Setting Up Local Machine",
     "text": "Setting Up Local Machine\nAs of September 2023, Mambaforge has been discouraged in favor of Miniforge. So, we will use Miniforge for our setup.\n\nWith the release of Miniforge3-23.3.1-0, that incorporated the changes in #277, the packages and configuration of Mambaforge and Miniforge3 are now identical. The only difference between the two is the name of the installer and, subsequently, the default installation directory.\n\n\nInstall Mamba\n\nVisit this link to select the installer for your operating system, copy its link, and move on to the next step.\n\nOpen your terminal and run the following commands one after the other:\nmkdir Projects # in your home directory create your project\n\nwget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-arm64.sh # paste the link you copied from prev step here\n\nbash Miniforge3-MacOSX-arm64.sh\n\nOnce the Miniforge installer is complete, you are asked to close and re-open your shell.\nWhen you do that, you’ll see (base) before the prompt, indicating that you’re inside the environment. To confirm, you can type which python, which will show that you’re now in the Miniforge directory.\n\n\n\n\n\nThe file with the .sh extension is a shell script with commands listed one after another. To see the content of the shell script, type:\nless Miniforge3-MacOSX-arm64.sh\nTo list the contents of your directory in a human-readable format, type:\nls -lh\nAnd to delete a directory, you can use:\nrm -rf miniforge\nWhere rm means to remove, -r means recursively, and -f means force. If you want to install everything from scratch, remove the directory and start again.\n\n\nCreate a new Environment\nYou can create a new environment by typing the following command into the Command Prompt:\nmamba create -n my_env devbio-napari python=3.9 pyqt -c conda-forge\nThis will create a new environment with the name my_first_env and Python version 3.9 installed. Additionally, the latest version of devbio-napari will be installed in this environment. Devbio-napari is a collection of Python libraries and Napari plugins maintained by the BiAPoL team, useful for processing fluorescent microscopy image data. Conda will ask for your permission to download the needed packages with Proceed [y]/n. By hitting Enter, you confirm this, and Mamba will download and install the necessary packages.\nTo activate the environment, type:\nmamba activate my_env"
   },
   {
     "objectID": "posts/blog5/index.html#install-packages-with-mamba",
     "href": "posts/blog5/index.html#install-packages-with-mamba",
-    "title": "How to Setup a Machine for Deep Learning Environment on Mac",
+    "title": "How to Setup a Machine for Deep Learning Environment (Mac Version)",
     "section": "Install Packages with Mamba",
     "text": "Install Packages with Mamba\n\nIPython\nNow you need to install libraries. One such library is IPython (Interactive Python), which works on the model known as REPL — Read-Eval-Print-Loop.\nmamba install ipython\n\n\nPytorch\nFor Pytorch you can select your preferences from here and then run the corresponding install command.\n\n\n\n\n\nmamba install pytorch torchvision torchaudio -c pytorch\n\n\nJupyter\nmamba install jupyterlab\nTo run Jupyter Notebook, simply type:\njupyter lab\nThe above command will work just fine on Mac. On Windows you might face with an error. To fix that, you can Ctrl + click on the link or use the — no-browser.\n\n\n\n\n\n\n\nInstalling New Packages\nIf you want to install new packages while working in your Jupyter notebook, you can:\n\nOpen a new Command Prompt window.\nActivate your current environment.\nInstall packages by specifying the channel with -c conda-forge.\n\nFor example, if you want to install seaborn, type:\nmamba install seaborn -c conda-forge"
   },
   {
     "objectID": "posts/blog5/index.html#final-words",
     "href": "posts/blog5/index.html#final-words",
-    "title": "How to Setup a Machine for Deep Learning Environment on Mac",
+    "title": "How to Setup a Machine for Deep Learning Environment (Mac Version)",
     "section": "Final Words",
     "text": "Final Words\nIn this quick tutorial, we have successfully installed Miniforge. I hope the instructions were clear and easy to follow. If you need more detailed steps and additional tips on using the terminal, you can always refer back to the original video linked above.\nOn another note, I should add that Jeremy is a fantastic instructor, and I highly recommend watching his videos to deepen your understanding of data science and machine learning concepts. His hands-on approach and clear explanations make complex topics accessible and engaging. Dive in and start learning from one of the best!\nNow, it’s time for you to start experimenting with Conda environments, familiarize yourself with some essential packages, and build some awesome projects. Happy coding!"
   },
@@ -305,6 +305,6 @@
     "href": "index.html",
     "title": "CognitiveDiscoveries",
     "section": "",
-    "text": "How to Setup a Machine for Deep Learning Environment on Mac\n\n\n\n\n\n\nCode\n\n\nAnalysis\n\n\nMamba\n\n\n\n\n\n\n\n\n\nJul 3, 2024\n\n\nTooba Rahimnia\n\n\n\n\n\n\n\n\n\n\n\n\nHow to Build a Music Genre Classifier Using Hugging Face Transformers and Gradio\n\n\n\n\n\n\nCode\n\n\nAnalysis\n\n\nAudio Signal Processing\n\n\n\n\n\n\n\n\n\nJun 20, 2024\n\n\nTooba Rahimnia\n\n\n\n\n\n\n\n\n\n\n\n\nNavigating the Kaggle U.S. Patent Phrase to Phrase Matching Competition: A Step-by-Step Guide\n\n\n\n\n\n\nCode\n\n\nAnalysis\n\n\nNLP\n\n\n\n\n\n\n\n\n\nJun 5, 2024\n\n\nTooba Rahimnia\n\n\n\n\n\n\n\n\n\n\n\n\nImplementing Binary Image Classification Using FastAI, and Flask\n\n\n\n\n\n\nCode\n\n\nAnalysis\n\n\nComputer Vision\n\n\n\n\n\n\n\n\n\nMay 28, 2024\n\n\nTooba Rahimnia\n\n\n\n\n\n\n\n\n\n\n\n\nHow to Build a Web App Using HuggingFace and Gradio Within an Hour\n\n\n\n\n\n\nCode\n\n\nAnalysis\n\n\nComputer Vision\n\n\n\n\n\n\n\n\n\nMay 20, 2024\n\n\nTooba Rahimnia\n\n\n\n\n\n\nNo matching items"
+    "text": "How to Setup a Machine for Deep Learning Environment (Mac Version)\n\n\n\n\n\n\nCode\n\n\nAnalysis\n\n\nMamba\n\n\n\n\n\n\n\n\n\nJul 3, 2024\n\n\nTooba Rahimnia\n\n\n\n\n\n\n\n\n\n\n\n\nHow to Build a Music Genre Classifier Using Hugging Face Transformers and Gradio\n\n\n\n\n\n\nCode\n\n\nAnalysis\n\n\nAudio Signal Processing\n\n\n\n\n\n\n\n\n\nJun 20, 2024\n\n\nTooba Rahimnia\n\n\n\n\n\n\n\n\n\n\n\n\nNavigating the Kaggle U.S. Patent Phrase to Phrase Matching Competition: A Step-by-Step Guide\n\n\n\n\n\n\nCode\n\n\nAnalysis\n\n\nNLP\n\n\n\n\n\n\n\n\n\nJun 5, 2024\n\n\nTooba Rahimnia\n\n\n\n\n\n\n\n\n\n\n\n\nImplementing Binary Image Classification Using FastAI, and Flask\n\n\n\n\n\n\nCode\n\n\nAnalysis\n\n\nComputer Vision\n\n\n\n\n\n\n\n\n\nMay 28, 2024\n\n\nTooba Rahimnia\n\n\n\n\n\n\n\n\n\n\n\n\nHow to Build a Web App Using HuggingFace and Gradio Within an Hour\n\n\n\n\n\n\nCode\n\n\nAnalysis\n\n\nComputer Vision\n\n\n\n\n\n\n\n\n\nMay 20, 2024\n\n\nTooba Rahimnia\n\n\n\n\n\n\nNo matching items"
   }
 ]

@@ -1,5 +1,5 @@
 ---
-title: "How to Setup a Machine for Deep Learning Environment on Mac"
+title: "How to Setup a Machine for Deep Learning Environment (Mac Version)"
 author: "Tooba Rahimnia"
 date: "2024-07-03"
 categories: [Code, Analysis, Mamba] #news
@@ -62,7 +62,7 @@ As of September 2023, Mambaforge has been discouraged in favor of Miniforge. So,
 
 1.  Visit this [link](https://github.com/conda-forge/miniforge) to select the installer for your operating system, copy its link, and move on to the next step.
 
-    ![](Screenshot 2024-07-03 at 10.04.35 PM.png){width="492"}
+    ![](Screenshot%202024-07-03%20at%2010.04.35%20PM.png){width="492"}
 
 2.  Open your terminal and run the following commands one after the other:
 
@@ -130,13 +130,13 @@ mamba install ipython
 
 For Pytorch you can select your preferences from [here](https://pytorch.org) and then run the corresponding install command.
 
-![](Screenshot 2024-07-03 at 9.32.42 PM.png){fig-align="center"}
+![](Screenshot%202024-07-03%20at%209.32.42%20PM.png){fig-align="center"}
 
 ``` bash
 mamba install pytorch torchvision torchaudio -c pytorch
 ```
 
-### Jupyter 
+### Jupyter
 
 ``` bash
 mamba install jupyterlab
@@ -150,7 +150,7 @@ jupyter lab
 
 The above command will work just fine on Mac. On Windows you might face with an error. To fix that, you can Ctrl + click on the link or use the — no-browser.
 
-![](Screenshot 2024-07-03 at 9.41.36 PM.png){fig-align="center"}
+![](Screenshot%202024-07-03%20at%209.41.36%20PM.png){fig-align="center"}
 
 ### Installing New Packages
 
