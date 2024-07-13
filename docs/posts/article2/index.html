@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Tooba Rahimnia">
+<meta name="dcterms.date" content="2024-05-28">
+
+<title>CognitiveDiscoveries - Implementing Binary Image Classification Using FastAI, and Flask</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">CognitiveDiscoveries</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/toobarahimnia"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Implementing Binary Image Classification Using FastAI, and Flask</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Code</div>
+                <div class="quarto-category">Analysis</div>
+                <div class="quarto-category">Computer Vision</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Tooba Rahimnia </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">May 28, 2024</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#data-loading-and-model-fine-tuning-in-jupyter-notebook" id="toc-data-loading-and-model-fine-tuning-in-jupyter-notebook" class="nav-link active" data-scroll-target="#data-loading-and-model-fine-tuning-in-jupyter-notebook">Data Loading and Model Fine-Tuning in Jupyter Notebook</a>
+  <ul class="collapse">
+  <li><a href="#downloading-data" id="toc-downloading-data" class="nav-link" data-scroll-target="#downloading-data">Downloading Data</a></li>
+  <li><a href="#data-cleaning" id="toc-data-cleaning" class="nav-link" data-scroll-target="#data-cleaning">Data Cleaning</a></li>
+  <li><a href="#data-augmentation-and-loading" id="toc-data-augmentation-and-loading" class="nav-link" data-scroll-target="#data-augmentation-and-loading">Data Augmentation and Loading</a></li>
+  <li><a href="#training-the-model" id="toc-training-the-model" class="nav-link" data-scroll-target="#training-the-model">Training the Model</a></li>
+  </ul></li>
+  <li><a href="#building-a-restful-api-with-flask" id="toc-building-a-restful-api-with-flask" class="nav-link" data-scroll-target="#building-a-restful-api-with-flask">Building a RESTful API with Flask</a></li>
+  <li><a href="#next-step-deployment" id="toc-next-step-deployment" class="nav-link" data-scroll-target="#next-step-deployment">Next Step: Deployment</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>This guide covers the entire process of deploying a dog breed image classification model. The model is locally hosted, and utilizes a RESTful API built with Flask.</p>
+<p><img src="puppy.avif" class="img-fluid"></p>
+<p>In this project, we will build a web application that can classify the breed of a dog given an image provided by the user. We will walk through the entire process, from loading the data and fine-tuning our model to designing the back end and front end using Flask, HTML, and CSS.</p>
+<p>So, without further ado, let’s get started.</p>
+<section id="data-loading-and-model-fine-tuning-in-jupyter-notebook" class="level2">
+<h2 class="anchored" data-anchor-id="data-loading-and-model-fine-tuning-in-jupyter-notebook">Data Loading and Model Fine-Tuning in Jupyter Notebook</h2>
+<p>First, install and load all the packages and dependencies:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="op">!</span>pip install fastbook</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="op">!</span>pip install timm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a><span class="im">import</span> timm <span class="co"># must be imported before fastai</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="im">import</span> fastbook </span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="im">from</span> fastbook <span class="im">import</span> <span class="op">*</span> </span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="im">from</span> fastai.vision.widgets <span class="im">import</span> <span class="op">*</span> </span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="im">import</span> requests <span class="co"># for making HTTP requests </span></span>
+<span id="cb2-6"><a href="#cb2-6"></a><span class="im">from</span> bs4 <span class="im">import</span> BeautifulSoup <span class="im">as</span> bs </span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb2-8"><a href="#cb2-8"></a><span class="im">import</span> os</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="downloading-data" class="level3">
+<h3 class="anchored" data-anchor-id="downloading-data">Downloading Data</h3>
+<p>In the next steps, we will extract our dataset from a webpage using a method called web scraping. Our target website contains an extensive list of dog breed names. We will use the first 50 breed names and then download 150 different images for each breed using the Python library&nbsp;<code>download_images</code>, which retrieves images directly from Google.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Fetch the webpage and parse it</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>URL <span class="op">=</span> <span class="st">"&lt;https://www.akc.org/expert-advice/news/most-popular-dog-breeds-full-ranking-list/&gt;"</span> </span>
+<span id="cb3-3"><a href="#cb3-3"></a>page <span class="op">=</span> requests.get(URL) </span>
+<span id="cb3-4"><a href="#cb3-4"></a>soup <span class="op">=</span> bs(page.content, <span class="st">"html.parser"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This Following line of code uses a list comprehension to extract the text from the first cell of each row within the table body of a HTML document parsed using BeautifulSoup (soup).</p>
+<p>To break it down:</p>
+<ul>
+<li><p><code>soup.select("tbody tr")</code>: This part uses the select method of BeautifulSoup to find all (table row) elements that are descendants of a (table body) element in the parsed HTML document. It returns a list of these elements.</p></li>
+<li><p><code>[row.td.get_text(strip=True) for row in ...]</code>: This is a list comprehension that iterates over each element (row) found by select and extracts the text from the first cell within that row.&nbsp;<code>row.td</code>&nbsp;accesses the first element in the row, and&nbsp;<code>get_text(strip=True)</code>&nbsp;gets the text content of that element, stripping any leading or trailing whitespace.</p></li>
+<li><p><code>[:50]</code>: Finally, [:50] at the end limits the resulting list of breed names to the first 50 entries, ensuring that only the top 50 breeds are considered.</p></li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a>breeds <span class="op">=</span> [row.td.get_text(strip<span class="op">=</span><span class="va">True</span>) <span class="cf">for</span> row <span class="kw">in</span> soup.select(<span class="st">"tbody tr"</span>)][:<span class="dv">50</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now, let’s download images using our list of breeds as keywords for the search engine:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># Set up the working directory</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>root <span class="op">=</span> Path.cwd() <span class="op">/</span> <span class="st">"dog-breed-DS"</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a></span>
+<span id="cb5-4"><a href="#cb5-4"></a><span class="co"># Query and download images for each breed</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a><span class="cf">if</span> <span class="kw">not</span> root.exists():</span>
+<span id="cb5-6"><a href="#cb5-6"></a>  root.mkdir()</span>
+<span id="cb5-7"><a href="#cb5-7"></a>  <span class="cf">for</span> breed <span class="kw">in</span> breeds:</span>
+<span id="cb5-8"><a href="#cb5-8"></a>      <span class="co"># duckduckgo_search(root, breed, breed, max_results=100)</span></span>
+<span id="cb5-9"><a href="#cb5-9"></a>      dest <span class="op">=</span> root<span class="op">/</span>breed</span>
+<span id="cb5-10"><a href="#cb5-10"></a>      dest.mkdir(exist_ok<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-11"><a href="#cb5-11"></a>      download_images(dest, urls<span class="op">=</span>search_images_ddg(<span class="ss">f'</span><span class="sc">{</span>breed<span class="sc">}</span><span class="ss"> dog'</span>, max_images<span class="op">=</span><span class="dv">150</span>))</span>
+<span id="cb5-12"><a href="#cb5-12"></a>      resize_images(dest, dest<span class="op">=</span>dest)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="data-cleaning" class="level3">
+<h3 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h3>
+<p>If you proceed with training your model on the dataset you collected, you might end up with an error similar to this:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1"></a><span class="ex">OSError:</span> Caught OSError in DataLoader worker process 0.</span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="ex">Original</span> Traceback <span class="er">(</span><span class="ex">most</span> recent call last<span class="kw">)</span><span class="bu">:</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a>  <span class="ex">File</span> <span class="st">"/usr/local/lib/python3.10/dist-packages/PIL/ImageFile.py"</span>, line 249, in load</span>
+<span id="cb6-4"><a href="#cb6-4"></a>    <span class="ex">s</span> = read<span class="er">(</span><span class="ex">self.decodermaxblock</span><span class="kw">)</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a> <span class="ex">...</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a> </span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="ex">struct.error:</span> unpack_from requires a buffer of at least 4 bytes for unpacking 4 bytes at offset 0 <span class="er">(</span><span class="ex">actual</span> buffer size is 0<span class="kw">)</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a></span>
+<span id="cb6-9"><a href="#cb6-9"></a><span class="ex">The</span> above exception was the direct cause of the following exception:</span>
+<span id="cb6-10"><a href="#cb6-10"></a></span>
+<span id="cb6-11"><a href="#cb6-11"></a><span class="ex">Traceback</span> <span class="er">(</span><span class="ex">most</span> recent call last<span class="kw">)</span><span class="bu">:</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a>  <span class="ex">File</span> <span class="st">"/usr/local/lib/python3.10/dist-packages/torch/utils/data/_utils/worker.py"</span>, line 308, in _worker_loop</span>
+<span id="cb6-13"><a href="#cb6-13"></a>    <span class="ex">data</span> = fetcher.fetch<span class="er">(</span><span class="ex">index</span><span class="kw">)</span>  <span class="co"># type: ignore[possibly-undefined]</span></span>
+<span id="cb6-14"><a href="#cb6-14"></a><span class="ex">...</span>    </span>
+<span id="cb6-15"><a href="#cb6-15"></a></span>
+<span id="cb6-16"><a href="#cb6-16"></a>  <span class="ex">File</span> <span class="st">"/usr/local/lib/python3.10/dist-packages/PIL/ImageFile.py"</span>, line 256, in load</span>
+<span id="cb6-17"><a href="#cb6-17"></a>    <span class="ex">raise</span> OSError<span class="er">(</span><span class="ex">msg</span><span class="kw">)</span> <span class="ex">from</span> e</span>
+<span id="cb6-18"><a href="#cb6-18"></a><span class="ex">OSError:</span> image file is truncated</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This error merely implies that one or more of your image files is corrupted or truncated. This can happen for various reasons, such as incomplete downloads, network issues, or issues with the image source. In order to fix this issue, you can clean the image dataset by deleting all the corrupted images in a given folder so that only the good ones remain in the directory:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a>cnt <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="cf">for</span> breedname <span class="kw">in</span> os.listdir(root):</span>
+<span id="cb7-3"><a href="#cb7-3"></a>    <span class="cf">for</span> filename <span class="kw">in</span> os.listdir(os.path.join(root, breedname)):</span>
+<span id="cb7-4"><a href="#cb7-4"></a>        <span class="cf">try</span>:</span>
+<span id="cb7-5"><a href="#cb7-5"></a>           img<span class="op">=</span>Image.<span class="bu">open</span>(os.path.join(root, breedname, filename))</span>
+<span id="cb7-6"><a href="#cb7-6"></a>        <span class="cf">except</span> <span class="pp">OSError</span>:</span>
+<span id="cb7-7"><a href="#cb7-7"></a>            <span class="bu">print</span>(<span class="st">"FILE:"</span>, os.path.join(breedname, filename), <span class="st">"is corrupt!"</span>)</span>
+<span id="cb7-8"><a href="#cb7-8"></a>            cnt <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a>            os.remove(os.path.join(root, breedname, filename))</span>
+<span id="cb7-10"><a href="#cb7-10"></a><span class="bu">print</span>(<span class="st">"Successfully Completed Operation! Files Courrupted are "</span>, cnt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="data-augmentation-and-loading" class="level3">
+<h3 class="anchored" data-anchor-id="data-augmentation-and-loading">Data Augmentation and Loading</h3>
+<p>At this step, we begin to set up a pipeline to process a dataset of dog images, applying necessary transformations and preparing it for training a deep learning model using the <strong><code>fastai</code></strong> library.</p>
+<p>First, we need to create the <code>DataBlock</code>. Let’s take it to smaller pieces and see what each part does:</p>
+<ul>
+<li><p><strong>DataBlock</strong>: <code>DataBlock</code> is a fastai class that allows you to define how to create your dataset. It provides a flexible and simple way to handle data pipelines.</p></li>
+<li><p><strong>blocks</strong>: This parameter defines the types of input and output blocks. <code>ImageBlock</code> is for handling images, and <code>CategoryBlock</code> is for categorical labels (the dog breeds in this case).</p></li>
+<li><p><strong>get_items</strong>: <code>get_image_files</code> is a function that retrieves all the image file paths.</p></li>
+<li><p><strong>splitter</strong>: <code>RandomSplitter(valid_pct=0.2, seed=42)</code> is used to split the dataset into training and validation sets. Here, 20% of the data is used for validation, and the split is reproducible due to the set seed.</p></li>
+<li><p><strong>get_y</strong>: <code>parent_label</code> is a function that gets the label for each image, typically by extracting it from the parent directory name.</p></li>
+<li><p><strong>item_tfms</strong>: <code>Resize(129)</code> is an item transformation that resizes each image to 129x129 pixels.</p></li>
+</ul>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a>dogs <span class="op">=</span> DataBlock(</span>
+<span id="cb8-2"><a href="#cb8-2"></a>      blocks<span class="op">=</span>(ImageBlock, CategoryBlock),</span>
+<span id="cb8-3"><a href="#cb8-3"></a>      get_items<span class="op">=</span>get_image_files,</span>
+<span id="cb8-4"><a href="#cb8-4"></a>      splitter<span class="op">=</span>RandomSplitter(valid_pct<span class="op">=</span><span class="fl">0.2</span>, seed<span class="op">=</span><span class="dv">42</span>),</span>
+<span id="cb8-5"><a href="#cb8-5"></a>      get_y<span class="op">=</span>parent_label,</span>
+<span id="cb8-6"><a href="#cb8-6"></a>      item_tfms<span class="op">=</span>Resize(<span class="dv">129</span>)</span>
+<span id="cb8-7"><a href="#cb8-7"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In the following cell we are trying to do the data augmentation to enhance the performance of our model:</p>
+<ul>
+<li><p><strong>dogs.new</strong>: This creates a new&nbsp;<code>DataBlock</code>&nbsp;object with updated transformations.</p></li>
+<li><p><strong>item_tfms</strong>:&nbsp;<code>RandomResizedCrop(129, min_scale=0.5)</code>&nbsp;replaces the previous&nbsp;<code>Resize(129)</code>. This transformation randomly crops the image to 129x129 pixels with a minimum scale of 0.5, which helps with data augmentation.</p></li>
+<li><p><strong>batch_tfms</strong>:&nbsp;<code>aug_transforms(mult=2)</code>&nbsp;applies a set of data augmentation transformations to the entire batch. The&nbsp;<code>mult=2</code>&nbsp;argument increases the intensity of these transformations.</p></li>
+</ul>
+<p>You can try to change the numbers to find the right adjustment for your model design.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1"></a>dogs <span class="op">=</span> dogs.new(</span>
+<span id="cb9-2"><a href="#cb9-2"></a>      item_tfms <span class="op">=</span> RandomResizedCrop(<span class="dv">129</span>, min_scale<span class="op">=</span><span class="fl">0.5</span>),</span>
+<span id="cb9-3"><a href="#cb9-3"></a>      batch_tfms <span class="op">=</span> aug_transforms(mult<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb9-4"><a href="#cb9-4"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The next method creates the DataLoaders object, which is used to load the data in batches.&nbsp;<strong><code>root</code></strong>&nbsp;is the root directory where the images are stored.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1"></a>dls <span class="op">=</span> dogs.dataloaders(root)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Finally, we show a batch of images from the training set for inspection.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1"></a>dls.train.show_batch(max_n<span class="op">=</span><span class="dv">4</span>, nrows<span class="op">=</span><span class="dv">1</span>, unique<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="data_aug.png" class="img-fluid"></p>
+</section>
+<section id="training-the-model" class="level3">
+<h3 class="anchored" data-anchor-id="training-the-model">Training the Model</h3>
+<p>Let’s go ahead and train our model</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a>learn <span class="op">=</span> cnn_learner(dls, resnet34, metrics<span class="op">=</span>error_rate)</span>
+<span id="cb12-2"><a href="#cb12-2"></a>learn.fine_tune(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>As you can see we get a training time of 3:53 min on the last epoch.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="model 1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="422"></p>
+</figure>
+</div>
+<p>Thanks to the great work that’s been done by Ross Wightman, we can import the powerful timm library which provides state-of-the-art pre-trained computer vision models. This allows us to improve our model performance. You can learn more about the library through this <a href="https://www.kaggle.com/code/jhoward/which-image-models-are-best/">analysis</a>. </p>
+<p>Here are some of the models covered by timm:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1"></a>timm.list_models(<span class="st">'convnext*'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="timm.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="216"></p>
+</figure>
+</div>
+<p>Now, training on we get a better result!</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1"></a>learn <span class="op">=</span> vision_learner(dls, <span class="st">'convnext_tiny_in22k'</span>, metrics<span class="op">=</span>error_rate).to_fp16()</span>
+<span id="cb14-2"><a href="#cb14-2"></a>learn.fine_tune(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="model 2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="421"></p>
+</figure>
+</div>
+<p>Notice the time is much faster and the accuracy increased from 81% to almost 86%!</p>
+<p>Lastly, we download our model and we’re done with this part:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1"></a>learn.export(<span class="st">'/content/model.pkl'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="building-a-restful-api-with-flask" class="level2">
+<h2 class="anchored" data-anchor-id="building-a-restful-api-with-flask">Building a RESTful API with Flask</h2>
+<p>REST APIs have become essential to modern software applications, enabling seamless communication between systems and ensuring data consistency. They facilitate the easy exchange of information between various websites, databases, and SaaS (Software as a Service) applications. Whether you’re developing a mobile app, a web application, or integrating third-party services, understanding how to create a robust REST API is crucial. </p>
+<p>There are numerous ways to build a REST API, and leveraging existing frameworks and tools can streamline the process. One such example is&nbsp;<strong>Flask</strong>, a web framework in Python. With the&nbsp;<a href="https://flask-restful.readthedocs.io/en/latest/?utm_source=xp&amp;utm_medium=blog&amp;utm_campaign=content">Flask-RESTful extension</a>, developers can quickly and efficiently develop REST APIs. </p>
+<p>Now, let’s dive into the implementation and see how we can create a REST API using Flask and the Flask-RESTful extension.</p>
+<ol type="1">
+<li><p><strong>Setup Your Flask Project</strong></p>
+<ul>
+<li><p>Open VSCode</p></li>
+<li><p>Create a new directory for your project and navigate into it.</p></li>
+<li><p>Create a virtual environment:&nbsp;<code>python -m venv .venv</code></p></li>
+<li><p>Activate the virtual environment:</p>
+<ul>
+<li><p>On Windows: <code>.venv\Scripts\activate</code></p></li>
+<li><p>On macOS/Linux:&nbsp;<code>source .venv/bin/activate</code></p></li>
+</ul></li>
+<li><p>Install Flask and fastbook if you haven’t already:</p>
+<ul>
+<li><p><code>pip install fastbook</code></p></li>
+<li><p><code>pip install Flask</code></p></li>
+</ul></li>
+<li><p>Create the following project structure:</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource texinfo number-lines code-with-copy"><code class="sourceCode texinfo"><span id="cb16-1"><a href="#cb16-1"></a>├── app.py</span>
+<span id="cb16-2"><a href="#cb16-2"></a>├── templates</span>
+<span id="cb16-3"><a href="#cb16-3"></a>│   └── index.html</span>
+<span id="cb16-4"><a href="#cb16-4"></a>|   └── result.html</span>
+<span id="cb16-5"><a href="#cb16-5"></a>└── static</span>
+<span id="cb16-6"><a href="#cb16-6"></a>|   └── style.css</span>
+<span id="cb16-7"><a href="#cb16-7"></a>├── model.pkl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ul></li>
+</ol>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="dog_breed_app.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="566"></p>
+</figure>
+</div>
+<ol start="2" type="1">
+<li><p><strong>Create Your Flask App (<code>app.py</code>)</strong></p>
+<ul>
+<li><p>Import necessary libraries and set up your Flask app.</p></li>
+<li><p>Define routes for the home page (<code>index.html</code>) and result page (<code>result.html</code>).</p></li>
+<li><p>Use a form to upload an image on the home page and process the uploaded image on the result page.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1"></a><span class="im">from</span> flask <span class="im">import</span> Flask, render_template, request, jsonify, url_for</span>
+<span id="cb17-2"><a href="#cb17-2"></a><span class="im">from</span> fastbook <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb17-3"><a href="#cb17-3"></a><span class="im">from</span> fastai <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb17-4"><a href="#cb17-4"></a><span class="im">from</span> fastai.vision <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb17-5"><a href="#cb17-5"></a><span class="im">import</span> os</span>
+<span id="cb17-6"><a href="#cb17-6"></a></span>
+<span id="cb17-7"><a href="#cb17-7"></a></span>
+<span id="cb17-8"><a href="#cb17-8"></a><span class="co"># Define a flask app</span></span>
+<span id="cb17-9"><a href="#cb17-9"></a>app <span class="op">=</span> Flask(<span class="va">__name__</span>)</span>
+<span id="cb17-10"><a href="#cb17-10"></a>root <span class="op">=</span> os.getcwd()</span>
+<span id="cb17-11"><a href="#cb17-11"></a>filename <span class="op">=</span> <span class="st">'model.pkl'</span></span>
+<span id="cb17-12"><a href="#cb17-12"></a>learn <span class="op">=</span> load_learner(os.path.join(root, filename))</span>
+<span id="cb17-13"><a href="#cb17-13"></a></span>
+<span id="cb17-14"><a href="#cb17-14"></a></span>
+<span id="cb17-15"><a href="#cb17-15"></a><span class="at">@app.route</span>(<span class="st">'/'</span>)</span>
+<span id="cb17-16"><a href="#cb17-16"></a><span class="kw">def</span> index():</span>
+<span id="cb17-17"><a href="#cb17-17"></a>    <span class="co"># Main page</span></span>
+<span id="cb17-18"><a href="#cb17-18"></a>    <span class="cf">return</span> render_template(<span class="st">'index.html'</span>)</span>
+<span id="cb17-19"><a href="#cb17-19"></a></span>
+<span id="cb17-20"><a href="#cb17-20"></a></span>
+<span id="cb17-21"><a href="#cb17-21"></a><span class="at">@app.route</span>(<span class="st">'/predict'</span>, methods<span class="op">=</span>[<span class="st">'POST'</span>])</span>
+<span id="cb17-22"><a href="#cb17-22"></a><span class="kw">def</span> predict():</span>
+<span id="cb17-23"><a href="#cb17-23"></a>    prediction <span class="op">=</span> single_image_predict(request.files[<span class="st">'uploaded-file'</span>])</span>
+<span id="cb17-24"><a href="#cb17-24"></a>    prediction_dict <span class="op">=</span> json.loads(prediction.data.decode(<span class="st">'utf-8'</span>))  <span class="co"># Convert bytes to string and then to dict</span></span>
+<span id="cb17-25"><a href="#cb17-25"></a></span>
+<span id="cb17-26"><a href="#cb17-26"></a>    <span class="cf">return</span> render_template(<span class="st">'result.html'</span>, percentage<span class="op">=</span>prediction_dict[<span class="st">'probability'</span>], prediction<span class="op">=</span>prediction_dict[<span class="st">'dog_type'</span>])</span>
+<span id="cb17-27"><a href="#cb17-27"></a></span>
+<span id="cb17-28"><a href="#cb17-28"></a></span>
+<span id="cb17-29"><a href="#cb17-29"></a><span class="co">#function to predict image</span></span>
+<span id="cb17-30"><a href="#cb17-30"></a><span class="kw">def</span> single_image_predict(image):</span>
+<span id="cb17-31"><a href="#cb17-31"></a>    img_PIL <span class="op">=</span> Image.<span class="bu">open</span>(image)</span>
+<span id="cb17-32"><a href="#cb17-32"></a>    img <span class="op">=</span> tensor(img_PIL) <span class="co">#converting PIL image to tensor</span></span>
+<span id="cb17-33"><a href="#cb17-33"></a>    learn_inf <span class="op">=</span> learn.predict(img)</span>
+<span id="cb17-34"><a href="#cb17-34"></a>    <span class="cf">return</span> jsonify({<span class="st">'dog_type'</span>: learn_inf[<span class="dv">0</span>][<span class="dv">0</span>:],</span>
+<span id="cb17-35"><a href="#cb17-35"></a>                    <span class="st">'probability'</span>: <span class="bu">str</span>(<span class="bu">round</span>(<span class="bu">max</span>(learn_inf[<span class="dv">2</span>].numpy()<span class="op">*</span><span class="dv">100</span>), <span class="dv">2</span>))})</span>
+<span id="cb17-36"><a href="#cb17-36"></a></span>
+<span id="cb17-37"><a href="#cb17-37"></a></span>
+<span id="cb17-38"><a href="#cb17-38"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">'__main__'</span>:</span>
+<span id="cb17-39"><a href="#cb17-39"></a>    app.run(host<span class="op">=</span><span class="st">"0.0.0.0"</span>, port<span class="op">=</span><span class="dv">8000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ul></li>
+<li><p><strong>Create Your HTML Templates (<code>index.html</code> and <code>result.html</code>)</strong></p>
+<ul>
+<li><p><code>index.html</code>&nbsp;for the home page with a form to upload the image.</p></li>
+<li><p><code>result.html</code>&nbsp;to display the result (breed of the dog).</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1"></a><span class="op">&lt;!--</span> index.html <span class="op">--&gt;</span></span>
+<span id="cb18-2"><a href="#cb18-2"></a><span class="op">&lt;!</span>DOCTYPE html<span class="op">&gt;</span></span>
+<span id="cb18-3"><a href="#cb18-3"></a><span class="op">&lt;</span>html<span class="op">&gt;</span></span>
+<span id="cb18-4"><a href="#cb18-4"></a><span class="op">&lt;</span>head<span class="op">&gt;</span></span>
+<span id="cb18-5"><a href="#cb18-5"></a>    <span class="op">&lt;</span>title<span class="op">&gt;</span>Home<span class="op">&lt;/</span>title<span class="op">&gt;</span></span>
+<span id="cb18-6"><a href="#cb18-6"></a>    <span class="op">&lt;</span>meta name<span class="op">=</span><span class="st">"viewport"</span> content<span class="op">=</span><span class="st">"width=device-width, initial-scale=1.0"</span><span class="op">&gt;</span></span>
+<span id="cb18-7"><a href="#cb18-7"></a>    <span class="op">&lt;</span>link rel<span class="op">=</span><span class="st">"stylesheet"</span> <span class="bu">type</span><span class="op">=</span><span class="st">"text/css"</span> href<span class="op">=</span><span class="st">"/static/style.css"</span><span class="op">&gt;</span></span>
+<span id="cb18-8"><a href="#cb18-8"></a>    <span class="op">&lt;</span>link rel<span class="op">=</span><span class="st">"stylesheet"</span> <span class="bu">type</span><span class="op">=</span><span class="st">"text/css"</span> href<span class="op">=</span><span class="st">"</span><span class="sc">{{</span><span class="st"> url_for('static', filename='/styles.css') </span><span class="sc">}}</span><span class="st">"</span><span class="op">&gt;</span></span>
+<span id="cb18-9"><a href="#cb18-9"></a><span class="op">&lt;/</span>head<span class="op">&gt;</span></span>
+<span id="cb18-10"><a href="#cb18-10"></a></span>
+<span id="cb18-11"><a href="#cb18-11"></a><span class="op">&lt;</span>body<span class="op">&gt;</span></span>
+<span id="cb18-12"><a href="#cb18-12"></a></span>
+<span id="cb18-13"><a href="#cb18-13"></a>    <span class="op">&lt;</span>div <span class="kw">class</span><span class="op">=</span><span class="st">"container main"</span><span class="op">&gt;&lt;/</span>div<span class="op">&gt;</span></span>
+<span id="cb18-14"><a href="#cb18-14"></a>        <span class="op">&lt;</span>div <span class="kw">class</span><span class="op">=</span><span class="st">"row"</span><span class="op">&gt;</span></span>
+<span id="cb18-15"><a href="#cb18-15"></a>          <span class="op">&lt;</span>div <span class="kw">class</span><span class="op">=</span><span class="st">"col"</span><span class="op">&gt;</span></span>
+<span id="cb18-16"><a href="#cb18-16"></a>            <span class="op">&lt;</span>h1 <span class="kw">class</span><span class="op">=</span><span class="st">"header"</span><span class="op">&gt;</span>Dog Breed Image Classifier<span class="op">&lt;/</span>h1<span class="op">&gt;</span></span>
+<span id="cb18-17"><a href="#cb18-17"></a>            <span class="op">&lt;</span>form action<span class="op">=</span><span class="st">"</span><span class="sc">{{</span><span class="st"> url_for('predict')</span><span class="sc">}}</span><span class="st">"</span> method<span class="op">=</span><span class="st">"post"</span> enctype<span class="op">=</span><span class="st">"multipart/form-data"</span><span class="op">&gt;</span></span>
+<span id="cb18-18"><a href="#cb18-18"></a>                <span class="op">&lt;</span>label <span class="cf">for</span><span class="op">=</span><span class="st">"uploaded-file"</span> <span class="kw">class</span><span class="op">=</span><span class="st">"upload-frame"</span><span class="op">&gt;</span></span>
+<span id="cb18-19"><a href="#cb18-19"></a>                    Upload your photo here :)</span>
+<span id="cb18-20"><a href="#cb18-20"></a>                    <span class="op">&lt;</span><span class="bu">input</span> <span class="bu">type</span><span class="op">=</span><span class="st">"file"</span> <span class="bu">id</span><span class="op">=</span><span class="st">"uploaded-file"</span> <span class="kw">class</span><span class="op">=</span><span class="st">"form-control"</span> name<span class="op">=</span><span class="st">"uploaded-file"</span> style<span class="op">=</span><span class="st">"display: none;"</span> onchange<span class="op">=</span><span class="st">"displayImage(event)"</span><span class="op">&gt;</span></span>
+<span id="cb18-21"><a href="#cb18-21"></a>                <span class="op">&lt;/</span>label<span class="op">&gt;</span></span>
+<span id="cb18-22"><a href="#cb18-22"></a>                <span class="op">&lt;</span><span class="bu">input</span> <span class="bu">type</span><span class="op">=</span><span class="st">"hidden"</span> name<span class="op">=</span><span class="st">"image_path"</span> <span class="bu">id</span><span class="op">=</span><span class="st">"image_path"</span><span class="op">&gt;</span></span>
+<span id="cb18-23"><a href="#cb18-23"></a>                <span class="op">&lt;</span>div <span class="kw">class</span><span class="op">=</span><span class="st">"button-group"</span><span class="op">&gt;</span></span>
+<span id="cb18-24"><a href="#cb18-24"></a>                    <span class="op">&lt;!--</span> <span class="op">&lt;</span>button <span class="kw">class</span><span class="op">=</span><span class="st">"upload-photo-btn"</span> <span class="bu">type</span><span class="op">=</span><span class="st">"button"</span> onclick<span class="op">=</span><span class="st">"document.getElementById('file-input').click()"</span><span class="op">&gt;</span>Upload Photo<span class="op">&lt;/</span>button<span class="op">&gt;</span> <span class="op">--&gt;</span></span>
+<span id="cb18-25"><a href="#cb18-25"></a>                    <span class="op">&lt;</span>button <span class="kw">class</span><span class="op">=</span><span class="st">"submit-btn"</span> <span class="bu">type</span><span class="op">=</span><span class="st">"submit"</span><span class="op">&gt;</span>Submit<span class="op">&lt;/</span>button<span class="op">&gt;</span></span>
+<span id="cb18-26"><a href="#cb18-26"></a>                <span class="op">&lt;/</span>div<span class="op">&gt;</span></span>
+<span id="cb18-27"><a href="#cb18-27"></a>            <span class="op">&lt;/</span>form<span class="op">&gt;</span></span>
+<span id="cb18-28"><a href="#cb18-28"></a></span>
+<span id="cb18-29"><a href="#cb18-29"></a>            <span class="op">&lt;</span>script<span class="op">&gt;</span></span>
+<span id="cb18-30"><a href="#cb18-30"></a>                function displayImage(event) {</span>
+<span id="cb18-31"><a href="#cb18-31"></a>                    var <span class="bu">file</span> <span class="op">=</span> event.target.files[<span class="dv">0</span>]<span class="op">;</span></span>
+<span id="cb18-32"><a href="#cb18-32"></a>                    var reader <span class="op">=</span> new FileReader()<span class="op">;</span></span>
+<span id="cb18-33"><a href="#cb18-33"></a></span>
+<span id="cb18-34"><a href="#cb18-34"></a>                    reader.onload <span class="op">=</span> function(e) {</span>
+<span id="cb18-35"><a href="#cb18-35"></a>                        var imageUrl <span class="op">=</span> e.target.result<span class="op">;</span></span>
+<span id="cb18-36"><a href="#cb18-36"></a>                        var uploadFrame <span class="op">=</span> document.querySelector(<span class="st">'.upload-frame'</span>)<span class="op">;</span></span>
+<span id="cb18-37"><a href="#cb18-37"></a>                        uploadFrame.style.backgroundImage <span class="op">=</span> <span class="st">'url('</span> <span class="op">+</span> imageUrl <span class="op">+</span> <span class="st">')'</span><span class="op">;</span></span>
+<span id="cb18-38"><a href="#cb18-38"></a>                        document.getElementById(<span class="st">'image_path'</span>).value <span class="op">=</span> imageUrl<span class="op">;</span> <span class="op">//</span> Set the value of the hidden <span class="bu">input</span> field</span>
+<span id="cb18-39"><a href="#cb18-39"></a>                    }<span class="op">;</span></span>
+<span id="cb18-40"><a href="#cb18-40"></a></span>
+<span id="cb18-41"><a href="#cb18-41"></a>                    reader.readAsDataURL(<span class="bu">file</span>)<span class="op">;</span></span>
+<span id="cb18-42"><a href="#cb18-42"></a>                }</span>
+<span id="cb18-43"><a href="#cb18-43"></a></span>
+<span id="cb18-44"><a href="#cb18-44"></a>                function validateForm(event) {</span>
+<span id="cb18-45"><a href="#cb18-45"></a>                    var fileInput <span class="op">=</span> document.getElementById(<span class="st">'uploaded-file'</span>)<span class="op">;</span></span>
+<span id="cb18-46"><a href="#cb18-46"></a>                    <span class="cf">if</span> (fileInput.files.length <span class="op">===</span> <span class="dv">0</span>) {</span>
+<span id="cb18-47"><a href="#cb18-47"></a>                        alert(<span class="st">'Please upload a photo first'</span>)<span class="op">;</span></span>
+<span id="cb18-48"><a href="#cb18-48"></a>                        event.preventDefault()<span class="op">;</span> <span class="op">//</span> Prevent the form <span class="im">from</span> submitting</span>
+<span id="cb18-49"><a href="#cb18-49"></a>                    }</span>
+<span id="cb18-50"><a href="#cb18-50"></a>                }</span>
+<span id="cb18-51"><a href="#cb18-51"></a></span>
+<span id="cb18-52"><a href="#cb18-52"></a>                document.querySelector(<span class="st">'form'</span>).addEventListener(<span class="st">'submit'</span>, validateForm)<span class="op">;</span></span>
+<span id="cb18-53"><a href="#cb18-53"></a>            <span class="op">&lt;/</span>script<span class="op">&gt;</span></span>
+<span id="cb18-54"><a href="#cb18-54"></a></span>
+<span id="cb18-55"><a href="#cb18-55"></a>        <span class="op">&lt;/</span>div<span class="op">&gt;</span></span>
+<span id="cb18-56"><a href="#cb18-56"></a>    <span class="op">&lt;/</span>div<span class="op">&gt;</span></span>
+<span id="cb18-57"><a href="#cb18-57"></a></span>
+<span id="cb18-58"><a href="#cb18-58"></a>    <span class="op">&lt;/</span>body<span class="op">&gt;</span></span>
+<span id="cb18-59"><a href="#cb18-59"></a><span class="op">&lt;/</span>html<span class="op">&gt;</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1"></a><span class="op">&lt;!--</span> result.html <span class="op">--&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2"></a><span class="op">&lt;!</span>DOCTYPE html<span class="op">&gt;</span></span>
+<span id="cb19-3"><a href="#cb19-3"></a><span class="op">&lt;</span>html<span class="op">&gt;</span></span>
+<span id="cb19-4"><a href="#cb19-4"></a><span class="op">&lt;</span>head<span class="op">&gt;</span></span>
+<span id="cb19-5"><a href="#cb19-5"></a>    <span class="op">&lt;</span>title<span class="op">&gt;&lt;/</span>title<span class="op">&gt;</span></span>
+<span id="cb19-6"><a href="#cb19-6"></a>    <span class="op">&lt;</span>meta name<span class="op">=</span><span class="st">"viewport"</span> content<span class="op">=</span><span class="st">"width=device-width, initial-scale=1.0"</span><span class="op">&gt;</span></span>
+<span id="cb19-7"><a href="#cb19-7"></a>    <span class="op">&lt;</span>link rel<span class="op">=</span><span class="st">"stylesheet"</span> <span class="bu">type</span><span class="op">=</span><span class="st">"text/css"</span> href<span class="op">=</span><span class="st">"/static/style.css"</span><span class="op">&gt;</span></span>
+<span id="cb19-8"><a href="#cb19-8"></a>    <span class="op">&lt;</span>link rel<span class="op">=</span><span class="st">"stylesheet"</span> <span class="bu">type</span><span class="op">=</span><span class="st">"text/css"</span> href<span class="op">=</span><span class="st">"</span><span class="sc">{{</span><span class="st"> url_for('static', filename='/styles.css') </span><span class="sc">}}</span><span class="st">"</span><span class="op">&gt;</span></span>
+<span id="cb19-9"><a href="#cb19-9"></a><span class="op">&lt;/</span>head<span class="op">&gt;</span></span>
+<span id="cb19-10"><a href="#cb19-10"></a><span class="op">&lt;</span>body<span class="op">&gt;</span></span>
+<span id="cb19-11"><a href="#cb19-11"></a></span>
+<span id="cb19-12"><a href="#cb19-12"></a>    <span class="op">&lt;</span>header<span class="op">&gt;</span></span>
+<span id="cb19-13"><a href="#cb19-13"></a>        <span class="op">&lt;</span>div <span class="kw">class</span><span class="op">=</span><span class="st">"container"</span><span class="op">&gt;</span></span>
+<span id="cb19-14"><a href="#cb19-14"></a>            <span class="op">&lt;</span>h1 <span class="kw">class</span><span class="op">=</span><span class="st">"header"</span><span class="op">&gt;</span>Classification Results<span class="op">&lt;/</span>h1<span class="op">&gt;</span></span>
+<span id="cb19-15"><a href="#cb19-15"></a>        <span class="op">&lt;/</span>div<span class="op">&gt;</span></span>
+<span id="cb19-16"><a href="#cb19-16"></a>    <span class="op">&lt;/</span>header<span class="op">&gt;</span></span>
+<span id="cb19-17"><a href="#cb19-17"></a></span>
+<span id="cb19-18"><a href="#cb19-18"></a>    <span class="op">&lt;</span>div <span class="kw">class</span><span class="op">=</span><span class="st">"results"</span><span class="op">&gt;</span></span>
+<span id="cb19-19"><a href="#cb19-19"></a>        <span class="op">&lt;</span>h3<span class="op">&gt;</span>This <span class="kw">is</span> {{ percentage }}<span class="op">%</span> {{ prediction }}<span class="op">&lt;/</span>h3<span class="op">&gt;</span></span>
+<span id="cb19-20"><a href="#cb19-20"></a>        <span class="op">&lt;</span>p<span class="op">&gt;</span>Let<span class="st">'s play again! Hit the Home link below :)&lt;/p&gt;</span></span>
+<span id="cb19-21"><a href="#cb19-21"></a><span class="er">        &lt;div style="text-align: center;"&gt;</span></span>
+<span id="cb19-22"><a href="#cb19-22"></a>            <span class="op">&lt;</span>a href<span class="op">=</span><span class="st">"</span><span class="sc">{{</span><span class="st"> url_for('index') </span><span class="sc">}}</span><span class="st">"</span> <span class="kw">class</span><span class="op">=</span><span class="st">"back-btn"</span><span class="op">&gt;</span>Home<span class="op">&lt;/</span>a<span class="op">&gt;</span></span>
+<span id="cb19-23"><a href="#cb19-23"></a>        <span class="op">&lt;/</span>div<span class="op">&gt;</span></span>
+<span id="cb19-24"><a href="#cb19-24"></a>    <span class="op">&lt;/</span>div<span class="op">&gt;</span></span>
+<span id="cb19-25"><a href="#cb19-25"></a></span>
+<span id="cb19-26"><a href="#cb19-26"></a><span class="op">&lt;/</span>body<span class="op">&gt;</span></span>
+<span id="cb19-27"><a href="#cb19-27"></a><span class="op">&lt;/</span>html<span class="op">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ul></li>
+<li><p><strong>Add Pretrained Model for Dog Breed Classification</strong></p>
+<ul>
+<li><p>Use a the downloaded pretrained model for dog breed classification.</p></li>
+<li><p>Load the model in your Flask app and use it to classify the uploaded image.</p></li>
+</ul></li>
+<li><p><strong>Run and Test Your Flask App</strong></p>
+<ul>
+<li><p>Run your Flask app:&nbsp;<code>python app.py</code></p></li>
+<li><p>Access your web app in a browser at&nbsp;<code>http://192.168.4.218:8000</code> (or any link that shows up on your terminal)&nbsp;to upload a dog photo and see the result!</p></li>
+</ul>
+<p><img src="demo.png" class="img-fluid"></p></li>
+</ol>
+<section id="section" class="level4">
+<h4 class="anchored" data-anchor-id="section"></h4>
+</section>
+</section>
+<section id="next-step-deployment" class="level2">
+<h2 class="anchored" data-anchor-id="next-step-deployment">Next Step: Deployment</h2>
+<p>So far, we have learned how to create our deep learning-based web app. We designed both the backend and the frontend. The final step is to deploy our model so everyone can access our application on their own devices.</p>
+<p>There are many options for choosing the right platform, but one of the most widely used deployment environments is a cloud service provider. Cloud services are ubiquitous these days, making it essential for machine learning practitioners and tech experts to stay ahead with a solid understanding of these services. One of the most important cloud service providers in the job market is AWS.</p>
+<p>Deploying a project of this scale on AWS can be tricky (and costly). If you have never worked with the platform before and want to do some warm-up practices with DL models, the best alternative options would be using Heroku, Hugging Face, or Render.</p>
+<p>Alright, we will stop the project at this point, but you can keep experimenting with the code and perhaps create your own image classification app with your chosen data!</p>
+<p>Finally, I want to leave you with some sources that inspired me for this project. You can also find my code in <a href="https://github.com/toobarahimnia/web-app-deployment.git">this repository</a>. Let me know what you think, and as always, all feedbacks are welcome! :)</p>
+<ol type="1">
+<li><p><a href="https://medium.com/@bijil.subhash/image-classifier-deployment-on-heroku-using-fastai-flask-and-node-js-70ad7057efc2">Binary Image Classifier Deployed on Heroku</a></p></li>
+<li><p><a href="https://www.youtube.com/watch?v=47kwvIuYLKw&amp;list=LL&amp;index=20&amp;t=686s">Deploy Machine Learning Model API on AWS EC2</a></p></li>
+<li><p><a href="https://www.integrate.io/blog/how-to-make-a-rest-api/">How to Make a REST API</a></p></li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
