@@ -2,7 +2,7 @@
 title: "How to Create a Web App with Django and YOLOv10 Models on Your Custom Dataset"
 author: "Tooba Rahimnia"
 date: "2024-07-13"
-categories: [Code, Analysis, Computer Vision] #news
+categories: [Web App, Computer Vision, Django] #news
 image: "opening.jpg"
 ---
 
@@ -94,7 +94,7 @@ YOLOv10 models, including YOLOv10-S and YOLOv10-X, offer significant speed advan
 
 ## Custom Model
 
-![](Screenshot 2024-07-12 at 6.04.54 PM.png)
+![](Screenshot%202024-07-12%20at%206.04.54%20PM.png)
 
 Now, let’s dive into the exciting part—implementation!
 

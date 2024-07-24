@@ -9,6 +9,10 @@ website:
       - about.qmd
       - icon: github
         href: https://github.com/toobarahimnia
+      - icon: linkedin
+        href: https://linkedin.com/in/tooba-rahimnia
+      - icon: envelope
+        href: mailto:trahimnia@gmail.com
       
 format:
   html:

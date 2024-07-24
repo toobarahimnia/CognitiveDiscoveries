@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Tooba Rahimnia">
+<meta name="dcterms.date" content="2024-07-24">
+
+<title>CognitiveDiscoveries - Detecting Fraudulent Transactions Using Random Forest: A Step-by-Step Guide</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">CognitiveDiscoveries</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/toobarahimnia"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://linkedin.com/in/tooba-rahimnia"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:trahimnia@gmail.com"> <i class="bi bi-envelope" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Detecting Fraudulent Transactions Using Random Forest: A Step-by-Step Guide</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Tabular Data</div>
+                <div class="quarto-category">Random Forest</div>
+                <div class="quarto-category">Kaggle</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Tooba Rahimnia </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">July 24, 2024</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#the-theory-behind-it-all" id="toc-the-theory-behind-it-all" class="nav-link active" data-scroll-target="#the-theory-behind-it-all">The Theory Behind It All</a></li>
+  <li><a href="#bagging" id="toc-bagging" class="nav-link" data-scroll-target="#bagging">Bagging</a></li>
+  <li><a href="#boosting" id="toc-boosting" class="nav-link" data-scroll-target="#boosting">Boosting</a></li>
+  <li><a href="#kaggle-competition" id="toc-kaggle-competition" class="nav-link" data-scroll-target="#kaggle-competition">Kaggle Competition</a></li>
+  <li><a href="#importing-libraries" id="toc-importing-libraries" class="nav-link" data-scroll-target="#importing-libraries">Importing Libraries</a></li>
+  <li><a href="#loading-and-cleaning-data" id="toc-loading-and-cleaning-data" class="nav-link" data-scroll-target="#loading-and-cleaning-data">Loading and cleaning data</a></li>
+  <li><a href="#preprocessing" id="toc-preprocessing" class="nav-link" data-scroll-target="#preprocessing">Preprocessing</a></li>
+  <li><a href="#machine-learning-model" id="toc-machine-learning-model" class="nav-link" data-scroll-target="#machine-learning-model">Machine Learning model</a>
+  <ul class="collapse">
+  <li><a href="#training-model" id="toc-training-model" class="nav-link" data-scroll-target="#training-model">Training Model</a></li>
+  <li><a href="#roc-curve" id="toc-roc-curve" class="nav-link" data-scroll-target="#roc-curve">ROC Curve</a></li>
+  <li><a href="#precision-and-recall" id="toc-precision-and-recall" class="nav-link" data-scroll-target="#precision-and-recall">Precision and Recall</a></li>
+  <li><a href="#confusion-matrix" id="toc-confusion-matrix" class="nav-link" data-scroll-target="#confusion-matrix">Confusion Matrix</a></li>
+  <li><a href="#feature-importance" id="toc-feature-importance" class="nav-link" data-scroll-target="#feature-importance">Feature Importance</a></li>
+  </ul></li>
+  <li><a href="#predict-and-submit" id="toc-predict-and-submit" class="nav-link" data-scroll-target="#predict-and-submit">Predict and submit</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>In this blog post, we’ll explore how to harness the power of Random Forest for effective fraud detection, especially when dealing with large and imbalanced datasets. We’ll break down the essentials of this algorithm and walk through its application in a Kaggle competition, offering practical insights and hands-on experience.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="pexels-radtacomadad-23897668.jpg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<section id="the-theory-behind-it-all" class="level3">
+<h3 class="anchored" data-anchor-id="the-theory-behind-it-all">The Theory Behind It All</h3>
+<p>It’s quite ironic that we all use the Decision Tree technique in our daily lives without even thinking about it. Consider how you choose an outfit for an occasion—you’re making a series of decisions between items. Or when you’re organizing your chores, you decide which task to tackle first. Similarly, businesses leverage this methodology as a supervised machine learning technique – in an ensemble format – to make better decisions and boost profits. Decision Trees are particularly effective with tabular datasets, which are commonly used and generated by organizations. However, they are known for their issues with bias and variance: simple trees often suffer from high bias, while complex trees can have high variance.</p>
+<p>To understand Decision Trees, let’s first look at where this algorithm originates. From top down perspective, it all begins with ensemble methods—techniques that combine multiple machine learning models to enhance performance. The two main ensemble methods are bagging and boosting. We’ll explore these methods, their advantages and disadvantages, and then dive into bagging, focusing specifically on Decision Trees and Random Forests.</p>
+</section>
+<section id="bagging" class="level3">
+<h3 class="anchored" data-anchor-id="bagging">Bagging</h3>
+<p>Bagging, which stands for Bootstrap Aggregating, is a technique designed to enhance the performance of machine learning algorithms by reducing variance and preventing overfitting.</p>
+<p><strong>How It Works:</strong></p>
+<ol type="1">
+<li><strong>Bootstrap Sampling:</strong> Multiple subsets of the training data are created by sampling with replacement.</li>
+<li><strong>Training:</strong> A model is trained independently on each subset.</li>
+<li><strong>Aggregation:</strong> The predictions from each model are combined, typically by voting for classification or averaging for regression.</li>
+</ol>
+<p><strong>Pros:</strong></p>
+<ul>
+<li>Reduces variance and helps prevent overfitting.</li>
+<li>Simple to implement and understand.</li>
+<li>Particularly effective with high-variance models like decision trees.</li>
+</ul>
+<p><strong>Cons:</strong></p>
+<ul>
+<li>Can be computationally expensive since it involves training multiple models.</li>
+<li>May not improve performance if the base models are already strong.</li>
+</ul>
+<section id="random-forest" class="level4">
+<h4 class="anchored" data-anchor-id="random-forest">Random Forest</h4>
+<p>Random Forest is an ensemble method that extends bagging by combining multiple decision trees to improve overall performance and robustness.</p>
+<p>Decision trees are a fundamental and versatile machine learning algorithm used for both classification and regression tasks. They work by splitting the data into branches based on feature values to make predictions.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/Random_forest_explain.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="643"></p>
+</figure>
+</div>
+<p><strong>How It Works:</strong></p>
+<ol type="1">
+<li><p><strong>Bootstrapping:</strong> Multiple subsets of the data are created by sampling with replacement.</p></li>
+<li><p><strong>Random Feature Selection:</strong> At each split in a tree, a random subset of features is considered. This helps to decorrelate the trees and improve the model’s performance.</p></li>
+<li><p><strong>Aggregation:</strong> Predictions from all the trees are combined to make the final prediction, either by voting for classification or averaging for regression.</p></li>
+</ol>
+<p>Random Forest can provide valuable insights into feature importance. It evaluates how much each feature contributes to reducing impurity and improving model accuracy. Features that significantly impact these metrics are considered important. A unique perspective on <a href="https://www.kaggle.com/code/jhoward/how-random-forests-really-work/">how random forests really work</a> was done by a a Kaggle Competition Grandmaster. The author does an excellent job of explaining the concepts in a very interesting way.</p>
+</section>
+</section>
+<section id="boosting" class="level3">
+<h3 class="anchored" data-anchor-id="boosting">Boosting</h3>
+<p><strong>Boosting</strong> improves model performance by focusing on correcting the errors made by previous models in the sequence.</p>
+<ul>
+<li><p><strong>How it Works</strong>:</p>
+<ul>
+<li><p><strong>Sequential Training</strong>: Models are trained one after another, with each model trying to correct the errors of its predecessor.</p></li>
+<li><p><strong>Weighted Voting</strong>: The final prediction is made by combining the predictions of all models, with more weight given to models that performed better.</p></li>
+</ul></li>
+<li><p><strong>Pros</strong>:</p>
+<ul>
+<li><p>Can achieve high accuracy by focusing on hard-to-predict examples.</p></li>
+<li><p>Often provides better performance than bagging for many problems.</p></li>
+</ul></li>
+<li><p><strong>Cons</strong>:</p>
+<ul>
+<li><p>Can be prone to overfitting if not tuned properly.</p></li>
+<li><p>More complex to implement and understand compared to bagging.</p></li>
+</ul></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="here.png" class="img-fluid figure-img"></p>
+<figcaption>Image by DataCamp.</figcaption>
+</figure>
+</div>
+<p>To summarize, ensemble methods like bagging and boosting are powerful techniques for improving model performance. Bagging, including methods like Random Forest, helps to reduce variance and overfitting by combining multiple models. Boosting, on the other hand, focuses on correcting errors from previous models, often achieving higher accuracy but with a risk of overfitting.</p>
+</section>
+<section id="kaggle-competition" class="level2">
+<h2 class="anchored" data-anchor-id="kaggle-competition">Kaggle Competition</h2>
+<p>From here on out, we’ll be diving into the IEEE-CIS Fraud Detection Kaggle Competition. Our goal is to use a Random Forest classifier to predict the probability of an online transaction being fraudulent.</p>
+<p>The data is split into two datasets: “identity” and “transaction,” which are linked by <code>TransactionID</code>. Keep in mind that not all transactions have matching identity information. You can check out more details about the competition <a href="https://www.kaggle.com/competitions/ieee-fraud-detection">here</a>. Now, let’s get started with the implementation!</p>
+</section>
+<section id="importing-libraries" class="level2">
+<h2 class="anchored" data-anchor-id="importing-libraries">Importing Libraries</h2>
+<p>We begin by importing the necessary libraries. In this case, we will use the&nbsp;scikit-learn&nbsp;package for training our model and performing preprocessing on the dataset.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Data Analysis</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-4"><a href="#cb1-4"></a></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="co"># Data Visualization</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="im">from</span> matplotlib <span class="im">import</span> pyplot <span class="im">as</span> plt</span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-8"><a href="#cb1-8"></a></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="co"># Machine Learning</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="im">from</span> sklearn.impute <span class="im">import</span> SimpleImputer</span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="im">from</span> imblearn.over_sampling <span class="im">import</span> SMOTE</span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> roc_auc_score</span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestClassifier</span>
+<span id="cb1-15"><a href="#cb1-15"></a><span class="im">import</span> sklearn.metrics <span class="im">as</span> metrics</span>
+<span id="cb1-16"><a href="#cb1-16"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> confusion_matrix <span class="im">as</span> cm</span>
+<span id="cb1-17"><a href="#cb1-17"></a></span>
+<span id="cb1-18"><a href="#cb1-18"></a><span class="co"># Warnings</span></span>
+<span id="cb1-19"><a href="#cb1-19"></a><span class="im">import</span> warnings</span>
+<span id="cb1-20"><a href="#cb1-20"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="loading-and-cleaning-data" class="level2">
+<h2 class="anchored" data-anchor-id="loading-and-cleaning-data">Loading and cleaning data</h2>
+<p>The dataset we are given is very large, so we will create a function to reduce its memory usage by changing the data types of its columns to more memory-efficient types. This will help us achieve faster processing and consume less storage.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">def</span> reduce_mem_usage(df, verbose<span class="op">=</span><span class="va">True</span>):</span>
+<span id="cb2-2"><a href="#cb2-2"></a>    numerics <span class="op">=</span> [<span class="st">'int16'</span>, <span class="st">'int32'</span>, <span class="st">'int64'</span>, <span class="st">'float16'</span>, <span class="st">'float32'</span>, <span class="st">'float64'</span>]</span>
+<span id="cb2-3"><a href="#cb2-3"></a>    </span>
+<span id="cb2-4"><a href="#cb2-4"></a>    start_mem <span class="op">=</span> df.memory_usage().<span class="bu">sum</span>() <span class="op">/</span> <span class="dv">1024</span><span class="op">**</span><span class="dv">2</span>    </span>
+<span id="cb2-5"><a href="#cb2-5"></a>    </span>
+<span id="cb2-6"><a href="#cb2-6"></a>    <span class="cf">for</span> col <span class="kw">in</span> df.columns:</span>
+<span id="cb2-7"><a href="#cb2-7"></a>        col_type <span class="op">=</span> df[col].dtypes</span>
+<span id="cb2-8"><a href="#cb2-8"></a>        <span class="cf">if</span> col_type <span class="kw">in</span> numerics:</span>
+<span id="cb2-9"><a href="#cb2-9"></a>            c_min <span class="op">=</span> df[col].<span class="bu">min</span>()</span>
+<span id="cb2-10"><a href="#cb2-10"></a>            c_max <span class="op">=</span> df[col].<span class="bu">max</span>()</span>
+<span id="cb2-11"><a href="#cb2-11"></a>            <span class="cf">if</span> <span class="bu">str</span>(col_type)[:<span class="dv">3</span>] <span class="op">==</span> <span class="st">'int'</span>:</span>
+<span id="cb2-12"><a href="#cb2-12"></a>                <span class="cf">if</span> c_min <span class="op">&gt;</span> np.iinfo(np.int8).<span class="bu">min</span> <span class="kw">and</span> c_max <span class="op">&lt;</span> np.iinfo(np.int8).<span class="bu">max</span>:</span>
+<span id="cb2-13"><a href="#cb2-13"></a>                    df[col] <span class="op">=</span> df[col].astype(np.int8)</span>
+<span id="cb2-14"><a href="#cb2-14"></a>                <span class="cf">elif</span> c_min <span class="op">&gt;</span> np.iinfo(np.int16).<span class="bu">min</span> <span class="kw">and</span> c_max <span class="op">&lt;</span> np.iinfo(np.int16).<span class="bu">max</span>:</span>
+<span id="cb2-15"><a href="#cb2-15"></a>                    df[col] <span class="op">=</span> df[col].astype(np.int16)</span>
+<span id="cb2-16"><a href="#cb2-16"></a>      ...</span>
+<span id="cb2-17"><a href="#cb2-17"></a>    </span>
+<span id="cb2-18"><a href="#cb2-18"></a>    end_mem <span class="op">=</span> df.memory_usage().<span class="bu">sum</span>() <span class="op">/</span> <span class="dv">1024</span><span class="op">**</span><span class="dv">2</span></span>
+<span id="cb2-19"><a href="#cb2-19"></a>    </span>
+<span id="cb2-20"><a href="#cb2-20"></a>    <span class="cf">if</span> verbose: <span class="bu">print</span>(<span class="st">'Mem. usage decreased to </span><span class="sc">{:5.2f}</span><span class="st"> Mb (</span><span class="sc">{:.1f}% r</span><span class="st">eduction)'</span>.<span class="bu">format</span>(end_mem, <span class="dv">100</span> <span class="op">*</span> (start_mem <span class="op">-</span> end_mem) <span class="op">/</span> start_mem))</span>
+<span id="cb2-21"><a href="#cb2-21"></a>    <span class="cf">return</span> df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Now, we are ready to load our data.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="co"># Loading train_transaction data</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a>train_transaction <span class="op">=</span> pd.read_csv(<span class="st">'../input/ieee-fraud-detection/train_transaction.csv'</span>)</span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="bu">print</span>(train_transaction.shape)</span>
+<span id="cb3-4"><a href="#cb3-4"></a>train_transaction <span class="op">=</span> reduce_mem_usage(train_transaction)</span>
+<span id="cb3-5"><a href="#cb3-5"></a>train_transaction.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>(590540, 394)
+Mem. usage decreased to 542.35 Mb (69.4% reduction)</code></pre>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Screenshot 2024-07-22 at 5.07.32 PM.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a><span class="co"># Loading train_identity data</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>train_identity <span class="op">=</span> pd.read_csv(<span class="st">'../input/ieee-fraud-detection/train_identity.csv'</span>)</span>
+<span id="cb5-3"><a href="#cb5-3"></a><span class="bu">print</span>(train_identity.shape)</span>
+<span id="cb5-4"><a href="#cb5-4"></a>train_identity <span class="op">=</span> reduce_mem_usage(train_identity)</span>
+<span id="cb5-5"><a href="#cb5-5"></a>train_identity.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>(144233, 41)
+Mem. usage decreased to 25.86 Mb (42.7% reduction)</code></pre>
+<p><img src="images/Screenshot 2024-07-22 at 5.08.57 PM.png" class="img-fluid"></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Merging transaction and identity train data</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a>train_df <span class="op">=</span> pd.merge(train_transaction, train_identity, how<span class="op">=</span><span class="st">'left'</span>)</span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="bu">print</span>(train_df.shape)</span>
+<span id="cb7-4"><a href="#cb7-4"></a>len_train_df <span class="op">=</span> <span class="bu">len</span>(train_df)</span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="kw">del</span> train_transaction, train_identity</span>
+<span id="cb7-6"><a href="#cb7-6"></a>train_df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>(590540, 434)</code></pre>
+<p><img src="images/Screenshot 2024-07-22 at 5.10.00 PM.png" class="img-fluid"></p>
+<p>You can load and merge your testing dataset using a similar pattern.</p>
+<p>Lastly, we need to create our submission DataFrame.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># Creating a submission file</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a>submission <span class="op">=</span> pd.DataFrame({<span class="st">'TransactionID'</span> : test_df.TransactionID})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1"></a><span class="co"># Duplicates check in train data</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>train_df.duplicated().<span class="bu">sum</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>0</code></pre>
+<p>Luckily, there are no duplicates in our dataset!</p>
+</section>
+<section id="preprocessing" class="level2">
+<h2 class="anchored" data-anchor-id="preprocessing">Preprocessing</h2>
+<p>In the previous section, we merged our transaction and identity training datasets, giving us a total of 434 columns, including the <code>isFraud</code> label. Our training dataset has 590,540 samples, and the testing dataset has 506,691 records. We also checked for any duplicates in the data.</p>
+<p>We’ve noticed that there are quite a few missing values in our datasets. To handle this, we’ll keep columns with at least 80% of the data and drop those with more than 20% missing values. To make things easier, we’ll combine the training and testing datasets while we clean up the data.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a>combined_df <span class="op">=</span> pd.concat([train_df.drop(columns<span class="op">=</span>[<span class="st">'isFraud'</span>, <span class="st">'TransactionID'</span>]), test_df.drop(columns<span class="op">=</span><span class="st">'TransactionID'</span>)])</span>
+<span id="cb12-2"><a href="#cb12-2"></a></span>
+<span id="cb12-3"><a href="#cb12-3"></a><span class="co"># Dependant variable</span></span>
+<span id="cb12-4"><a href="#cb12-4"></a>y <span class="op">=</span> train_df.isFraud</span>
+<span id="cb12-5"><a href="#cb12-5"></a></span>
+<span id="cb12-6"><a href="#cb12-6"></a><span class="co"># Dropping columns with more than 20% missing values</span></span>
+<span id="cb12-7"><a href="#cb12-7"></a>miss_val <span class="op">=</span> combined_df.isnull().<span class="bu">sum</span>() <span class="op">/</span> <span class="bu">len</span>(combined_df)</span>
+<span id="cb12-8"><a href="#cb12-8"></a>combined_pruned_df <span class="op">=</span> combined_df.drop(columns<span class="op">=</span>miss_val[miss_val <span class="op">&gt;</span> <span class="fl">0.2</span>].index)</span>
+<span id="cb12-9"><a href="#cb12-9"></a></span>
+<span id="cb12-10"><a href="#cb12-10"></a><span class="kw">del</span> combined_df, train_df, test_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>As a result, we are left with only 180 columns out of 434 after removing those with more than 20% missing values. We have also removed the&nbsp;<code>TransactionID</code>&nbsp;column, as it does not provide useful information for prediction.</p>
+<p>The next step is to address the missing values in the remaining columns. For numerical columns, we will impute missing values with the median, while for categorical columns, we will use the most frequent category.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1"></a><span class="co"># Filtering numerical data</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a>num_pruned_df <span class="op">=</span> combined_pruned_df.select_dtypes(include<span class="op">=</span>np.number)</span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="bu">print</span>(num_pruned_df.shape)</span>
+<span id="cb13-4"><a href="#cb13-4"></a></span>
+<span id="cb13-5"><a href="#cb13-5"></a><span class="co"># Filtering categorical data</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a>cat_pruned_df <span class="op">=</span> combined_pruned_df.select_dtypes(exclude<span class="op">=</span>np.number)</span>
+<span id="cb13-7"><a href="#cb13-7"></a><span class="bu">print</span>(cat_pruned_df.shape)</span>
+<span id="cb13-8"><a href="#cb13-8"></a><span class="kw">del</span> combined_pruned_df</span>
+<span id="cb13-9"><a href="#cb13-9"></a></span>
+<span id="cb13-10"><a href="#cb13-10"></a><span class="co"># Filling missing values for numerical columns</span></span>
+<span id="cb13-11"><a href="#cb13-11"></a>imp_median <span class="op">=</span> SimpleImputer(missing_values<span class="op">=</span>np.nan, strategy<span class="op">=</span><span class="st">'median'</span>)</span>
+<span id="cb13-12"><a href="#cb13-12"></a>num_df <span class="op">=</span> pd.DataFrame(imp_median.fit_transform(num_pruned_df), columns<span class="op">=</span>num_pruned_df.columns)</span>
+<span id="cb13-13"><a href="#cb13-13"></a><span class="kw">del</span> num_pruned_df</span>
+<span id="cb13-14"><a href="#cb13-14"></a><span class="bu">print</span>(num_df.shape)</span>
+<span id="cb13-15"><a href="#cb13-15"></a></span>
+<span id="cb13-16"><a href="#cb13-16"></a><span class="co"># Filling missing values for categorical columns</span></span>
+<span id="cb13-17"><a href="#cb13-17"></a>imp_max <span class="op">=</span> SimpleImputer(missing_values<span class="op">=</span>np.nan, strategy<span class="op">=</span><span class="st">'most_frequent'</span>)</span>
+<span id="cb13-18"><a href="#cb13-18"></a>cat_df <span class="op">=</span> pd.DataFrame(imp_max.fit_transform(cat_pruned_df), columns<span class="op">=</span>cat_pruned_df.columns)</span>
+<span id="cb13-19"><a href="#cb13-19"></a><span class="kw">del</span> cat_pruned_df</span>
+<span id="cb13-20"><a href="#cb13-20"></a><span class="bu">print</span>(cat_df.shape)</span>
+<span id="cb13-21"><a href="#cb13-21"></a></span>
+<span id="cb13-22"><a href="#cb13-22"></a><span class="co"># Concatinating numerical and categorical columns</span></span>
+<span id="cb13-23"><a href="#cb13-23"></a>combined_df <span class="op">=</span> pd.concat([num_df, cat_df], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb13-24"><a href="#cb13-24"></a><span class="kw">del</span> num_df, cat_df</span>
+<span id="cb13-25"><a href="#cb13-25"></a></span>
+<span id="cb13-26"><a href="#cb13-26"></a><span class="co"># Checking for missing values</span></span>
+<span id="cb13-27"><a href="#cb13-27"></a><span class="bu">print</span>(<span class="ss">f'Total missing values: </span><span class="sc">{</span>combined_df<span class="sc">.</span>isnull()<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb13-28"><a href="#cb13-28"></a><span class="bu">print</span>(combined_df.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>(1097231, 176)
+(1097231, 4)
+(1097231, 176)
+(1097231, 4)
+Total missing values: 0
+(1097231, 180)</code></pre>
+<p>Next, we need to convert our categorical columns into numerical representations. We can accomplish this using the&nbsp;<code>get_dummies</code>&nbsp;method.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1"></a><span class="co"># One-hot encoding</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a>combined_df_encoded <span class="op">=</span> pd.get_dummies(combined_df, drop_first<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb15-3"><a href="#cb15-3"></a><span class="bu">print</span>(combined_df_encoded.shape)</span>
+<span id="cb15-4"><a href="#cb15-4"></a><span class="kw">del</span> combined_df</span>
+<span id="cb15-5"><a href="#cb15-5"></a>combined_df_encoded.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>(1097231, 245)</code></pre>
+<p><img src="images/Screenshot 2024-07-22 at 5.15.10 PM.png" class="img-fluid"></p>
+<p>As you recall, we combined the training and testing datasets to speed up data cleaning. Now, we need to separate them again as we move forward with data manipulation on the training set.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1"></a><span class="co"># Separating train and test data</span></span>
+<span id="cb17-2"><a href="#cb17-2"></a>X <span class="op">=</span> combined_df_encoded.iloc[:len_train_df]</span>
+<span id="cb17-3"><a href="#cb17-3"></a><span class="bu">print</span>(X.shape)</span>
+<span id="cb17-4"><a href="#cb17-4"></a>test <span class="op">=</span> combined_df_encoded.iloc[len_train_df:]</span>
+<span id="cb17-5"><a href="#cb17-5"></a><span class="bu">print</span>(test.shape)</span>
+<span id="cb17-6"><a href="#cb17-6"></a><span class="kw">del</span> combined_df_encoded</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>(590540, 245)
+(506691, 245)</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1"></a>train <span class="op">=</span> pd.concat([X, y], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb19-2"><a href="#cb19-2"></a>train.sort_values(<span class="st">'TransactionDT'</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb19-3"><a href="#cb19-3"></a>X <span class="op">=</span> train.drop(columns<span class="op">=</span>[<span class="st">'isFraud'</span>])</span>
+<span id="cb19-4"><a href="#cb19-4"></a><span class="co"># or X = train.drop(['isFraud'], axis=1)</span></span>
+<span id="cb19-5"><a href="#cb19-5"></a>y <span class="op">=</span> train[<span class="st">'isFraud'</span>]</span>
+<span id="cb19-6"><a href="#cb19-6"></a>splitting_index <span class="op">=</span> <span class="bu">int</span>(<span class="fl">0.8</span> <span class="op">*</span> <span class="bu">len</span>(X))</span>
+<span id="cb19-7"><a href="#cb19-7"></a>X_train <span class="op">=</span> X.iloc[:splitting_index]</span>
+<span id="cb19-8"><a href="#cb19-8"></a>X_val <span class="op">=</span> X.iloc[splitting_index:]</span>
+<span id="cb19-9"><a href="#cb19-9"></a>y_train <span class="op">=</span> y.iloc[:splitting_index]</span>
+<span id="cb19-10"><a href="#cb19-10"></a>y_val <span class="op">=</span> y.iloc[splitting_index:]</span>
+<span id="cb19-11"><a href="#cb19-11"></a><span class="bu">print</span>(X_train.shape, X_val.shape, y_train.shape, y_val.shape)</span>
+<span id="cb19-12"><a href="#cb19-12"></a><span class="kw">del</span> train, y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>(472432, 245) (118108, 245) (472432,) (118108,)</code></pre>
+<p>One noteworthy point to mention is that you do not need to normalize or scale your data features for Random Forest. Scaling is primarily important in algorithms that are distance-based and rely on Euclidean distance. Random Forest is a tree-based model and, therefore, does not require feature scaling.</p>
+<p>Furthermore, I would argue that it’s not only unnecessary but also highly discouraged to scale features for Random Forest. By not scaling features, I was able to boost the accuracy by more than 7%.</p>
+<p>The next thing we need to look into is the distribution of classes. We observed a significant class imbalance. This pattern is also evident in the validation set.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1"></a><span class="co"># Class imbalance check</span></span>
+<span id="cb21-2"><a href="#cb21-2"></a><span class="bu">print</span>(pd.value_counts(y_train))</span>
+<span id="cb21-3"><a href="#cb21-3"></a>plt.pie(y_train.value_counts(), labels<span class="op">=</span>[<span class="st">'not Fraud'</span>, <span class="st">'Fraud'</span>], autopct<span class="op">=</span><span class="st">'</span><span class="sc">%0.1f%%</span><span class="st">'</span>, shadow<span class="op">=</span><span class="st">'dict'</span>)</span>
+<span id="cb21-4"><a href="#cb21-4"></a>plt.axis(<span class="st">'equal'</span>)</span>
+<span id="cb21-5"><a href="#cb21-5"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>isFraud
+0    455833
+1     16599
+Name: count, dtype: int64</code></pre>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="train.png" class="img-fluid figure-img" width="468"></p>
+<figcaption>Pie chart for training dataset.</figcaption>
+</figure>
+</div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1"></a>plt.pie(y_val.value_counts(), labels<span class="op">=</span>[<span class="st">'not Fraud'</span>, <span class="st">'Fraud'</span>], autopct<span class="op">=</span><span class="st">'</span><span class="sc">%0.1f%%</span><span class="st">'</span>, shadow<span class="op">=</span><span class="st">'dict'</span>)</span>
+<span id="cb23-2"><a href="#cb23-2"></a>plt.axis(<span class="st">'equal'</span>)</span>
+<span id="cb23-3"><a href="#cb23-3"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="valid.png" class="img-fluid figure-img" width="492"></p>
+<figcaption>Pie chart for validation dataset.</figcaption>
+</figure>
+</div>
+<p>The class&nbsp;<code>not Fraud</code>&nbsp;is much more frequent than&nbsp;<code>Fraud</code>. Detecting the minority class (fraudulent transactions) is more important than the majority class (non-fraudulent transactions). Our first attempt was to use SMOTE (Synthetic Minority Over-sampling Technique), to over sample our minority class.</p>
+<p>Although this approach works well, it takes quite a long time to train. Instead, we will use the <code>class_weight='balanced'</code> argument in our <code>RandomForestClassifier</code> to improve training efficiency.</p>
+<p>If you’re interested in checking out the SMOTE approach, I’ll share the link to the Kaggle notebook I worked on at the end. Feel free to take a look there!</p>
+</section>
+<section id="machine-learning-model" class="level2">
+<h2 class="anchored" data-anchor-id="machine-learning-model">Machine Learning model</h2>
+<p>As we mentioned earlier, we’ll be using a random forest to train our model. The main reason we’re choosing this algorithm is for practice. We’ll dive into its performance using ROC curves, a confusion matrix, and other metrics. We’ll also pinpoint any issues our model runs into and suggest some improvements for future work.</p>
+<section id="training-model" class="level3">
+<h3 class="anchored" data-anchor-id="training-model">Training Model</h3>
+<p>Here, we use 50% of the samples to train each base estimator and require a minimum of 80 samples to split an internal node. Instead of using SMOTE to approach class imbalance issue, we use the&nbsp;<code>class_weight</code>&nbsp;parameter to give more weight to the minority class. So far, this approach has yielded the best results. Another idea could be to reduce dimensionality using PCA, which is an interesting question to explore.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1"></a><span class="co"># Random forest classifier</span></span>
+<span id="cb24-2"><a href="#cb24-2"></a>rfc <span class="op">=</span> RandomForestClassifier(class_weight<span class="op">=</span><span class="st">'balanced'</span>, criterion<span class="op">=</span><span class="st">'entropy'</span>, max_samples<span class="op">=</span><span class="fl">0.5</span>, min_samples_split<span class="op">=</span><span class="dv">80</span>)</span>
+<span id="cb24-3"><a href="#cb24-3"></a>model <span class="op">=</span> rfc.fit(X_train, y_train)</span>
+<span id="cb24-4"><a href="#cb24-4"></a>y_probs <span class="op">=</span> model.predict_proba(X_val)[:, <span class="dv">1</span>] <span class="co"># probabilities for the positive class</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="roc-curve" class="level3">
+<h3 class="anchored" data-anchor-id="roc-curve">ROC Curve</h3>
+<p>The&nbsp;<strong>ROC curve</strong>, which stands for Receiver Operating Characteristic curve, is a graphical representation of a binary classifier’s performance (in our case fraud/ not fraud) across different classification thresholds. It plots the True Positive Rate (TPR) against the False Positive Rate (FPR). You can see our ROC blue curve below.</p>
+<p>On the other hand, <strong>ROC AUC</strong>, or Receiver Operating Characteristic Area Under the Curve, is a single metric that summarizes a classifier’s performance over all possible classification thresholds. The ROC AUC score is obtained by measuring the area under the ROC curve. In our example it is 0.89, which is the area under the blue curve [<a href="https://www.evidentlyai.com/classification-metrics/explain-roc-curve#:~:text=The%20ROC%20AUC%20score%20is%20the%20area%20under%20the%20ROC,and%201%20indicates%20perfect%20performance.">source</a>].</p>
+<p>The ROC AUC score indicates how well a classifier distinguishes between positive and negative classes, with values ranging from 0 to 1. A higher ROC AUC score signifies better performance: a perfect model achieves an AUC of 1, whereas a random model scores 0.5.</p>
+<p>Do you see why? If the model is performing poorly, the AUC would be equal to the area under the red dotted line, which is 0.5 ( = 1 * 1 / 2). The more concave the blue line appears, the more it resembles a rectangle, resulting in an area closer to 1 (since the units of the sides are one as well).</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1"></a><span class="bu">print</span>(<span class="ss">f'Validation AUC = </span><span class="sc">{</span>roc_auc_score(y_val, y_probs)<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb25-2"><a href="#cb25-2"></a></span>
+<span id="cb25-3"><a href="#cb25-3"></a><span class="co"># plotting ROC Curve</span></span>
+<span id="cb25-4"><a href="#cb25-4"></a>fpr, tpr, threshold <span class="op">=</span> metrics.roc_curve(y_val, y_probs[:])</span>
+<span id="cb25-5"><a href="#cb25-5"></a>roc_auc <span class="op">=</span> metrics.auc(fpr, tpr)</span>
+<span id="cb25-6"><a href="#cb25-6"></a></span>
+<span id="cb25-7"><a href="#cb25-7"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>,<span class="dv">6</span>))</span>
+<span id="cb25-8"><a href="#cb25-8"></a>plt.title(<span class="st">'Receiver Operating Characteristic'</span>)</span>
+<span id="cb25-9"><a href="#cb25-9"></a>plt.plot(fpr, tpr, <span class="st">'b'</span>, label<span class="op">=</span><span class="st">'AUC=</span><span class="sc">%0.2f</span><span class="st">'</span> <span class="op">%</span> roc_auc)</span>
+<span id="cb25-10"><a href="#cb25-10"></a>...</span>
+<span id="cb25-11"><a href="#cb25-11"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>Validation AUC = 0.8904434324215795</code></pre>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Screenshot 2024-07-24 at 12.32.19 PM.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+<section id="precision-and-recall" class="level3">
+<h3 class="anchored" data-anchor-id="precision-and-recall">Precision and Recall</h3>
+<p>Let’s get back to basics. When you’re evaluating how well a classification model is performing, you need to be familiar with three key metrics: precision, recall, and F1 score. These are especially important when your data is imbalanced, or when the cost of different types of errors varies.</p>
+<ul>
+<li><p><strong>Precision</strong> is all about accuracy. Of all the items that the model labeled as positive, how many are actually positive?</p></li>
+<li><p><strong>Recall</strong> is about coverage. Of all the actual positive items, how many were correctly identified by the model?</p></li>
+<li><p>And the <strong>F1 score</strong>? It’s like the perfect combo of both precision and recall, providing a single metric that balances the two. It’s super useful when you need a balance between them.</p></li>
+</ul>
+<p>When I was digging through different articles online to get a better grip on these terms, I stumbled upon a comprehensive article by <a href="https://towardsdatascience.com/a-look-at-precision-recall-and-f1-score-36b5fd0dd3ec">Teemu Kanstrén</a>. He points out that the basis of precision, recall, and F1 score comes from understanding concepts like True Positive, True Negative, False Positive, and False Negative.</p>
+<p>Here’s a quick table to break down what each term means:</p>
+<table class="table-striped table-hover table">
+<caption>True/False Positive and Negative Definitions</caption>
+<colgroup>
+<col style="width: 16%">
+<col style="width: 19%">
+<col style="width: 20%">
+<col style="width: 43%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Prediction</th>
+<th style="text-align: left;">Actual value</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">True Positive</td>
+<td style="text-align: left;">Predicted Positive and was Positive</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">True Negative</td>
+<td style="text-align: left;">Predicted Negative and was Negative</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">False Positive</td>
+<td style="text-align: left;">Predicted Positive but was Negative</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">False Negative</td>
+<td style="text-align: left;">Predicted Negative but was Positive</td>
+</tr>
+</tbody>
+</table>
+<p>To really get a handle on what each term means, I’ve put together a confusion matrix to illustrate it below (and don’t worry, we’ll dive into the details of the confusion matrix soon).</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Predicted.png" class="img-fluid figure-img" width="706"></p>
+<figcaption>Confusion Matrix. Image by Author.</figcaption>
+</figure>
+</div>
+<p>These terms give us some pretty useful insights. For example, when the F1 score is at its peak, it means we have the best balance between precision and recall. It’s a good sign that the model is doing well at spotting positive cases without missing too many or making a lot of false positives.</p>
+<p>At this maximum F1 score, we also get a specific threshold value. The threshold is used to decide if a predicted probability should be classified as positive or negative in classification models.</p>
+<p>For example, if the threshold is set to 0.5, any prediction with a probability above 0.5 is classified as positive (fraudulent), and anything below 0.5 is classified as negative (not fraudulent).</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1"></a><span class="co"># Calculate precision and recall for different thresholds</span></span>
+<span id="cb27-2"><a href="#cb27-2"></a>precision, recall, thresholds <span class="op">=</span> precision_recall_curve(y_val, y_probs)</span>
+<span id="cb27-3"><a href="#cb27-3"></a></span>
+<span id="cb27-4"><a href="#cb27-4"></a><span class="co"># Calculate F1 score</span></span>
+<span id="cb27-5"><a href="#cb27-5"></a>f1_scores <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> (precision <span class="op">*</span> recall) <span class="op">/</span> (precision <span class="op">+</span> recall)</span>
+<span id="cb27-6"><a href="#cb27-6"></a></span>
+<span id="cb27-7"><a href="#cb27-7"></a><span class="co"># Find the threshold that gives the maximum F1 score</span></span>
+<span id="cb27-8"><a href="#cb27-8"></a>optimal_threshold <span class="op">=</span> thresholds[np.argmax(f1_scores)]</span>
+<span id="cb27-9"><a href="#cb27-9"></a></span>
+<span id="cb27-10"><a href="#cb27-10"></a><span class="bu">print</span>(<span class="ss">f"Optimal Threshold: </span><span class="sc">{</span>optimal_threshold<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>Optimal Threshold: 0.650943583810778</code></pre>
+</section>
+<section id="confusion-matrix" class="level3">
+<h3 class="anchored" data-anchor-id="confusion-matrix">Confusion Matrix</h3>
+<p>In our case, the threshold is set to 0.65. We’ll use this value to label our predicted probabilities as 0 or 1 because the confusion matrix only works with discrete numbers, not probabilities.</p>
+<p>A confusion matrix is a table that helps us evaluate how well our classification model is performing. It shows counts for true positives, true negatives, false positives, and false negatives. We’ve already covered these terms in a table in the previous section.</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1"></a><span class="co"># Confusion matrix</span></span>
+<span id="cb29-2"><a href="#cb29-2"></a>y_probs_labels <span class="op">=</span> (y_probs[:] <span class="op">&gt;=</span> optimal_threshold).astype(<span class="bu">int</span>)</span>
+<span id="cb29-3"><a href="#cb29-3"></a></span>
+<span id="cb29-4"><a href="#cb29-4"></a><span class="co"># y_val contains the true binary labels</span></span>
+<span id="cb29-5"><a href="#cb29-5"></a>conf_matrix <span class="op">=</span> cm(y_val, y_probs_labels)</span>
+<span id="cb29-6"><a href="#cb29-6"></a></span>
+<span id="cb29-7"><a href="#cb29-7"></a>categories <span class="op">=</span> [<span class="st">'Zero'</span>, <span class="st">'One'</span>]</span>
+<span id="cb29-8"><a href="#cb29-8"></a></span>
+<span id="cb29-9"><a href="#cb29-9"></a><span class="co"># Display the confusion matrix</span></span>
+<span id="cb29-10"><a href="#cb29-10"></a>sns.heatmap(</span>
+<span id="cb29-11"><a href="#cb29-11"></a>    conf_matrix <span class="op">/</span> np.<span class="bu">sum</span>(conf_matrix),  <span class="co"># Normalized by the total sum for percentages</span></span>
+<span id="cb29-12"><a href="#cb29-12"></a>    annot<span class="op">=</span><span class="va">True</span>,  <span class="co"># Show the annotations</span></span>
+<span id="cb29-13"><a href="#cb29-13"></a>    annot_kws<span class="op">=</span>{<span class="st">'size'</span>: <span class="dv">16</span>},  <span class="co"># Size of annotations</span></span>
+<span id="cb29-14"><a href="#cb29-14"></a>    cmap<span class="op">=</span><span class="st">'Blues'</span>,  <span class="co"># Color map</span></span>
+<span id="cb29-15"><a href="#cb29-15"></a>    fmt<span class="op">=</span><span class="st">'.2%'</span>,  <span class="co"># Format the annotation to show percentage</span></span>
+<span id="cb29-16"><a href="#cb29-16"></a>    xticklabels<span class="op">=</span>categories,  <span class="co"># Set x-axis labels</span></span>
+<span id="cb29-17"><a href="#cb29-17"></a>    yticklabels<span class="op">=</span>categories,  <span class="co"># Set y-axis labels</span></span>
+<span id="cb29-18"><a href="#cb29-18"></a>    cbar_kws<span class="op">=</span>{<span class="st">'label'</span>: <span class="st">'Percentage of Total'</span>}  <span class="co"># Add color bar with label</span></span>
+<span id="cb29-19"><a href="#cb29-19"></a>)</span>
+<span id="cb29-20"><a href="#cb29-20"></a></span>
+<span id="cb29-21"><a href="#cb29-21"></a>plt.xlabel(<span class="st">'Predicted Labels'</span>)  <span class="co"># X-axis label</span></span>
+<span id="cb29-22"><a href="#cb29-22"></a>plt.ylabel(<span class="st">'True Labels'</span>)  <span class="co"># Y-axis label</span></span>
+<span id="cb29-23"><a href="#cb29-23"></a>plt.title(<span class="st">'Normalized Confusion Matrix'</span>)  <span class="co"># Title of the plot</span></span>
+<span id="cb29-24"><a href="#cb29-24"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Looking at the figure below, we can get some useful insights. The total of all the percentages should add up to 100. Ideally, the diagonal boxes (representing correct predictions) should have the highest percentages. The 95.46% portion refers to True Negatives, which are the non-fraudulent transactions. Our model did a pretty good job here, as this aligns closely with the original 96.6% of non-fraudulent transactions (or 114,092 in total) in the validation dataset (take a look at the pie charts above again).</p>
+<p>However, the model only detected 1.41% of the 3.4% fraudulent transactions, missing almost half of them. This is concerning because we need a system that can reliably spot any fraudulent transactions. Since there are far more “normal” transactions than “fraud” ones, the model tends to generalize that almost everything is safe. So, while our model didn’t perform well in this area, there’s definitely room for improvement!</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Screenshot 2024-07-24 at 12.34.22 PM.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="484"></p>
+</figure>
+</div>
+</section>
+<section id="feature-importance" class="level3">
+<h3 class="anchored" data-anchor-id="feature-importance">Feature Importance</h3>
+<p>We’ve already talked about why feature importance is important and what it’s used for. Now, let’s take a look at the top 20 most important features in our dataset.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1"></a><span class="co"># Create a pandas Series from the feature importances</span></span>
+<span id="cb30-2"><a href="#cb30-2"></a>feature_series <span class="op">=</span> pd.Series(rfc.feature_importances_, index<span class="op">=</span>X.columns)</span>
+<span id="cb30-3"><a href="#cb30-3"></a></span>
+<span id="cb30-4"><a href="#cb30-4"></a><span class="co"># Get the top 20 features in descending order</span></span>
+<span id="cb30-5"><a href="#cb30-5"></a>top_features <span class="op">=</span> feature_series.nlargest(<span class="dv">20</span>)</span>
+<span id="cb30-6"><a href="#cb30-6"></a></span>
+<span id="cb30-7"><a href="#cb30-7"></a><span class="co"># Create a DataFrame for seaborn</span></span>
+<span id="cb30-8"><a href="#cb30-8"></a>top_features_df <span class="op">=</span> top_features.reset_index()</span>
+<span id="cb30-9"><a href="#cb30-9"></a>top_features_df.columns <span class="op">=</span> [<span class="st">'Feature'</span>, <span class="st">'Importance'</span>]</span>
+<span id="cb30-10"><a href="#cb30-10"></a>...</span>
+<span id="cb30-11"><a href="#cb30-11"></a></span>
+<span id="cb30-12"><a href="#cb30-12"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Screenshot 2024-07-24 at 12.34.58 PM.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+</section>
+</section>
+<section id="predict-and-submit" class="level2">
+<h2 class="anchored" data-anchor-id="predict-and-submit">Predict and submit</h2>
+<p>And finally, we need to test our <em>unseen</em> dataset and get ready to submit our results to the leaderboard!</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1"></a><span class="co"># Predicting the test data</span></span>
+<span id="cb31-2"><a href="#cb31-2"></a>predictions <span class="op">=</span> rfc.predict_proba(test)</span>
+<span id="cb31-3"><a href="#cb31-3"></a><span class="bu">print</span>(predictions.shape)</span>
+<span id="cb31-4"><a href="#cb31-4"></a>submission[<span class="st">'isFraud'</span>] <span class="op">=</span> predictions[:, <span class="dv">1</span>]</span>
+<span id="cb31-5"><a href="#cb31-5"></a><span class="bu">print</span>(submission.shape)</span>
+<span id="cb31-6"><a href="#cb31-6"></a>submission.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>(506691, 2)
+(506691, 2)</code></pre>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Screenshot 2024-07-24 at 12.35.45 PM.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="188"></p>
+</figure>
+</div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1"></a><span class="co"># Submitting results</span></span>
+<span id="cb33-2"><a href="#cb33-2"></a>submission.to_csv(<span class="st">'submission.csv'</span>, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb33-3"><a href="#cb33-3"></a><span class="bu">print</span>(<span class="st">'Submission is successful !'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>Submission is successful !</code></pre>
+<p>And that’s a wrap! If you could follow along without any issues, it means I’ve done a good job of sharing my knowledge! And if there was any ambiguity or you just want to share any comments or suggestions, let me know!</p>
+<p>Lastly, I wanted to share some useful links that helped me along the way as well as my written notebook on Kaggle.</p>
+<p>Cheers :)</p>
+<ol type="1">
+<li><a href="https://www.kaggle.com/code/pradneshlachake/ieee-cis-fraud-detection-random-forest-classifier">IEEE-CIS Fraud Detection: Random Forest Classifier</a></li>
+<li><a href="https://www.kaggle.com/code/shafqaatahmad/ieee-cis-fraud-detection-random-forest">ieee-cis-fraud-detection-random-forest</a></li>
+<li><a href="https://www.kaggle.com/code/kabure/extensive-eda-and-modeling-xgb-hyperopt">Extensive EDA and Modeling XGB Hyperopt</a></li>
+<li><a href="https://explained.ai/gradient-boosting/">How to explain gradient boosting</a></li>
+<li><a href="https://www.kaggle.com/code/toobarahimnia/ieee-cis-fraud-detection-with-random-forest">My Notebook</a></li>
+</ol>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

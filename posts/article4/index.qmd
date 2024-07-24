@@ -2,7 +2,7 @@
 title: "How to Build a Music Genre Classifier Using Hugging Face Transformers and Gradio"
 author: "Tooba Rahimnia"
 date: "2024-06-20"
-categories: [Code, Analysis, Audio Signal Processing] #news
+categories: [Web App, Audio Signal Processing] #news
 image: "opening.jpg"
 ---
 
