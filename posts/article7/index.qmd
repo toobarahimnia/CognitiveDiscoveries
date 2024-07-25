@@ -53,7 +53,7 @@ Decision trees are a fundamental and versatile machine learning algorithm used f
 
 3.  **Aggregation:** Predictions from all the trees are combined to make the final prediction, either by voting for classification or averaging for regression.
 
-Random Forest can provide valuable insights into feature importance. It evaluates how much each feature contributes to reducing impurity and improving model accuracy. Features that significantly impact these metrics are considered important. A unique perspective on [how random forests really work ](https://www.kaggle.com/code/jhoward/how-random-forests-really-work/) was done by a a Kaggle Competition Grandmaster. The author does an excellent job of explaining the concepts in a very interesting way.
+Random Forest can provide valuable insights into feature importance. It evaluates how much each feature contributes to reducing impurity and improving model accuracy. Features that significantly impact these metrics are considered important. A unique perspective on [how random forests really work](https://www.kaggle.com/code/jhoward/how-random-forests-really-work/) was done by a a Kaggle Competition Grandmaster. The author does an excellent job of explaining the concepts in a very interesting way.
 
 ### Boosting
 
@@ -403,7 +403,7 @@ plt.show()
 Validation AUC = 0.8904434324215795
 ```
 
-![](Screenshot 2024-07-24 at 12.32.19 PM.png){fig-align="center"}
+![](Screenshot%202024-07-24%20at%2012.32.19%20PM.png){fig-align="center"}
 
 ### Precision and Recall
 
@@ -420,7 +420,7 @@ When I was digging through different articles online to get a better grip on the
 Here’s a quick table to break down what each term means:
 
 | Prediction | Actual value | Type           | Explanation                         |
-|:-----------|:-------------|:--------------|:-------------------------------|
+|:-----------|:-------------|:---------------|:------------------------------------|
 | 1          | 1            | True Positive  | Predicted Positive and was Positive |
 | 0          | 0            | True Negative  | Predicted Negative and was Negative |
 | 1          | 0            | False Positive | Predicted Positive but was Negative |
@@ -492,7 +492,7 @@ Looking at the figure below, we can get some useful insights. The total of all t
 
 However, the model only detected 1.41% of the 3.4% fraudulent transactions, missing almost half of them. This is concerning because we need a system that can reliably spot any fraudulent transactions. Since there are far more "normal" transactions than "fraud" ones, the model tends to generalize that almost everything is safe. So, while our model didn't perform well in this area, there’s definitely room for improvement!
 
-![](Screenshot 2024-07-24 at 12.34.22 PM.png){fig-align="center" width="484"}
+![](Screenshot%202024-07-24%20at%2012.34.22%20PM.png){fig-align="center" width="484"}
 
 ### Feature Importance
 
@@ -513,7 +513,7 @@ top_features_df.columns = ['Feature', 'Importance']
 plt.show()
 ```
 
-![](Screenshot 2024-07-24 at 12.34.58 PM.png){fig-align="center"}
+![](Screenshot%202024-07-24%20at%2012.34.58%20PM.png){fig-align="center"}
 
 ## Predict and submit
 
@@ -533,7 +533,7 @@ submission.head()
 (506691, 2)
 ```
 
-![](Screenshot 2024-07-24 at 12.35.45 PM.png){fig-align="center" width="188"}
+![](Screenshot%202024-07-24%20at%2012.35.45%20PM.png){fig-align="center" width="188"}
 
 ``` python
 # Submitting results
