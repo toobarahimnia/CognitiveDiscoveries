@@ -261,7 +261,7 @@ rating_frequencies = book_rating_counts.value_counts().sort_index()
 
 # Plotting the histogram
 plt.figure(figsize=(8, 4))
-plt.bar(rating_frequencies[:500].index, rating_frequencies[:500].values, color='lightgreen', edgecolor='darkgreen')
+plt.bar(rating_frequencies[:500].index, rating_frequencies[:500].values, color='Cornsilk', edgecolor='LightCoral')
 
 plt.xlim(0, 250)
 
@@ -290,7 +290,7 @@ rating_frequencies = user_rating_counts.value_counts().sort_index()
 
 # Plotting the histogram
 plt.figure(figsize=(8, 4))
-plt.bar(rating_frequencies.index, rating_frequencies.values, color='lightgreen', edgecolor='darkgreen')
+plt.bar(rating_frequencies.index, rating_frequencies.values, color='Cornsilk', edgecolor='LightCoral')
 
 plt.xlim(0, 200)
 
@@ -330,9 +330,11 @@ book_rating_counts = final_rating.groupby('Book-Title')['Book-Rating'].count().r
 # Rename columns for clarity
 book_rating_counts.columns = ['Book-Title', 'Number of Ratings']
 
+print(book_rating_counts['Number of Ratings'].max())
+
 # Plotting the boxplot
 plt.figure(figsize=(8, 4))
-sns.boxplot(x='Number of Ratings', data=book_rating_counts, color='lightgreen')
+sns.boxplot(x='Number of Ratings', data=book_rating_counts, color='LightCoral')
 plt.xlabel('Number of Ratings per Book')
 plt.title('Distribution of Number of Ratings per Book')
 plt.grid(True)
