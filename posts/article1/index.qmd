@@ -179,7 +179,7 @@ git commit -m 'Add application file'
 git push
 ```
 
-However, to upload your model, you need a different approach since it's a large file (over 25 MB). You need to first. Follow these steps:
+However, to upload your model, you need a different approach since it's a large file (over 25 MB). You need to first follow these steps:
 
 1.  **Install Git**: If you do not have Git installed locally, please download from [here](#0).
 

@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Tooba Rahimnia">
+<meta name="dcterms.date" content="2024-08-16">
+
+<title>CognitiveDiscoveries - Building a Book Recommender Engine from Scratch and Deploying it to a Web Application</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-contrib/videojs/video.min.js"></script>
+<link href="../../site_libs/quarto-contrib/videojs/video-js.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">CognitiveDiscoveries</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/toobarahimnia"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://linkedin.com/in/tooba-rahimnia"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="mailto:trahimnia@gmail.com"> <i class="bi bi-envelope" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.youtube.com/@toobarahimnia9171"> <i class="bi bi-youtube" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Building a Book Recommender Engine from Scratch and Deploying it to a Web Application</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Web App</div>
+                <div class="quarto-category">Recommendation System</div>
+                <div class="quarto-category">Collaborative Filtering</div>
+                <div class="quarto-category">Flask</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Tooba Rahimnia </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">August 16, 2024</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#importing-libraries" id="toc-importing-libraries" class="nav-link active" data-scroll-target="#importing-libraries">Importing Libraries</a></li>
+  <li><a href="#loading-data" id="toc-loading-data" class="nav-link" data-scroll-target="#loading-data">Loading Data</a></li>
+  <li><a href="#data-preprocessing" id="toc-data-preprocessing" class="nav-link" data-scroll-target="#data-preprocessing">Data Preprocessing</a></li>
+  <li><a href="#pivot-table" id="toc-pivot-table" class="nav-link" data-scroll-target="#pivot-table">Pivot Table</a></li>
+  <li><a href="#dimensionality-reduction" id="toc-dimensionality-reduction" class="nav-link" data-scroll-target="#dimensionality-reduction">Dimensionality Reduction</a></li>
+  <li><a href="#exploratory-data-analysis-eda" id="toc-exploratory-data-analysis-eda" class="nav-link" data-scroll-target="#exploratory-data-analysis-eda">Exploratory Data Analysis (EDA)</a></li>
+  <li><a href="#training-machine-learning-model" id="toc-training-machine-learning-model" class="nav-link" data-scroll-target="#training-machine-learning-model">Training Machine Learning Model</a>
+  <ul class="collapse">
+  <li><a href="#k-mean-clustering" id="toc-k-mean-clustering" class="nav-link" data-scroll-target="#k-mean-clustering">K-mean Clustering</a></li>
+  <li><a href="#gaussian-mixture-modeling" id="toc-gaussian-mixture-modeling" class="nav-link" data-scroll-target="#gaussian-mixture-modeling">Gaussian Mixture Modeling</a></li>
+  </ul></li>
+  <li><a href="#prediction" id="toc-prediction" class="nav-link" data-scroll-target="#prediction">Prediction</a></li>
+  <li><a href="#downloading-necessary-files" id="toc-downloading-necessary-files" class="nav-link" data-scroll-target="#downloading-necessary-files">Downloading Necessary Files</a></li>
+  <li><a href="#creating-the-app" id="toc-creating-the-app" class="nav-link" data-scroll-target="#creating-the-app">Creating the App</a>
+  <ul class="collapse">
+  <li><a href="#software-design" id="toc-software-design" class="nav-link" data-scroll-target="#software-design">Software Design</a></li>
+  <li><a href="#virtual-environment-setup-and-run" id="toc-virtual-environment-setup-and-run" class="nav-link" data-scroll-target="#virtual-environment-setup-and-run">Virtual Environment Setup and Run</a></li>
+  </ul></li>
+  <li><a href="#results-and-limitations" id="toc-results-and-limitations" class="nav-link" data-scroll-target="#results-and-limitations">Results and Limitations</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>This guide outlines the process of building a book recommendation system using distributed computing with Sklearn and Pandas, integrated into a fully deployed web application with Flask. It features K-Means clustering and Gaussian Mixture Modeling for content filtering to deliver personalized book recommendations.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="wp4506810.jpg" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p>Have you ever found yourself so mesmerized by a book that you wished there were more similar content out there? For many of us book lovers, this isn’t just a desire—it’s a necessity. Fortunately, with the advancements in machine learning and data science, we now have the privilege of receiving recommendations tailored to our interests. In the world of AI, this is known as a “Recommendation System.” These systems are widely used by e-commerce and entertainment companies such as Amazon and Netflix to increase user engagement, loyalty, satisfaction, and ultimately, the company’s profit.</p>
+<p>One popular approach to recommendation systems is collaborative filtering, a technique that predicts items a user might like based on the reactions of similar users. Collaborative filtering is basically a user-based filtering.</p>
+<p>In the user-based approach, we leverage the opinions of people who share similar interests with you. For example, if you and a friend both enjoy the book Atomic Habits by James Clear, and your friend also likes The Compound Effect by Darren Hardy, chances are you’ll like that book too! Companies rely on user feedback and ratings to suggest contents to others with similar tastes. Simply put, if Person A and Person B both like content C, and Person B likes content D, the system will recommend content D to Person A.&nbsp;</p>
+<p>Another approach to recommendation system is called content-based filtering which focuses solely on the contents themselves, identifying which contents are most similar to what the user already enjoys.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Content-based-filtering-vs-Collaborative-filtering-Source.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p>In this blog, we’ll implement content-based filtering. Given the name of a book chosen by our user, we’ll provide 10 suggested books that we think the user might also enjoy. How will we do this? By analyzing a pool of book titles, each ranked by multiple users, we’ll identify which books are similar to the one the user likes, then suggest those titles, assuming the user will enjoy them as well.</p>
+<section id="importing-libraries" class="level2">
+<h2 class="anchored" data-anchor-id="importing-libraries">Importing Libraries</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Handle warning messages</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="im">import</span> warnings</span>
+<span id="cb1-3"><a href="#cb1-3"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># Data manipulation</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-3"><a href="#cb2-3"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-4"><a href="#cb2-4"></a></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="co"># File handling</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a><span class="im">import</span> os</span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="im">import</span> pickle</span>
+<span id="cb2-8"><a href="#cb2-8"></a></span>
+<span id="cb2-9"><a href="#cb2-9"></a><span class="co"># Time management</span></span>
+<span id="cb2-10"><a href="#cb2-10"></a><span class="im">import</span> time</span>
+<span id="cb2-11"><a href="#cb2-11"></a></span>
+<span id="cb2-12"><a href="#cb2-12"></a><span class="co"># Data visualization</span></span>
+<span id="cb2-13"><a href="#cb2-13"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb2-14"><a href="#cb2-14"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb2-15"><a href="#cb2-15"></a></span>
+<span id="cb2-16"><a href="#cb2-16"></a><span class="co"># Machine learning</span></span>
+<span id="cb2-17"><a href="#cb2-17"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
+<span id="cb2-18"><a href="#cb2-18"></a><span class="im">from</span> sklearn.decomposition <span class="im">import</span> TruncatedSVD</span>
+<span id="cb2-19"><a href="#cb2-19"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb2-20"><a href="#cb2-20"></a><span class="im">from</span> sklearn.metrics.pairwise <span class="im">import</span> cosine_similarity</span>
+<span id="cb2-21"><a href="#cb2-21"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> silhouette_score</span>
+<span id="cb2-22"><a href="#cb2-22"></a><span class="im">from</span> sklearn.mixture <span class="im">import</span> GaussianMixture</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="loading-data" class="level2">
+<h2 class="anchored" data-anchor-id="loading-data">Loading Data</h2>
+<p>We’re using the&nbsp;<a href="https://www.kaggle.com/datasets/arashnic/book-recommendation-dataset/data">Book Recommendation Dataset</a>&nbsp;from Kaggle. Within this dataset, there are several files, but we only need&nbsp;<code>books.csv</code>&nbsp;and&nbsp;<code>ratings.csv</code>. Together, these files provide the ratings of over 1 million users on more than 270,000 books, with no duplicated rows in either dataset. Both files share a common column,&nbsp;<code>ISBN</code>, which we’ll use to merge them into one comprehensive dataset. This will make our analysis much smoother and more efficient.</p>
+<p>if you are on Kaggle, use the following commands to load your data:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a>books_df <span class="op">=</span> pd.read_csv(<span class="st">'/kaggle/input/book-recommendation-dataset/Books.csv'</span>)</span>
+<span id="cb3-2"><a href="#cb3-2"></a>ratings_df <span class="op">=</span> pd.read_csv(<span class="st">'/kaggle/input/book-recommendation-dataset/Ratings.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>And if on Google Colab:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a><span class="im">from</span> google.colab <span class="im">import</span> drive</span>
+<span id="cb4-2"><a href="#cb4-2"></a>drive.mount(<span class="st">'/content/drive'</span>)</span>
+<span id="cb4-3"><a href="#cb4-3"></a></span>
+<span id="cb4-4"><a href="#cb4-4"></a>path <span class="op">=</span> <span class="st">'/path/to/your/dataset/folder'</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a></span>
+<span id="cb4-6"><a href="#cb4-6"></a><span class="co"># List all CSV files in the directory</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a>csv_files <span class="op">=</span> [<span class="bu">file</span> <span class="cf">for</span> <span class="bu">file</span> <span class="kw">in</span> os.listdir(path) <span class="cf">if</span> <span class="bu">file</span>.endswith(<span class="st">'.csv'</span>)]</span>
+<span id="cb4-8"><a href="#cb4-8"></a></span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="co"># Create a dictionary to store the DataFrames</span></span>
+<span id="cb4-10"><a href="#cb4-10"></a>dataframes <span class="op">=</span> {}</span>
+<span id="cb4-11"><a href="#cb4-11"></a></span>
+<span id="cb4-12"><a href="#cb4-12"></a><span class="co"># Read each CSV file into a DataFrame and store it in the dictionary</span></span>
+<span id="cb4-13"><a href="#cb4-13"></a><span class="cf">for</span> <span class="bu">file</span> <span class="kw">in</span> csv_files:</span>
+<span id="cb4-14"><a href="#cb4-14"></a>    <span class="co"># Extract the base name of the file (without extension) to use as the key</span></span>
+<span id="cb4-15"><a href="#cb4-15"></a>    base_name <span class="op">=</span> os.path.splitext(<span class="bu">file</span>)[<span class="dv">0</span>]</span>
+<span id="cb4-16"><a href="#cb4-16"></a></span>
+<span id="cb4-17"><a href="#cb4-17"></a>    <span class="co"># Read the CSV file into a DataFrame</span></span>
+<span id="cb4-18"><a href="#cb4-18"></a>    dataframes[base_name] <span class="op">=</span> pd.read_csv(os.path.join(path, <span class="bu">file</span>), header<span class="op">=</span><span class="va">True</span>, inferSchema<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb4-19"><a href="#cb4-19"></a>    <span class="co"># dataframes[base_name] = pd.read_csv(os.path.join(path, file))</span></span>
+<span id="cb4-20"><a href="#cb4-20"></a></span>
+<span id="cb4-21"><a href="#cb4-21"></a><span class="co"># Display the first few rows of each DataFrame</span></span>
+<span id="cb4-22"><a href="#cb4-22"></a><span class="cf">for</span> name, df <span class="kw">in</span> dataframes.items():</span>
+<span id="cb4-23"><a href="#cb4-23"></a>    <span class="bu">print</span>(<span class="ss">f"DataFrame: </span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a>books_df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="images/Screenshot 2024-08-14 at 9.36.45 PM.png" class="img-fluid" width="951"></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a>ratings_df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="images/Screenshot 2024-08-14 at 9.37.28 PM.png" class="img-fluid" width="261"></p>
+</section>
+<section id="data-preprocessing" class="level2">
+<h2 class="anchored" data-anchor-id="data-preprocessing">Data Preprocessing</h2>
+<p>The maximum rating a user can give to a book is 10, with 11 distinct rating options ranging from 0 to 10, where a higher rating indicates greater interest and zero means no rating.&nbsp;</p>
+<p>As we merge the two datasets,&nbsp;<code>books_df</code>&nbsp;and&nbsp;<code>ratings_df</code>, we’ll notice that many items have no rating, resulting in&nbsp;<code>null</code>&nbsp;values. These&nbsp;<code>null</code>&nbsp;values indicate that the user did not rate that particular book. This situation makes our matrix sparse. Since we need to work exclusively with numerical data, we will replace these&nbsp;<code>null</code>&nbsp;values with zeros, signifying that the user did not rate the book.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Calculate the maximum rating and find the unique ratings</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="bu">print</span>(ratings_df[<span class="st">'Book-Rating'</span>].<span class="bu">max</span>(), ratings_df[<span class="st">'Book-Rating'</span>].unique())</span>
+<span id="cb7-3"><a href="#cb7-3"></a></span>
+<span id="cb7-4"><a href="#cb7-4"></a>ratings_df.head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="images/Screenshot 2024-08-14 at 9.40.01 PM.png" class="img-fluid" width="320"></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a><span class="bu">print</span>(<span class="ss">f'Book dataframe</span><span class="ch">\'</span><span class="ss">s shape is </span><span class="sc">{</span>books_df<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="bu">print</span>(<span class="st">'Ratings</span><span class="ch">\'</span><span class="st">s shape is: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(ratings_df.shape))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="images/Screenshot 2024-08-14 at 9.41.44 PM.png" width="299" height="49"></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1"></a><span class="bu">print</span>(<span class="st">'Null values in books dataframe are as follows:'</span>)</span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="bu">print</span>(<span class="st">'**********************************************'</span>)</span>
+<span id="cb9-3"><a href="#cb9-3"></a><span class="bu">print</span>(books_df.isnull().<span class="bu">sum</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="images/Screenshot 2024-08-14 at 9.43.06 PM.png" class="img-fluid" width="357"></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1"></a><span class="bu">print</span>(<span class="st">'Null values in ratings dataframe are as follows:'</span>)</span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="bu">print</span>(<span class="st">'************************************************'</span>)</span>
+<span id="cb10-3"><a href="#cb10-3"></a><span class="bu">print</span>(ratings_df.isnull().<span class="bu">sum</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="images/Screenshot 2024-08-14 at 9.44.20 PM.png" class="img-fluid" width="364"></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1"></a><span class="bu">print</span>(<span class="st">'Number of duplicated values in books_df'</span>)</span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="bu">print</span>(<span class="st">'***************************************'</span>)</span>
+<span id="cb11-3"><a href="#cb11-3"></a></span>
+<span id="cb11-4"><a href="#cb11-4"></a><span class="bu">print</span>(books_df.duplicated().<span class="bu">sum</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="images/Screenshot 2024-08-14 at 9.45.13 PM.png" width="314" height="58"></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a><span class="bu">print</span>(<span class="st">'Number of duplicated values in ratings_df'</span>)</span>
+<span id="cb12-2"><a href="#cb12-2"></a><span class="bu">print</span>(<span class="st">'*****************************************'</span>)</span>
+<span id="cb12-3"><a href="#cb12-3"></a></span>
+<span id="cb12-4"><a href="#cb12-4"></a><span class="bu">print</span>(ratings_df.duplicated().<span class="bu">sum</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="images/Screenshot 2024-08-14 at 9.46.01 PM.png" class="img-fluid" width="340"></p>
+<p>As mentioned earlier, we merge the two datasets on the <code>ISBN</code> column. To ensure more reliable results, we will filter our data to include only users who have rated more than 100 books and books that have received more than 50 votes. Entries that don’t meet these criteria will be dropped from the dataset.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1"></a>df <span class="op">=</span> books_df.merge(ratings_df, on<span class="op">=</span><span class="st">'ISBN'</span>)</span>
+<span id="cb13-2"><a href="#cb13-2"></a></span>
+<span id="cb13-3"><a href="#cb13-3"></a>user_prune <span class="op">=</span> df.groupby(<span class="st">'User-ID'</span>)[<span class="st">'Book-Rating'</span>].count() <span class="op">&gt;</span> <span class="dv">100</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a>user_and_rating <span class="op">=</span> user_prune[user_prune].index <span class="co"># outputs the User-IDs for users that rate more than 100 books</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a></span>
+<span id="cb13-6"><a href="#cb13-6"></a>filtered_rating <span class="op">=</span> df[df[<span class="st">'User-ID'</span>].isin(user_and_rating)]</span>
+<span id="cb13-7"><a href="#cb13-7"></a></span>
+<span id="cb13-8"><a href="#cb13-8"></a>rating_prune <span class="op">=</span> df.groupby(<span class="st">'Book-Title'</span>)[<span class="st">'Book-Rating'</span>].count() <span class="op">&gt;=</span> <span class="dv">50</span></span>
+<span id="cb13-9"><a href="#cb13-9"></a>famous_books <span class="op">=</span> rating_prune[rating_prune].index</span>
+<span id="cb13-10"><a href="#cb13-10"></a></span>
+<span id="cb13-11"><a href="#cb13-11"></a>final_rating <span class="op">=</span> filtered_rating[filtered_rating[<span class="st">'Book-Title'</span>].isin(famous_books)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="pivot-table" class="level2">
+<h2 class="anchored" data-anchor-id="pivot-table">Pivot Table</h2>
+<p>Here, we are creating an item-based filtering system, which means constructing a table where&nbsp;<code>Book-Title</code>&nbsp;serve as row and&nbsp;<code>User-ID</code>&nbsp;as column.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1"></a>book_pivot_table <span class="op">=</span> final_rating.pivot_table(index<span class="op">=</span><span class="st">'Book-Title'</span>, columns<span class="op">=</span><span class="st">'User-ID'</span>, values<span class="op">=</span><span class="st">'Book-Rating'</span>)</span>
+<span id="cb14-2"><a href="#cb14-2"></a></span>
+<span id="cb14-3"><a href="#cb14-3"></a>book_pivot_table.fillna(<span class="dv">0</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb14-4"><a href="#cb14-4"></a></span>
+<span id="cb14-5"><a href="#cb14-5"></a><span class="bu">print</span>(<span class="st">'datset dimension: '</span>, (book_pivot_table.shape))</span>
+<span id="cb14-6"><a href="#cb14-6"></a>book_pivot_table.head(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="images/Screenshot 2024-08-14 at 9.48.01 PM.png" class="img-fluid"></p>
+<p>Notice how the number of users has shrunk from over a million to just 1,642. This highlights that only 0.14% of users rated more than 100 books, and only 0.9% of books were rated more than 50 times by these avid readers.</p>
+</section>
+<section id="dimensionality-reduction" class="level2">
+<h2 class="anchored" data-anchor-id="dimensionality-reduction">Dimensionality Reduction</h2>
+<p>Even with this significant reduction in dimensionality, our dataset still consumes a considerable amount of memory, making it computationally expensive to process. To address this, we can further reduce the matrix’s dimensions (specifically, the number of users) to decrease memory usage and speed up the training process. For this, we’ll use Truncated Singular Value Decomposition (SVD).</p>
+<p>Truncated SVD is a matrix factorization technique similar to Principal Component Analysis (PCA). The key difference is that Truncated SVD operates directly on the data matrix, while PCA is applied to the covariance matrix. Truncated SVD factorizes the data matrix, truncating it to a specified number of columns, which effectively reduces the complexity of the data.</p>
+<p>Read more at:&nbsp;<a href="https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.TruncatedSVD.html">TruncatedSVD</a></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1"></a>tsvd <span class="op">=</span> TruncatedSVD(n_components<span class="op">=</span><span class="dv">200</span>, random_state<span class="op">=</span><span class="dv">42</span>) <span class="co"># reduce the dimentionality - similar to PCA</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a>book_pivot_table_tsvd <span class="op">=</span> tsvd.fit_transform(book_pivot_table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1"></a><span class="bu">print</span>(<span class="st">'Original number of features before dimensionality reduction: '</span>, (book_pivot_table.count(), <span class="bu">len</span>(book_pivot_table.columns)))</span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="bu">print</span>(<span class="st">'Number of features after dimensionality reduction: '</span>, book_pivot_table_tsvd.shape)</span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="bu">print</span>(<span class="st">'Explained variance ratio: '</span>, tsvd.explained_variance_ratio_[<span class="dv">0</span>:<span class="dv">1500</span>].<span class="bu">sum</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="images/Screenshot 2024-08-14 at 9.49.59 PM.png" class="img-fluid" width="532"></p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1"></a>indices <span class="op">=</span> book_pivot_table.index <span class="co"># all the user IDs</span></span>
+<span id="cb17-2"><a href="#cb17-2"></a></span>
+<span id="cb17-3"><a href="#cb17-3"></a>book_rating_clustering <span class="op">=</span> pd.DataFrame(data<span class="op">=</span>book_pivot_table_tsvd, index<span class="op">=</span>indices)</span>
+<span id="cb17-4"><a href="#cb17-4"></a><span class="bu">print</span>(book_rating_clustering.shape)</span>
+<span id="cb17-5"><a href="#cb17-5"></a>book_rating_clustering.head(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="images/Screenshot 2024-08-14 at 9.50.59 PM.png" class="img-fluid"></p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1"></a>train_rate, test_rate <span class="op">=</span> train_test_split(book_rating_clustering, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">42</span>)</span>
+<span id="cb18-2"><a href="#cb18-2"></a><span class="bu">print</span>(<span class="ss">f'Traing set shape: </span><span class="sc">{</span>train_rate<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb18-3"><a href="#cb18-3"></a><span class="bu">print</span>(<span class="st">'Testing set shape: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(test_rate.shape))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="images/Screenshot 2024-08-14 at 9.51.38 PM.png" width="257" height="43"></p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1"></a>test_rate.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="images/Screenshot 2024-08-14 at 9.54.21 PM.png" class="img-fluid"></p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1"></a>indices <span class="op">=</span> test_rate.index</span>
+<span id="cb20-2"><a href="#cb20-2"></a>test_set_rating <span class="op">=</span> book_pivot_table.loc[indices] <span class="co"># .loc[] for label-based indexing and .iloc[] for position-based indexing.</span></span>
+<span id="cb20-3"><a href="#cb20-3"></a>test_set_rating.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="images/Screenshot 2024-08-14 at 9.54.55 PM.png" class="img-fluid"></p>
+</section>
+<section id="exploratory-data-analysis-eda" class="level2">
+<h2 class="anchored" data-anchor-id="exploratory-data-analysis-eda">Exploratory Data Analysis (EDA)</h2>
+<p>Before diving into model training, let’s explore our data further. We’ll start by examining the distribution of the number of rating counts across the books. By plotting a histogram, we can visualize how frequently different books have been rated.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1"></a><span class="co"># Group the data by each book and counts how many ratings each book has recieved</span></span>
+<span id="cb21-2"><a href="#cb21-2"></a>book_rating_counts <span class="op">=</span> final_rating.groupby(<span class="st">'Book-Title'</span>)[<span class="st">'Book-Rating'</span>].count()</span>
+<span id="cb21-3"><a href="#cb21-3"></a></span>
+<span id="cb21-4"><a href="#cb21-4"></a><span class="co"># Calculate how many books fall into each rating count category and then sorts these counts</span></span>
+<span id="cb21-5"><a href="#cb21-5"></a>rating_frequencies <span class="op">=</span> book_rating_counts.value_counts().sort_index()</span>
+<span id="cb21-6"><a href="#cb21-6"></a></span>
+<span id="cb21-7"><a href="#cb21-7"></a><span class="co"># Plotting the histogram</span></span>
+<span id="cb21-8"><a href="#cb21-8"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
+<span id="cb21-9"><a href="#cb21-9"></a>plt.bar(rating_frequencies[:<span class="dv">500</span>].index, rating_frequencies[:<span class="dv">500</span>].values, color<span class="op">=</span><span class="st">'lightgreen'</span>, edgecolor<span class="op">=</span><span class="st">'darkgreen'</span>)</span>
+<span id="cb21-10"><a href="#cb21-10"></a></span>
+<span id="cb21-11"><a href="#cb21-11"></a>plt.xlim(<span class="dv">0</span>, <span class="dv">250</span>)</span>
+<span id="cb21-12"><a href="#cb21-12"></a></span>
+<span id="cb21-13"><a href="#cb21-13"></a><span class="co"># Adding titles and labels</span></span>
+<span id="cb21-14"><a href="#cb21-14"></a>plt.title(<span class="st">'Books by number of ratings recieved'</span>)</span>
+<span id="cb21-15"><a href="#cb21-15"></a>plt.xlabel(<span class="st">'Number of Rating Counts'</span>)</span>
+<span id="cb21-16"><a href="#cb21-16"></a>plt.ylabel(<span class="st">'Frequency of Books'</span>)</span>
+<span id="cb21-17"><a href="#cb21-17"></a></span>
+<span id="cb21-18"><a href="#cb21-18"></a><span class="co"># Display the plot</span></span>
+<span id="cb21-19"><a href="#cb21-19"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>For example, below we can observe that around 25 books have received approximately 35 ratings each. The majority of books fall within the range of 25 to 75 total ratings, indicating that most books have moderate engagement from users. Interestingly, there are very few books with rating counts exceeding 150, highlighting the rarity of highly rated books in our dataset. This insight will help us better understand the characteristics of our data as we move forward.</p>
+<p><img src="images/Screenshot 2024-08-15 at 7.55.13 PM.png" class="img-fluid"></p>
+<p>Next, let’s examine the distribution of the number of ratings provided by users. This will help us understand user engagement in our dataset.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1"></a><span class="co"># Group the data by each user and counts how many ratings each user has given</span></span>
+<span id="cb22-2"><a href="#cb22-2"></a>user_rating_counts <span class="op">=</span> final_rating.groupby(<span class="st">'User-ID'</span>)[<span class="st">'Book-Rating'</span>].count()</span>
+<span id="cb22-3"><a href="#cb22-3"></a></span>
+<span id="cb22-4"><a href="#cb22-4"></a><span class="co"># Calculate how many users fall into each rating count category and then sorts these counts</span></span>
+<span id="cb22-5"><a href="#cb22-5"></a>rating_frequencies <span class="op">=</span> user_rating_counts.value_counts().sort_index()</span>
+<span id="cb22-6"><a href="#cb22-6"></a></span>
+<span id="cb22-7"><a href="#cb22-7"></a></span>
+<span id="cb22-8"><a href="#cb22-8"></a><span class="co"># Plotting the histogram</span></span>
+<span id="cb22-9"><a href="#cb22-9"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
+<span id="cb22-10"><a href="#cb22-10"></a>plt.bar(rating_frequencies.index, rating_frequencies.values, color<span class="op">=</span><span class="st">'lightgreen'</span>, edgecolor<span class="op">=</span><span class="st">'darkgreen'</span>)</span>
+<span id="cb22-11"><a href="#cb22-11"></a></span>
+<span id="cb22-12"><a href="#cb22-12"></a>plt.xlim(<span class="dv">0</span>, <span class="dv">200</span>)</span>
+<span id="cb22-13"><a href="#cb22-13"></a></span>
+<span id="cb22-14"><a href="#cb22-14"></a><span class="co"># Adding titles and labels</span></span>
+<span id="cb22-15"><a href="#cb22-15"></a>plt.title(<span class="st">'Raters by number of books rated'</span>)</span>
+<span id="cb22-16"><a href="#cb22-16"></a>plt.xlabel(<span class="st">'Number of Ratings'</span>)</span>
+<span id="cb22-17"><a href="#cb22-17"></a>plt.ylabel(<span class="st">'Frequency of Users'</span>)</span>
+<span id="cb22-18"><a href="#cb22-18"></a></span>
+<span id="cb22-19"><a href="#cb22-19"></a><span class="co"># Display the plot</span></span>
+<span id="cb22-20"><a href="#cb22-20"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In the plot below, we observe the frequency of users based on the number of ratings they have given. For instance, there are approximately 20 users who have voted around 37 times. Most users have given between 0 to 100 ratings, showing that casual engagement is common. Notably, the number of users who have rated more than 100 times drops sharply, with the count decreasing from about 10 to almost just 2 users. This indicates that only a small fraction of users are highly active in rating books.</p>
+<p><img src="images/Screenshot 2024-08-15 at 7.57.15 PM.png" class="img-fluid"></p>
+<p>Now let’s talk about another graph: a boxplot, which is a statistical tool used to visualize the distribution of a dataset. Here are its essential components:</p>
+<ol type="1">
+<li><p><strong>Box</strong>: The central part of the plot represents the interquartile range (IQR), containing the middle 50% of the data.</p></li>
+<li><p><strong>Median Line</strong>: A line within the box indicates the median (50th percentile) of the data.</p></li>
+<li><p><strong>Whiskers</strong>: Lines extending from the box to the smallest and largest values within 1.5 times the IQR from the lower and upper quartiles.</p></li>
+<li><p><strong>Outliers</strong>: Points outside the whiskers are considered outliers, indicating unusually high or low values.</p></li>
+<li><p><strong>Quartiles</strong>: The edges of the box represent the first quartile (Q1, 25th percentile) and the third quartile (Q3, 75th percentile).</p></li>
+</ol>
+<p>A boxplot efficiently illustrates the data’s spread, central tendency, and potential outliers.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="boxplot.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1"></a><span class="co"># Count the number of ratings per book</span></span>
+<span id="cb23-2"><a href="#cb23-2"></a>book_rating_counts <span class="op">=</span> final_rating.groupby(<span class="st">'Book-Title'</span>)[<span class="st">'Book-Rating'</span>].count().reset_index()</span>
+<span id="cb23-3"><a href="#cb23-3"></a></span>
+<span id="cb23-4"><a href="#cb23-4"></a><span class="co"># Rename columns for clarity</span></span>
+<span id="cb23-5"><a href="#cb23-5"></a>book_rating_counts.columns <span class="op">=</span> [<span class="st">'Book-Title'</span>, <span class="st">'Number of Ratings'</span>]</span>
+<span id="cb23-6"><a href="#cb23-6"></a></span>
+<span id="cb23-7"><a href="#cb23-7"></a><span class="co"># Plotting the boxplot</span></span>
+<span id="cb23-8"><a href="#cb23-8"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
+<span id="cb23-9"><a href="#cb23-9"></a>sns.boxplot(x<span class="op">=</span><span class="st">'Number of Ratings'</span>, data<span class="op">=</span>book_rating_counts, color<span class="op">=</span><span class="st">'lightgreen'</span>)</span>
+<span id="cb23-10"><a href="#cb23-10"></a>plt.xlabel(<span class="st">'Number of Ratings per Book'</span>)</span>
+<span id="cb23-11"><a href="#cb23-11"></a>plt.title(<span class="st">'Distribution of Number of Ratings per Book'</span>)</span>
+<span id="cb23-12"><a href="#cb23-12"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb23-13"><a href="#cb23-13"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="images/Screenshot 2024-08-15 at 7.58.11 PM.png" class="img-fluid"></p>
+<p>So in the plot above, we can observe that the majority of books received a bit over 100 ratings. Half of the books have at most 50 votes. Additionally, 75% of the books have up to ~75 votes. The maximum value within our fourth quartile (Q4) lies between 100 and 120, indicating that most books do not receive more than 120 votes. The minimum rating a user can give is 1, and there are outliers on the right-hand side, displayed as gray dots. These represent individual books, with one book on the far right edge having a rating as high as 556.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1"></a><span class="co"># Count the number of ratings per user</span></span>
+<span id="cb24-2"><a href="#cb24-2"></a>user_rating_counts <span class="op">=</span> final_rating.groupby(<span class="st">'User-ID'</span>)[<span class="st">'Book-Rating'</span>].count().reset_index()</span>
+<span id="cb24-3"><a href="#cb24-3"></a></span>
+<span id="cb24-4"><a href="#cb24-4"></a><span class="co"># Rename columns for clarity</span></span>
+<span id="cb24-5"><a href="#cb24-5"></a>user_rating_counts.columns <span class="op">=</span> [<span class="st">'User-ID'</span>, <span class="st">'Number of Ratings'</span>]</span>
+<span id="cb24-6"><a href="#cb24-6"></a></span>
+<span id="cb24-7"><a href="#cb24-7"></a><span class="co"># Plotting the boxplot</span></span>
+<span id="cb24-8"><a href="#cb24-8"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
+<span id="cb24-9"><a href="#cb24-9"></a>sns.boxplot(x<span class="op">=</span><span class="st">'Number of Ratings'</span>, data<span class="op">=</span>user_rating_counts, color<span class="op">=</span><span class="st">'LightCoral'</span>)</span>
+<span id="cb24-10"><a href="#cb24-10"></a>plt.xlabel(<span class="st">'Number of Ratings per User'</span>)</span>
+<span id="cb24-11"><a href="#cb24-11"></a>plt.title(<span class="st">'Distribution of Number of Ratings per User'</span>)</span>
+<span id="cb24-12"><a href="#cb24-12"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb24-13"><a href="#cb24-13"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="images/Screenshot 2024-08-15 at 7.59.33 PM.png" class="img-fluid"></p>
+<p>The plot for users is more condensed, with one outlier (an individual) having rated more than 2,000 books! However, the majority of voters fall within the range of 1 to just under 250 votes. Half of the voters have cast at most 60 votes, and 75% have rated at most close to 100 times. This suggests that most users don’t engage in extensive voting.</p>
+</section>
+<section id="training-machine-learning-model" class="level2">
+<h2 class="anchored" data-anchor-id="training-machine-learning-model">Training Machine Learning Model</h2>
+<p>Content filtering, especially when dealing with a large number of users and items, requires significant computational resources. As the number of users (U) and items (I) increases, the computational demands grow nonlinearly, primarily due to the time-intensive process of calculating similarities. The time complexity for such operations can be expressed as O(U × I), where the similarity calculations dominate the computational time.</p>
+<p>To address these challenges, we propose using content clustering combined with neighbors’ voting. Clustering is a technique used to group similar data points into clusters. In the context of recommendation systems, clustering can help group items (e.g., books) that have similar patterns of user ratings. This reduces the computational load by allowing us to focus on clusters of similar items rather than individual item comparisons across the entire dataset.</p>
+<p>Clustering is an unsupervised learning task, meaning we don’t have labeled data to guide the process. Instead, we aim to discover hidden patterns and relationships within the dataset. Our objective is to group books based on user rankings without any predefined categories or labels. By identifying clusters of books that have similar rating patterns, we can better understand how these books relate to each other in the eyes of users. This understanding is crucial for building an effective recommendation system that can suggest relevant items to users based on their preferences.<img src="1*Ht06cKFv9S9XWCsnR2kSpw.gif" class="img-fluid"></p>
+<p>For this task, we experiment with two clustering algorithms: K-Means and Gaussian Mixture Modeling (GMM). Both are unsupervised learning techniques used for clustering, but they handle the assignment of data points to clusters differently.</p>
+<section id="k-mean-clustering" class="level3">
+<h3 class="anchored" data-anchor-id="k-mean-clustering">K-mean Clustering</h3>
+<ul>
+<li><p>Hard Assignment: K-Means clustering operates under the assumption that each data point belongs to one and only one cluster.</p></li>
+<li><p>Determinate Clustering: At any given point in the algorithm, we are certain about the cluster assignment of each data point. For example, if a point is assigned to the red cluster, the algorithm is fully confident in that assignment. In subsequent iterations, this assignment might change, but the certainty remains; the point will be entirely assigned to a different cluster (e.g., green). This approach is known as a “hard assignment.”</p></li>
+</ul>
+<div class="sourceCode" id="cb25"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1"></a><span class="co"># Fit the KMeans model</span></span>
+<span id="cb25-2"><a href="#cb25-2"></a>clusterer_KMeans <span class="op">=</span> KMeans(n_clusters<span class="op">=</span><span class="dv">6</span>, random_state<span class="op">=</span><span class="dv">42</span>).fit(train_rate)</span>
+<span id="cb25-3"><a href="#cb25-3"></a></span>
+<span id="cb25-4"><a href="#cb25-4"></a><span class="co"># Transform the data to get predictions</span></span>
+<span id="cb25-5"><a href="#cb25-5"></a>preds_KMeans <span class="op">=</span> clusterer_KMeans.predict(train_rate)</span>
+<span id="cb25-6"><a href="#cb25-6"></a></span>
+<span id="cb25-7"><a href="#cb25-7"></a>unique_labels <span class="op">=</span> np.unique(preds_KMeans)</span>
+<span id="cb25-8"><a href="#cb25-8"></a><span class="bu">print</span>(<span class="ss">f"Number of clusters: </span><span class="sc">{</span><span class="bu">len</span>(unique_labels)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb25-9"><a href="#cb25-9"></a></span>
+<span id="cb25-10"><a href="#cb25-10"></a>KMeans_score <span class="op">=</span> silhouette_score(train_rate, preds_KMeans)</span>
+<span id="cb25-11"><a href="#cb25-11"></a><span class="bu">print</span>(<span class="st">'Silhouette score for k-mean approach: '</span>, KMeans_score)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="images/Screenshot 2024-08-14 at 9.57.37 PM.png" width="458" height="40"></p>
+</section>
+<section id="gaussian-mixture-modeling" class="level3">
+<h3 class="anchored" data-anchor-id="gaussian-mixture-modeling">Gaussian Mixture Modeling</h3>
+<ul>
+<li><p>Soft Assignment: GMM, on the other hand, allows for uncertainty in cluster assignments. Instead of assigning a data point to a single cluster with full certainty, GMM provides probabilities for a point’s membership in multiple clusters.</p></li>
+<li><p>Probabilistic Clustering: For instance, a data point might have a 70% probability of belonging to the red cluster, a 10% probability of being in the green cluster, and a 20% probability of being in the blue cluster. This approach is known as a “soft assignment,” where the model expresses the degree of uncertainty in cluster membership.</p></li>
+<li><p>Iterative Refinement: GMM starts with a prior belief about the cluster assignments, and as the algorithm iterates, it continuously revises these probabilities, taking into account the uncertainty in each assignment.</p></li>
+</ul>
+<div class="sourceCode" id="cb26"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1"></a><span class="co"># clustering books</span></span>
+<span id="cb26-2"><a href="#cb26-2"></a>clusterer_GM <span class="op">=</span> GaussianMixture(n_components<span class="op">=</span><span class="dv">6</span>, random_state<span class="op">=</span><span class="dv">42</span>).fit(train_rate)</span>
+<span id="cb26-3"><a href="#cb26-3"></a>preds_GM <span class="op">=</span> clusterer_GM.predict(train_rate)</span>
+<span id="cb26-4"><a href="#cb26-4"></a></span>
+<span id="cb26-5"><a href="#cb26-5"></a>GM_score <span class="op">=</span> silhouette_score(train_rate, preds_GM)</span>
+<span id="cb26-6"><a href="#cb26-6"></a><span class="bu">print</span>(<span class="st">'Silhouette score for Gaussian Mixture approach: '</span>, GM_score)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="images/Screenshot 2024-08-14 at 9.58.13 PM.png" class="img-fluid" width="509"></p>
+<p>Silhouette scores measure how similar an object is to its own cluster compared to other clusters, providing a way to assess the quality of clustering.</p>
+<p>In the above code snippets we used Silhouette scores to compare the performance of K-Means and Gaussian Mixture Models (GMM). The score must range from -1 to 1, with higher scores indicating better clustering—where points are more closely grouped within their own clusters and well-separated from others.</p>
+<p>As observed, GMM (score = 0.124) outperforms K-Means (score = 0.014), as it creates more distinct and well-defined clusters.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1"></a>indices <span class="op">=</span> train_rate.index</span>
+<span id="cb27-2"><a href="#cb27-2"></a>preds <span class="op">=</span> pd.DataFrame(data<span class="op">=</span>preds_GM, columns<span class="op">=</span>[<span class="st">'cluster'</span>], index<span class="op">=</span>indices)</span>
+<span id="cb27-3"><a href="#cb27-3"></a><span class="bu">print</span>(preds.shape)</span>
+<span id="cb27-4"><a href="#cb27-4"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">7</span>):</span>
+<span id="cb27-5"><a href="#cb27-5"></a>  <span class="bu">print</span>(<span class="st">'cluster '</span>, i<span class="op">+</span><span class="dv">1</span>, <span class="st">':'</span>, preds[preds[<span class="st">'cluster'</span>] <span class="op">==</span> i<span class="op">+</span><span class="dv">1</span>].count())</span>
+<span id="cb27-6"><a href="#cb27-6"></a>preds.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="images/Screenshot 2024-08-14 at 9.59.04 PM.png" class="img-fluid" width="323"></p>
+</section>
+</section>
+<section id="prediction" class="level2">
+<h2 class="anchored" data-anchor-id="prediction">Prediction</h2>
+<div class="sourceCode" id="cb28"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1"></a>test_preds <span class="op">=</span> clusterer_GM.predict(test_rate)</span>
+<span id="cb28-2"><a href="#cb28-2"></a>test_indices <span class="op">=</span> test_rate.index</span>
+<span id="cb28-3"><a href="#cb28-3"></a>test_cluster <span class="op">=</span> pd.DataFrame(data<span class="op">=</span>test_preds, columns<span class="op">=</span>[<span class="st">'cluster'</span>], index<span class="op">=</span>test_indices)</span>
+<span id="cb28-4"><a href="#cb28-4"></a></span>
+<span id="cb28-5"><a href="#cb28-5"></a>Test_GM_score <span class="op">=</span> silhouette_score(test_rate, test_preds)</span>
+<span id="cb28-6"><a href="#cb28-6"></a></span>
+<span id="cb28-7"><a href="#cb28-7"></a><span class="bu">print</span>(<span class="ss">f'Silhouette Score for the test set is: </span><span class="sc">{</span>Test_GM_score<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb28-8"><a href="#cb28-8"></a>test_cluster.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><img src="images/Screenshot 2024-08-14 at 10.02.28 PM.png" class="img-fluid" width="476"></p>
+</section>
+<section id="downloading-necessary-files" class="level2">
+<h2 class="anchored" data-anchor-id="downloading-necessary-files">Downloading Necessary Files</h2>
+<div class="sourceCode" id="cb29"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1"></a>pickle.dump(book_pivot_table, <span class="bu">open</span>(<span class="st">'book_pivot_table.pkl'</span>, <span class="st">'wb'</span>))</span>
+<span id="cb29-2"><a href="#cb29-2"></a>pickle.dump(books_df, <span class="bu">open</span>(<span class="st">'books.pkl'</span>, <span class="st">'wb'</span>))</span>
+<span id="cb29-3"><a href="#cb29-3"></a>pickle.dump(preds, <span class="bu">open</span>(<span class="st">'predicted_clusters.pkl'</span>, <span class="st">'wb'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="creating-the-app" class="level2">
+<h2 class="anchored" data-anchor-id="creating-the-app">Creating the App</h2>
+<p>We are using Flask, a micro web framework that we’ve previously utilized in blog 2. The project’s structure should look like this:</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode numberSource texinfo number-lines code-with-copy"><code class="sourceCode texinfo"><span id="cb30-1"><a href="#cb30-1"></a>├── myproject</span>
+<span id="cb30-2"><a href="#cb30-2"></a>|   └── dataset</span>
+<span id="cb30-3"><a href="#cb30-3"></a>|       └── Books.csv</span>
+<span id="cb30-4"><a href="#cb30-4"></a>|       └── Ratings.csv</span>
+<span id="cb30-5"><a href="#cb30-5"></a>│   └── models</span>
+<span id="cb30-6"><a href="#cb30-6"></a>|       └── book_pivot_table.pkl</span>
+<span id="cb30-7"><a href="#cb30-7"></a>|       └── books.pkl</span>
+<span id="cb30-8"><a href="#cb30-8"></a>|       └── predicted_clusters.pkl</span>
+<span id="cb30-9"><a href="#cb30-9"></a>|   └── static/css</span>
+<span id="cb30-10"><a href="#cb30-10"></a>|       └── styles.css</span>
+<span id="cb30-11"><a href="#cb30-11"></a>|   └── templates</span>
+<span id="cb30-12"><a href="#cb30-12"></a>|       └── index.html</span>
+<span id="cb30-13"><a href="#cb30-13"></a>|       └── recommendation.html</span>
+<span id="cb30-14"><a href="#cb30-14"></a>|   └── utils.py</span>
+<span id="cb30-15"><a href="#cb30-15"></a>|   └── app.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="software-design" class="level3">
+<h3 class="anchored" data-anchor-id="software-design">Software Design</h3>
+<p>We begin by collecting the name of the book that the user enjoys and wants to find similar recommendations for. Using this input, we then need our book-user table, which contains the entire dataset, as well as the predicted clusters from our clustering algorithm, and the number of recommendations the user desires.</p>
+<p>The first step is to check if the given book exists in our dataset. Once validated, we identify the cluster to which the book belongs. With this cluster identified, we retrieve a list of all the books within that specific cluster. To find books similar in style to the one the user enjoys, we calculate the cosine similarity between the rankings of the given book and all the other books in the cluster. This similarity score helps us determine which books are closest in style and content based on user rankings. Finally, we select the top 10 books with the highest similarity scores, ensuring that the recommended books align closely with the user’s preferences. This method leverages both clustering and similarity metrics to provide personalized and relevant book recommendations.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>utils.py</strong></pre>
+</div>
+<div class="sourceCode" id="cb31" data-filename="utils.py"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1"></a></span>
+<span id="cb31-2"><a href="#cb31-2"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb31-3"><a href="#cb31-3"></a></span>
+<span id="cb31-4"><a href="#cb31-4"></a><span class="kw">def</span> recommending_books(book_name, book_pivot_table, preds, n_recommendations<span class="op">=</span><span class="dv">10</span>):</span>
+<span id="cb31-5"><a href="#cb31-5"></a>    <span class="co"># Check if the book is in the pivot table</span></span>
+<span id="cb31-6"><a href="#cb31-6"></a>    <span class="cf">if</span> book_name <span class="kw">not</span> <span class="kw">in</span> book_pivot_table.index:</span>
+<span id="cb31-7"><a href="#cb31-7"></a>        <span class="cf">return</span> np.array([<span class="ss">f"The book '</span><span class="sc">{</span>book_name<span class="sc">}</span><span class="ss">' is not in the dataset :/"</span>])</span>
+<span id="cb31-8"><a href="#cb31-8"></a></span>
+<span id="cb31-9"><a href="#cb31-9"></a>    <span class="co"># Find the cluster of the given book</span></span>
+<span id="cb31-10"><a href="#cb31-10"></a>    book_cluster <span class="op">=</span> preds.loc[book_name, <span class="st">'cluster'</span>]</span>
+<span id="cb31-11"><a href="#cb31-11"></a></span>
+<span id="cb31-12"><a href="#cb31-12"></a>    <span class="co"># Get all the books in the same cluster</span></span>
+<span id="cb31-13"><a href="#cb31-13"></a>    cluster_books <span class="op">=</span> preds[preds[<span class="st">'cluster'</span>] <span class="op">==</span> book_cluster].index</span>
+<span id="cb31-14"><a href="#cb31-14"></a></span>
+<span id="cb31-15"><a href="#cb31-15"></a>    <span class="co"># Calculate similarity scores within the cluster</span></span>
+<span id="cb31-16"><a href="#cb31-16"></a>    book_vector <span class="op">=</span> book_pivot_table.loc[book_name].values.reshape(<span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb31-17"><a href="#cb31-17"></a></span>
+<span id="cb31-18"><a href="#cb31-18"></a>    cluster_vectors <span class="op">=</span> book_pivot_table.loc[cluster_books].values</span>
+<span id="cb31-19"><a href="#cb31-19"></a></span>
+<span id="cb31-20"><a href="#cb31-20"></a>    similarity_scores <span class="op">=</span> np.dot(cluster_vectors, book_vector.T).flatten()</span>
+<span id="cb31-21"><a href="#cb31-21"></a></span>
+<span id="cb31-22"><a href="#cb31-22"></a>    <span class="co"># Sort the books by similarity scores</span></span>
+<span id="cb31-23"><a href="#cb31-23"></a>    similar_books_indices <span class="op">=</span> np.argsort(<span class="op">-</span>similarity_scores)[<span class="dv">1</span>:n_recommendations<span class="op">+</span><span class="dv">1</span>]  <span class="co"># Skip the first one as it's the book itself</span></span>
+<span id="cb31-24"><a href="#cb31-24"></a></span>
+<span id="cb31-25"><a href="#cb31-25"></a>    similar_books <span class="op">=</span> cluster_books[similar_books_indices]</span>
+<span id="cb31-26"><a href="#cb31-26"></a></span>
+<span id="cb31-27"><a href="#cb31-27"></a>    <span class="cf">return</span> <span class="bu">list</span>(similar_books)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The next step is to create our Flask application file. First, we need to load our pre-trained models and data using the&nbsp;<code>pickle</code>&nbsp;library. Specifically, we load the pivot table of book-user interactions, the book metadata, and the predicted clusters, which are stored as pickle files.</p>
+<p>After loading these files, we set up the initial web page using the&nbsp;<code>index.html</code>&nbsp;template. This page will display 12 random books with their titles and images, and also provide an interface for the user to input a book title for recommendations.</p>
+<p>Lastly, we handle the user request by checking whether the book title exists in our pivot table. If the title exists, we call our&nbsp;<code>recommending_books</code>&nbsp;function to get the top 10 book recommendations. For each recommended book, we extract the title and the corresponding profile picture, then render these results through the&nbsp;<code>recommendation.html</code>&nbsp;template.</p>
+<p>If the book title doesn’t exist in the dataset, an error message is displayed on the&nbsp;<code>recommendation.html</code>&nbsp;page.</p>
+<div class="code-with-filename">
+<div class="code-with-filename-file">
+<pre><strong>app.py</strong></pre>
+</div>
+<div class="sourceCode" id="cb32" data-filename="app.py"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1"></a></span>
+<span id="cb32-2"><a href="#cb32-2"></a><span class="im">from</span> flask <span class="im">import</span> Flask,render_template,request</span>
+<span id="cb32-3"><a href="#cb32-3"></a><span class="im">import</span> pickle</span>
+<span id="cb32-4"><a href="#cb32-4"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb32-5"><a href="#cb32-5"></a><span class="im">from</span> utils <span class="im">import</span> recommending_books</span>
+<span id="cb32-6"><a href="#cb32-6"></a></span>
+<span id="cb32-7"><a href="#cb32-7"></a>pt <span class="op">=</span> pickle.load(<span class="bu">open</span>(<span class="st">'path/to/book_pivot_table.pkl'</span>,<span class="st">'rb'</span>))</span>
+<span id="cb32-8"><a href="#cb32-8"></a>book <span class="op">=</span> pickle.load(<span class="bu">open</span>(<span class="st">'path/to/books.pkl'</span>,<span class="st">'rb'</span>))</span>
+<span id="cb32-9"><a href="#cb32-9"></a>preds <span class="op">=</span> pickle.load(<span class="bu">open</span>(<span class="st">'path/to/predicted_clusters.pkl'</span>,<span class="st">'rb'</span>))</span>
+<span id="cb32-10"><a href="#cb32-10"></a></span>
+<span id="cb32-11"><a href="#cb32-11"></a>app <span class="op">=</span> Flask(<span class="va">__name__</span>)</span>
+<span id="cb32-12"><a href="#cb32-12"></a></span>
+<span id="cb32-13"><a href="#cb32-13"></a><span class="at">@app.route</span>(<span class="st">'/'</span>)</span>
+<span id="cb32-14"><a href="#cb32-14"></a><span class="kw">def</span> index():</span>
+<span id="cb32-15"><a href="#cb32-15"></a>    <span class="cf">return</span> render_template(<span class="st">'index.html'</span>,</span>
+<span id="cb32-16"><a href="#cb32-16"></a>                           book_name <span class="op">=</span> <span class="bu">list</span>(book[<span class="st">'Book-Title'</span>][<span class="dv">109</span>:<span class="dv">121</span>].values),</span>
+<span id="cb32-17"><a href="#cb32-17"></a>                           image <span class="op">=</span> <span class="bu">list</span>(book[<span class="st">'Image-URL-M'</span>][<span class="dv">109</span>:<span class="dv">121</span>].values),</span>
+<span id="cb32-18"><a href="#cb32-18"></a>                           )</span>
+<span id="cb32-19"><a href="#cb32-19"></a></span>
+<span id="cb32-20"><a href="#cb32-20"></a><span class="at">@app.route</span>(<span class="st">'/recommendation'</span>)</span>
+<span id="cb32-21"><a href="#cb32-21"></a><span class="kw">def</span> recommendation_ui():</span>
+<span id="cb32-22"><a href="#cb32-22"></a>    <span class="cf">return</span> render_template(<span class="st">'recommendation.html'</span>)</span>
+<span id="cb32-23"><a href="#cb32-23"></a></span>
+<span id="cb32-24"><a href="#cb32-24"></a><span class="at">@app.route</span>(<span class="st">'/recommend_books'</span>, methods<span class="op">=</span>[<span class="st">'post'</span>])</span>
+<span id="cb32-25"><a href="#cb32-25"></a><span class="kw">def</span> recommendation():</span>
+<span id="cb32-26"><a href="#cb32-26"></a>    user_input <span class="op">=</span> request.form.get(<span class="st">'user_input'</span>)</span>
+<span id="cb32-27"><a href="#cb32-27"></a></span>
+<span id="cb32-28"><a href="#cb32-28"></a>    recommendations <span class="op">=</span> recommending_books(user_input, pt, preds, n_recommendations<span class="op">=</span><span class="dv">10</span>)</span>
+<span id="cb32-29"><a href="#cb32-29"></a>    </span>
+<span id="cb32-30"><a href="#cb32-30"></a>    <span class="co"># Check if the book is not found</span></span>
+<span id="cb32-31"><a href="#cb32-31"></a>    <span class="cf">if</span> <span class="bu">isinstance</span>(recommendations, np.ndarray) <span class="kw">and</span> recommendations[<span class="dv">0</span>].startswith(<span class="st">"The book"</span>):</span>
+<span id="cb32-32"><a href="#cb32-32"></a>        <span class="cf">return</span> render_template(<span class="st">'recommendation.html'</span>, error<span class="op">=</span>recommendations[<span class="dv">0</span>])</span>
+<span id="cb32-33"><a href="#cb32-33"></a>    </span>
+<span id="cb32-34"><a href="#cb32-34"></a>    <span class="co"># Gather the data for rendering</span></span>
+<span id="cb32-35"><a href="#cb32-35"></a>    data <span class="op">=</span> []</span>
+<span id="cb32-36"><a href="#cb32-36"></a>    <span class="cf">for</span> book_name <span class="kw">in</span> recommendations:</span>
+<span id="cb32-37"><a href="#cb32-37"></a>        item <span class="op">=</span> []</span>
+<span id="cb32-38"><a href="#cb32-38"></a>        temp_df <span class="op">=</span> book[book[<span class="st">'Book-Title'</span>] <span class="op">==</span> book_name]</span>
+<span id="cb32-39"><a href="#cb32-39"></a>        item.extend(<span class="bu">list</span>(temp_df.drop_duplicates(<span class="st">'Book-Title'</span>)[<span class="st">'Book-Title'</span>].values))</span>
+<span id="cb32-40"><a href="#cb32-40"></a>        item.extend(<span class="bu">list</span>(temp_df.drop_duplicates(<span class="st">'Book-Title'</span>)[<span class="st">'Image-URL-M'</span>].values))</span>
+<span id="cb32-41"><a href="#cb32-41"></a>        data.append(item)</span>
+<span id="cb32-42"><a href="#cb32-42"></a>        <span class="bu">print</span>(item)</span>
+<span id="cb32-43"><a href="#cb32-43"></a>    </span>
+<span id="cb32-44"><a href="#cb32-44"></a>    <span class="cf">return</span> render_template(<span class="st">'recommendation.html'</span>, data<span class="op">=</span>data)</span>
+<span id="cb32-45"><a href="#cb32-45"></a>    </span>
+<span id="cb32-46"><a href="#cb32-46"></a></span>
+<span id="cb32-47"><a href="#cb32-47"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">'__main__'</span>:</span>
+<span id="cb32-48"><a href="#cb32-48"></a>    app.run(debug<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Below are the templates and the static (CSS) files.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">index.html</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">recommendation.html</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">styles.css</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="sourceCode" id="cb33"><pre class="sourceCode numberSource html number-lines code-with-copy"><code class="sourceCode html"><span id="cb33-1"><a href="#cb33-1"></a><span class="dt">&lt;!DOCTYPE</span> html<span class="dt">&gt;</span></span>
+<span id="cb33-2"><a href="#cb33-2"></a><span class="dt">&lt;</span><span class="kw">html</span><span class="ot"> lang</span><span class="op">=</span><span class="st">"en"</span><span class="dt">&gt;</span></span>
+<span id="cb33-3"><a href="#cb33-3"></a><span class="dt">&lt;</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<span id="cb33-4"><a href="#cb33-4"></a>    <span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> charset</span><span class="op">=</span><span class="st">"UTF-8"</span><span class="dt">&gt;</span></span>
+<span id="cb33-5"><a href="#cb33-5"></a>    <span class="dt">&lt;</span><span class="kw">title</span><span class="dt">&gt;</span>Book Recommendation Website<span class="dt">&lt;/</span><span class="kw">title</span><span class="dt">&gt;</span></span>
+<span id="cb33-6"><a href="#cb33-6"></a>    <span class="dt">&lt;</span><span class="kw">link</span><span class="ot"> rel</span><span class="op">=</span><span class="st">"stylesheet"</span><span class="ot"> href</span><span class="op">=</span><span class="st">"{{ url_for('static', filename='css/styles.css') }}"</span><span class="dt">&gt;</span></span>
+<span id="cb33-7"><a href="#cb33-7"></a>    <span class="dt">&lt;</span><span class="kw">link</span><span class="ot"> rel</span><span class="op">=</span><span class="st">"stylesheet"</span><span class="ot"> href</span><span class="op">=</span><span class="st">"https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"</span><span class="dt">&gt;</span></span>
+<span id="cb33-8"><a href="#cb33-8"></a>    <span class="dt">&lt;</span><span class="kw">script</span><span class="ot"> src</span><span class="op">=</span><span class="st">"https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"</span><span class="dt">&gt;&lt;/</span><span class="kw">script</span><span class="dt">&gt;</span></span>
+<span id="cb33-9"><a href="#cb33-9"></a>    <span class="dt">&lt;</span><span class="kw">script</span><span class="ot"> src</span><span class="op">=</span><span class="st">"https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"</span><span class="dt">&gt;&lt;/</span><span class="kw">script</span><span class="dt">&gt;</span></span>
+<span id="cb33-10"><a href="#cb33-10"></a>    <span class="dt">&lt;</span><span class="kw">script</span><span class="ot"> src</span><span class="op">=</span><span class="st">"https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"</span><span class="dt">&gt;&lt;/</span><span class="kw">script</span><span class="dt">&gt;</span></span>
+<span id="cb33-11"><a href="#cb33-11"></a>    <span class="dt">&lt;</span><span class="kw">link</span><span class="ot"> rel</span><span class="op">=</span><span class="st">"stylesheet"</span><span class="ot"> href</span><span class="op">=</span><span class="st">"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"</span><span class="dt">&gt;</span></span>
+<span id="cb33-12"><a href="#cb33-12"></a><span class="dt">&lt;/</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<span id="cb33-13"><a href="#cb33-13"></a><span class="dt">&lt;</span><span class="kw">body</span><span class="ot"> style</span><span class="op">=</span><span class="st">"background-color:#ffe4e1"</span><span class="dt">&gt;</span></span>
+<span id="cb33-14"><a href="#cb33-14"></a>    <span class="dt">&lt;</span><span class="kw">nav</span><span class="ot"> class</span><span class="op">=</span><span class="st">"navbar"</span><span class="ot"> style</span><span class="op">=</span><span class="st">"background-color:currentColor"</span><span class="dt">&gt;</span></span>
+<span id="cb33-15"><a href="#cb33-15"></a>        <span class="co">&lt;!-- &lt;a class="navbar-brand" style="color: white; font-size: 30px"&gt;Book Recommendation System&lt;/a&gt; --&gt;</span></span>
+<span id="cb33-16"><a href="#cb33-16"></a>        <span class="dt">&lt;</span><span class="kw">ul</span><span class="ot"> class</span><span class="op">=</span><span class="st">"nav navbar-nav ml-auto"</span><span class="dt">&gt;</span></span>
+<span id="cb33-17"><a href="#cb33-17"></a>            <span class="dt">&lt;</span><span class="kw">li</span><span class="dt">&gt;&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">"/"</span><span class="ot"> style</span><span class="op">=</span><span class="st">"color: #d8bfd8"</span><span class="ot"> </span><span class="dt">&gt;&lt;</span><span class="kw">i</span><span class="ot"> class</span><span class="op">=</span><span class="st">"fas fa-home"</span><span class="ot"> </span><span class="dt">&gt;&lt;/</span><span class="kw">i</span><span class="dt">&gt;&lt;/</span><span class="kw">a</span><span class="dt">&gt;&lt;/</span><span class="kw">li</span><span class="dt">&gt;</span></span>
+<span id="cb33-18"><a href="#cb33-18"></a>        <span class="dt">&lt;/</span><span class="kw">ul</span><span class="dt">&gt;</span></span>
+<span id="cb33-19"><a href="#cb33-19"></a>    <span class="dt">&lt;/</span><span class="kw">nav</span><span class="dt">&gt;</span></span>
+<span id="cb33-20"><a href="#cb33-20"></a></span>
+<span id="cb33-21"><a href="#cb33-21"></a>    <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"container"</span><span class="dt">&gt;</span></span>
+<span id="cb33-22"><a href="#cb33-22"></a>        <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"row"</span><span class="dt">&gt;</span></span>
+<span id="cb33-23"><a href="#cb33-23"></a>            <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"col-md-12"</span><span class="dt">&gt;</span></span>
+<span id="cb33-24"><a href="#cb33-24"></a>                <span class="dt">&lt;</span><span class="kw">h1</span><span class="ot"> class</span><span class="op">=</span><span class="st">"text-blue"</span><span class="ot"> style</span><span class="op">=</span><span class="st">"font-size: 45px; color:#4a0f6f; margin-top: 10px;margin-left:300px"</span><span class="dt">&gt;&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">"/recommendation"</span><span class="dt">&gt;</span> 💻 Type in a Book's Name... <span class="dt">&lt;/</span><span class="kw">a</span><span class="dt">&gt;&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
+<span id="cb33-25"><a href="#cb33-25"></a>            <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb33-26"><a href="#cb33-26"></a></span>
+<span id="cb33-27"><a href="#cb33-27"></a>            <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"container"</span><span class="ot"> style</span><span class="op">=</span><span class="st">"padding-bottom: 50px;"</span><span class="dt">&gt;</span> <span class="co">&lt;!-- Add padding at the bottom --&gt;</span></span>
+<span id="cb33-28"><a href="#cb33-28"></a>                <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"row"</span><span class="dt">&gt;</span></span>
+<span id="cb33-29"><a href="#cb33-29"></a>                    {% for i in range(book_name|length) %}</span>
+<span id="cb33-30"><a href="#cb33-30"></a>                        <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"col-md-3"</span><span class="ot"> style</span><span class="op">=</span><span class="st">"margin-top:50px"</span><span class="dt">&gt;</span></span>
+<span id="cb33-31"><a href="#cb33-31"></a>                        <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"card"</span><span class="ot"> style</span><span class="op">=</span><span class="st">"width: 100%; height: 100%"</span><span class="dt">&gt;</span></span>
+<span id="cb33-32"><a href="#cb33-32"></a>                            <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"card-body"</span><span class="ot"> style</span><span class="op">=</span><span class="st">"font-family: emoji;padding: 1.02rem"</span><span class="dt">&gt;</span></span>
+<span id="cb33-33"><a href="#cb33-33"></a>                                <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> class</span><span class="op">=</span><span class="st">"card-img-top"</span><span class="ot"> src</span><span class="op">=</span><span class="st">"{{image[i]}}"</span><span class="ot"> alt</span><span class="op">=</span><span class="st">"Book Image"</span></span>
+<span id="cb33-34"><a href="#cb33-34"></a><span class="ot">                                style</span><span class="op">=</span><span class="st">"width: 100%; height: 70%; object-fit: cover;"</span><span class="dt">&gt;</span></span>
+<span id="cb33-35"><a href="#cb33-35"></a>                                <span class="dt">&lt;</span><span class="kw">h4</span><span class="ot"> class</span><span class="op">=</span><span class="st">"text-blue"</span><span class="ot"> style</span><span class="op">=</span><span class="st">"font-size: 20px; font-weight: bold; margin-top: 10px;"</span><span class="dt">&gt;</span>{{book_name[i]}}<span class="dt">&lt;/</span><span class="kw">h4</span><span class="dt">&gt;</span></span>
+<span id="cb33-36"><a href="#cb33-36"></a>                            <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb33-37"><a href="#cb33-37"></a>                        <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb33-38"><a href="#cb33-38"></a>                        <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb33-39"><a href="#cb33-39"></a>                    {% endfor %}</span>
+<span id="cb33-40"><a href="#cb33-40"></a>                <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb33-41"><a href="#cb33-41"></a>            <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span>    </span>
+<span id="cb33-42"><a href="#cb33-42"></a></span>
+<span id="cb33-43"><a href="#cb33-43"></a>        <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb33-44"><a href="#cb33-44"></a>    <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb33-45"><a href="#cb33-45"></a><span class="dt">&lt;/</span><span class="kw">body</span><span class="dt">&gt;</span></span>
+<span id="cb33-46"><a href="#cb33-46"></a><span class="dt">&lt;/</span><span class="kw">html</span><span class="dt">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="sourceCode" id="cb34"><pre class="sourceCode numberSource html number-lines code-with-copy"><code class="sourceCode html"><span id="cb34-1"><a href="#cb34-1"></a><span class="dt">&lt;!DOCTYPE</span> html<span class="dt">&gt;</span></span>
+<span id="cb34-2"><a href="#cb34-2"></a><span class="dt">&lt;!DOCTYPE</span> html<span class="dt">&gt;</span></span>
+<span id="cb34-3"><a href="#cb34-3"></a><span class="dt">&lt;</span><span class="kw">html</span><span class="ot"> lang</span><span class="op">=</span><span class="st">"en"</span><span class="dt">&gt;</span></span>
+<span id="cb34-4"><a href="#cb34-4"></a><span class="dt">&lt;</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<span id="cb34-5"><a href="#cb34-5"></a>    <span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> charset</span><span class="op">=</span><span class="st">"UTF-8"</span><span class="dt">&gt;</span></span>
+<span id="cb34-6"><a href="#cb34-6"></a>    <span class="dt">&lt;</span><span class="kw">title</span><span class="dt">&gt;</span>Recommendation Site<span class="dt">&lt;/</span><span class="kw">title</span><span class="dt">&gt;</span></span>
+<span id="cb34-7"><a href="#cb34-7"></a>    <span class="dt">&lt;</span><span class="kw">link</span><span class="ot"> rel</span><span class="op">=</span><span class="st">"stylesheet"</span><span class="ot"> href</span><span class="op">=</span><span class="st">"{{ url_for('static', filename='css/styles.css') }}"</span><span class="dt">&gt;</span></span>
+<span id="cb34-8"><a href="#cb34-8"></a>    <span class="dt">&lt;</span><span class="kw">link</span><span class="ot"> rel</span><span class="op">=</span><span class="st">"stylesheet"</span><span class="ot"> href</span><span class="op">=</span><span class="st">"https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"</span><span class="dt">&gt;</span></span>
+<span id="cb34-9"><a href="#cb34-9"></a>    <span class="dt">&lt;</span><span class="kw">script</span><span class="ot"> src</span><span class="op">=</span><span class="st">"https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"</span><span class="dt">&gt;&lt;/</span><span class="kw">script</span><span class="dt">&gt;</span></span>
+<span id="cb34-10"><a href="#cb34-10"></a>    <span class="dt">&lt;</span><span class="kw">script</span><span class="ot"> src</span><span class="op">=</span><span class="st">"https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"</span><span class="dt">&gt;&lt;/</span><span class="kw">script</span><span class="dt">&gt;</span></span>
+<span id="cb34-11"><a href="#cb34-11"></a>    <span class="dt">&lt;</span><span class="kw">script</span><span class="ot"> src</span><span class="op">=</span><span class="st">"https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"</span><span class="dt">&gt;&lt;/</span><span class="kw">script</span><span class="dt">&gt;</span></span>
+<span id="cb34-12"><a href="#cb34-12"></a>    <span class="dt">&lt;</span><span class="kw">link</span><span class="ot"> rel</span><span class="op">=</span><span class="st">"stylesheet"</span><span class="ot"> href</span><span class="op">=</span><span class="st">"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"</span><span class="dt">&gt;</span></span>
+<span id="cb34-13"><a href="#cb34-13"></a><span class="dt">&lt;/</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<span id="cb34-14"><a href="#cb34-14"></a><span class="dt">&lt;</span><span class="kw">body</span><span class="ot"> style</span><span class="op">=</span><span class="st">"background-color:#ffe4e1"</span><span class="ot"> </span><span class="dt">&gt;</span></span>
+<span id="cb34-15"><a href="#cb34-15"></a>    <span class="dt">&lt;</span><span class="kw">nav</span><span class="ot"> class</span><span class="op">=</span><span class="st">"navbar"</span><span class="ot"> style</span><span class="op">=</span><span class="st">"background-color:currentColor"</span><span class="dt">&gt;</span></span>
+<span id="cb34-16"><a href="#cb34-16"></a>        <span class="co">&lt;!-- &lt;a class="navbar-brand" style="color: white; font-size: 30px"&gt;Book Recommendation System&lt;/a&gt; --&gt;</span></span>
+<span id="cb34-17"><a href="#cb34-17"></a>        <span class="dt">&lt;</span><span class="kw">ul</span><span class="ot"> class</span><span class="op">=</span><span class="st">"nav navbar-nav ml-auto"</span><span class="dt">&gt;</span></span>
+<span id="cb34-18"><a href="#cb34-18"></a>            <span class="dt">&lt;</span><span class="kw">li</span><span class="dt">&gt;&lt;</span><span class="kw">a</span><span class="ot"> href</span><span class="op">=</span><span class="st">"/"</span><span class="ot"> style</span><span class="op">=</span><span class="st">"color: #d8bfd8"</span><span class="dt">&gt;&lt;</span><span class="kw">i</span><span class="ot"> class</span><span class="op">=</span><span class="st">"fas fa-home"</span><span class="dt">&gt;&lt;/</span><span class="kw">i</span><span class="dt">&gt;&lt;/</span><span class="kw">a</span><span class="dt">&gt;&lt;/</span><span class="kw">li</span><span class="dt">&gt;</span></span>
+<span id="cb34-19"><a href="#cb34-19"></a>        <span class="dt">&lt;/</span><span class="kw">ul</span><span class="dt">&gt;</span></span>
+<span id="cb34-20"><a href="#cb34-20"></a>    <span class="dt">&lt;/</span><span class="kw">nav</span><span class="dt">&gt;</span></span>
+<span id="cb34-21"><a href="#cb34-21"></a></span>
+<span id="cb34-22"><a href="#cb34-22"></a>    <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"container"</span><span class="dt">&gt;</span></span>
+<span id="cb34-23"><a href="#cb34-23"></a>        <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"row"</span><span class="dt">&gt;</span></span>
+<span id="cb34-24"><a href="#cb34-24"></a>            <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"col-md-12"</span><span class="dt">&gt;</span></span>
+<span id="cb34-25"><a href="#cb34-25"></a>                <span class="dt">&lt;</span><span class="kw">h4</span><span class="ot"> class</span><span class="op">=</span><span class="st">"text-blue"</span><span class="ot"> style</span><span class="op">=</span><span class="st">"font-size: 35px; color:#4a0f6f; margin-top: 15px;"</span><span class="dt">&gt;</span>Recommended Books<span class="dt">&lt;/</span><span class="kw">h4</span><span class="dt">&gt;</span></span>
+<span id="cb34-26"><a href="#cb34-26"></a>                <span class="dt">&lt;</span><span class="kw">form</span><span class="ot"> action</span><span class="op">=</span><span class="st">"/recommend_books"</span><span class="ot"> method</span><span class="op">=</span><span class="st">"post"</span><span class="ot"> style</span><span class="op">=</span><span class="st">"margin-top: 20px;"</span><span class="dt">&gt;</span></span>
+<span id="cb34-27"><a href="#cb34-27"></a>                    <span class="dt">&lt;</span><span class="kw">input</span><span class="ot"> name</span><span class="op">=</span><span class="st">"user_input"</span><span class="ot"> type</span><span class="op">=</span><span class="st">"text"</span><span class="ot"> class</span><span class="op">=</span><span class="st">"form-control"</span><span class="ot"> placeholder</span><span class="op">=</span><span class="st">"Enter a book title"</span><span class="dt">&gt;</span></span>
+<span id="cb34-28"><a href="#cb34-28"></a>                    <span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="cb34-29"><a href="#cb34-29"></a>                    <span class="dt">&lt;</span><span class="kw">input</span><span class="ot"> type</span><span class="op">=</span><span class="st">"submit"</span><span class="ot"> class</span><span class="op">=</span><span class="st">"btn btn-lg btn-warning"</span><span class="ot"> style</span><span class="op">=</span><span class="st">"background-color: #b0e0e6; color: #4a0f6f"</span><span class="ot"> value</span><span class="op">=</span><span class="st">"Get Recommendations"</span><span class="dt">&gt;</span></span>
+<span id="cb34-30"><a href="#cb34-30"></a>                <span class="dt">&lt;/</span><span class="kw">form</span><span class="dt">&gt;</span></span>
+<span id="cb34-31"><a href="#cb34-31"></a>            <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb34-32"><a href="#cb34-32"></a>        <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb34-33"><a href="#cb34-33"></a>        </span>
+<span id="cb34-34"><a href="#cb34-34"></a>        <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"container"</span><span class="ot"> style</span><span class="op">=</span><span class="st">"padding-bottom: 50px;"</span><span class="dt">&gt;</span> <span class="co">&lt;!-- Add padding at the bottom --&gt;</span></span>
+<span id="cb34-35"><a href="#cb34-35"></a>            <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"row"</span><span class="dt">&gt;</span></span>
+<span id="cb34-36"><a href="#cb34-36"></a>                {% if data %}</span>
+<span id="cb34-37"><a href="#cb34-37"></a>                <span class="dt">&lt;</span><span class="kw">p</span><span class="ot"> class</span><span class="op">=</span><span class="st">"text-blue"</span><span class="ot"> style</span><span class="op">=</span><span class="st">"font-size: 25px; margin-top: 15px;"</span><span class="dt">&gt;</span>Based on your preference, we think you might like the following books! :)<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="cb34-38"><a href="#cb34-38"></a>                    <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"row"</span><span class="dt">&gt;</span></span>
+<span id="cb34-39"><a href="#cb34-39"></a>                        {% for i in data %}</span>
+<span id="cb34-40"><a href="#cb34-40"></a>                            <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"col-md-3"</span><span class="ot"> style</span><span class="op">=</span><span class="st">"margin-top:50px"</span><span class="dt">&gt;</span></span>
+<span id="cb34-41"><a href="#cb34-41"></a>                                <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"card"</span><span class="ot"> style</span><span class="op">=</span><span class="st">"width: 100%; height: 100%"</span><span class="dt">&gt;</span></span>
+<span id="cb34-42"><a href="#cb34-42"></a>                                    <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> class</span><span class="op">=</span><span class="st">"card-img-top"</span><span class="ot"> src</span><span class="op">=</span><span class="st">{{i[1]}}</span><span class="ot"> alt</span><span class="op">=</span><span class="st">"Book Image"</span><span class="dt">&gt;</span></span>
+<span id="cb34-43"><a href="#cb34-43"></a>                                    <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">"card-body"</span><span class="dt">&gt;</span></span>
+<span id="cb34-44"><a href="#cb34-44"></a>                                        <span class="dt">&lt;</span><span class="kw">h4</span><span class="ot"> class</span><span class="op">=</span><span class="st">"text-blue"</span><span class="ot"> style</span><span class="op">=</span><span class="st">"font-size: 20px; font-weight: bold; margin-top: 10px;"</span><span class="dt">&gt;</span>{{i[0]}}<span class="dt">&lt;/</span><span class="kw">h4</span><span class="dt">&gt;</span></span>
+<span id="cb34-45"><a href="#cb34-45"></a>                                    <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb34-46"><a href="#cb34-46"></a>                                <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb34-47"><a href="#cb34-47"></a>                            <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb34-48"><a href="#cb34-48"></a>                        {% endfor %}</span>
+<span id="cb34-49"><a href="#cb34-49"></a>                    <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb34-50"><a href="#cb34-50"></a>                {% endif %}</span>
+<span id="cb34-51"><a href="#cb34-51"></a>            <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span> </span>
+<span id="cb34-52"><a href="#cb34-52"></a>        <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span>       </span>
+<span id="cb34-53"><a href="#cb34-53"></a>    <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb34-54"><a href="#cb34-54"></a>    </span>
+<span id="cb34-55"><a href="#cb34-55"></a>    <span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb34-56"><a href="#cb34-56"></a><span class="dt">&lt;/</span><span class="kw">body</span><span class="dt">&gt;</span></span>
+<span id="cb34-57"><a href="#cb34-57"></a><span class="dt">&lt;/</span><span class="kw">html</span><span class="dt">&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<div class="sourceCode" id="cb35"><pre class="sourceCode numberSource css number-lines code-with-copy"><code class="sourceCode css"><span id="cb35-1"><a href="#cb35-1"></a><span class="fu">.card</span> {</span>
+<span id="cb35-2"><a href="#cb35-2"></a>    <span class="kw">transition</span><span class="ch">:</span> <span class="dv">transform 0.3</span><span class="dt">s</span> <span class="dv">ease</span><span class="op">,</span> <span class="dv">box-shadow 0.3</span><span class="dt">s</span> <span class="dv">ease</span><span class="op">;</span></span>
+<span id="cb35-3"><a href="#cb35-3"></a>}</span>
+<span id="cb35-4"><a href="#cb35-4"></a><span class="fu">.card</span><span class="in">:hover</span> {</span>
+<span id="cb35-5"><a href="#cb35-5"></a>    <span class="kw">transform</span><span class="ch">:</span> <span class="fu">scale(</span><span class="dv">1.05</span><span class="fu">)</span><span class="op">;</span> <span class="co">/* Scales up the card */</span></span>
+<span id="cb35-6"><a href="#cb35-6"></a>    <span class="kw">box-shadow</span><span class="ch">:</span> <span class="dv">0</span><span class="dt">px</span> <span class="dv">4</span><span class="dt">px</span> <span class="dv">20</span><span class="dt">px</span> <span class="fu">rgba(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0.2</span><span class="fu">)</span><span class="op">;</span> <span class="co">/* Adds a shadow effect */</span></span>
+<span id="cb35-7"><a href="#cb35-7"></a>}</span>
+<span id="cb35-8"><a href="#cb35-8"></a><span class="fu">.card-body</span> {</span>
+<span id="cb35-9"><a href="#cb35-9"></a>    <span class="kw">padding</span><span class="ch">:</span> <span class="dv">1.02</span><span class="dt">rem</span><span class="op">;</span></span>
+<span id="cb35-10"><a href="#cb35-10"></a>    <span class="kw">font-family</span><span class="ch">:</span> <span class="dv">emoji</span><span class="op">;</span></span>
+<span id="cb35-11"><a href="#cb35-11"></a>}</span>
+<span id="cb35-12"><a href="#cb35-12"></a><span class="fu">.card-img-top</span> {</span>
+<span id="cb35-13"><a href="#cb35-13"></a>    <span class="kw">width</span><span class="ch">:</span> <span class="dv">100</span><span class="dt">%</span><span class="op">;</span></span>
+<span id="cb35-14"><a href="#cb35-14"></a>    <span class="kw">height</span><span class="ch">:</span> <span class="dv">70</span><span class="dt">%</span><span class="op">;</span></span>
+<span id="cb35-15"><a href="#cb35-15"></a>    <span class="kw">object-fit</span><span class="ch">:</span> <span class="dv">cover</span><span class="op">;</span></span>
+<span id="cb35-16"><a href="#cb35-16"></a>}</span>
+<span id="cb35-17"><a href="#cb35-17"></a><span class="fu">.text-blue</span> {</span>
+<span id="cb35-18"><a href="#cb35-18"></a>    <span class="kw">color</span><span class="ch">:</span> <span class="cn">#4a0f6f</span><span class="op">;</span> <span class="co">/* Example color */</span></span>
+<span id="cb35-19"><a href="#cb35-19"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="virtual-environment-setup-and-run" class="level3">
+<h3 class="anchored" data-anchor-id="virtual-environment-setup-and-run">Virtual Environment Setup and Run</h3>
+<p>After completing the programming part, it’s time to execute! Follow the steps below in your preferred terminal (make sure you are in your project directory first):</p>
+<ol type="1">
+<li><p><strong>Create a virtual environment</strong>: <code>mamba create -n env_name -c conda-forge</code></p></li>
+<li><p><strong>Activate the environment</strong>: <code>mamba activate env_name</code></p></li>
+<li><p><strong>Find the Python path</strong>: <code>which python</code></p></li>
+<li><p><strong>Set the Python interpreter</strong>:</p>
+<p>On Mac press <code>command + shift + p</code></p>
+<p>On Windows press <code>Ctrl + Shift + P</code></p>
+<p>Then select “Python: Select Interpreter” and paste the Python path you found in the previous step</p></li>
+<li><p><strong>Install required packages, including Flask</strong>: <code>mamba install flask</code></p></li>
+<li><p><strong>Run the app</strong>: <code>python app.py</code></p></li>
+</ol>
+</section>
+</section>
+<section id="results-and-limitations" class="level2">
+<h2 class="anchored" data-anchor-id="results-and-limitations">Results and Limitations</h2>
+<p>Here’s a short demo of our simple, functional app currently under development. You can, of course, add more features and functionalities as needed.</p>
+<div class="quarto-video"><video id="video_shortcode_videojs_video1" class="video-js vjs-default-skin vjs-fluid" controls="" preload="auto" data-setup="{}" title=""><source src="MyMovie.mp4"></video></div>
+<p>In this project, we endeavored to implement content-based filtering, a form of recommendation system, on a book dataset. The core objective was to utilize unsupervised algorithms like K-Means and the Gaussian Mixture Model to cluster book titles based on their relevance or irrelevance to each other. This allows us to suggest books that are similar to the one a user selects for a recommendation.</p>
+<p>This “closeness” between books is considered a latent factor—an underlying variable that is not directly observable but inferred from other measurable variables, such as rankings. Latent factors are commonly used in recommendation systems and matrix factorization techniques like Singular Value Decomposition (SVD), which we employed in our approach.</p>
+<p>While we successfully achieved our goal, our approach has limitations. Specifically, our system can only recognize and recommend books that already exist in our dataset. In other words, if the book title provided by the user does not exist in our clusters, we cannot generate a recommendation. This limitation is particularly evident when a new user joins the system or a new book is added to the archive, as there is no existing information—no rankings, no history—about these new entries. This is a known issue in recommendation systems, often referred to as the “Cold Start” problem, where content filtering struggles with new books, and collaborative filtering cannot produce recommendations for new users. Addressing this challenge could be a fruitful area for further exploration, with many academic papers available to guide the way.</p>
+<p>That concludes this project. I hope it was worth your time and that you learned something new along the way, just as I did while working on it. As always, feel free to share your feedback or any comments you might have.</p>
+<p>Until the next blog, happy coding!</p>
+<p>Links to my code:</p>
+<ul>
+<li><p><a href="https://www.kaggle.com/code/toobarahimnia/content-based-book-recommendation-system">Kaggle Notebook</a></p></li>
+<li><p><a href="https://github.com/toobarahimnia/Book_recommendation/tree/main">Github</a></p></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<script>videojs(video_shortcode_videojs_video1);</script>
+
+
+
+
+</body></html>
