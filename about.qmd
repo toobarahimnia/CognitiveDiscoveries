@@ -1,6 +1,6 @@
 ---
 title: "About"
-image: sunrise.jpg
+image: photos/sunrise.jpg
 about:
   template: jolla
   links:
