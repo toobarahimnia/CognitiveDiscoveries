@@ -1,6 +1,6 @@
 ---
 title: "Navigating the Kaggle U.S. Patent Phrase to Phrase Matching Competition: A Step-by-Step Guide "
-author: "Tooba Rahimnia"
+author: "Tina Rahimnia"
 date: "2024-06-05"
 categories: [NLP, Tabular Data, Kaggle] #news
 image: "opening.jpg"

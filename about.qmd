@@ -15,4 +15,4 @@ about:
       href: mailto:trahimnia@gmail.com
 ---
 
-Hello and welcome to my blog! My name is Tooba. I'm a tech enthusiast who's constantly learning and eager to share my journey with you. Here, I share everything I've learned about applied machine learning and the latest cloud technologies. Whether you're just starting out or already an expert, I hope you'll find something valuable in my posts. Thank you for joining me on this learning adventure!
+Hello and welcome to my blog! My name is Tina. I'm a tech enthusiast who's constantly learning and eager to share my journey with you. Here, I share everything I've learned about applied machine learning and the latest cloud technologies. Whether you're just starting out or already an expert, I hope you'll find something valuable in my posts. Thank you for joining me on this learning adventure!

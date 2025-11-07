@@ -1,6 +1,6 @@
 ---
 title: "How to Create a Web App with Django and YOLOv10 Models on Your Custom Dataset"
-author: "Tooba Rahimnia"
+author: "Tina Rahimnia"
 date: "2024-07-13"
 categories: [Web App, Computer Vision, Django] #news
 image: "opening.jpg"

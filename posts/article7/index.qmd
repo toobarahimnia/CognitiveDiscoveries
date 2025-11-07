@@ -1,6 +1,6 @@
 ---
 title: "Detecting Fraudulent Transactions Using Random Forest: A Step-by-Step Guide"
-author: "Tooba Rahimnia"
+author: "Tina Rahimnia"
 date: "2024-07-24"
 categories: [Tabular Data, Random Forest, Kaggle] #news
 image: "opening.jpg"
@@ -420,7 +420,7 @@ When I was digging through different articles online to get a better grip on the
 Here’s a quick table to break down what each term means:
 
 | Prediction | Actual value | Type           | Explanation                         |
-|:-----------|:-------------|:---------------|:------------------------------------|
+|:--------------|:--------------|:--------------|:----------------------------|
 | 1          | 1            | True Positive  | Predicted Positive and was Positive |
 | 0          | 0            | True Negative  | Predicted Negative and was Negative |
 | 1          | 0            | False Positive | Predicted Positive but was Negative |

@@ -1,6 +1,6 @@
 ---
 title: "Building a Book Recommender Engine from Scratch and Deploying It to a Web Application"
-author: "Tooba Rahimnia"
+author: "Tina Rahimnia"
 date: "2024-08-16"
 categories: [Web App, Recommendation System, Flask] #news
 image: "opening.jpg"
