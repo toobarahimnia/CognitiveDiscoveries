@@ -7,7 +7,7 @@ image: "opening.jpg"
 ---
 
 Create a Deep Learning environment on your own system using mamba, and fastai.
- 
+
 ![](pexels-arts-1022189.jpg){fig-align="center"}
 
 Recently, I discovered a fantastic series of *recorded* live coding sessions by Jeremy Howard from [fastai](https://www.fast.ai). These sessions are a treasure trove for machine learning and deep learning enthusiasts, offering practical insights and cutting-edge techniques. Inspired by Jeremy's work, I've decided to document my learnings through writing articles. My goal is to understand, remember, and share some of the valuable tips and tricks from these sessions with you.
